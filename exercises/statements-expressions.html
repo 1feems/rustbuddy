@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rust: Statements & Expressions - Rust Bud</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --color-bg: #FFFFFF; --color-surface: #1E1E1A; --color-primary: #FF7657; --color-secondary: #DFFF65; --color-ink: #171714; --color-muted: #77766F; --color-border: #171714; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--color-bg); color: var(--color-ink); min-height: 100vh; }
+    .site-header { display: flex; align-items: center; gap: 10px; padding: 16px 32px; border-bottom: 1px solid var(--color-border); }
+    .back-link { font-size: 14px; color: var(--color-muted); text-decoration: none; transition: color 200ms ease; }
+    .back-link:hover { color: var(--color-ink); }
+    .header-sep { color: var(--color-muted); font-size: 14px; }
+    .header-title { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+    .main { padding: 32px; max-width: 1400px; margin: 0 auto; }
+    .tab-container { border: 1px solid var(--color-border); border-radius: 20px; overflow: hidden; }
+    .tab-bar { display: flex; border-bottom: 1px solid var(--color-border); }
+    .tab-btn { padding: 14px 28px; font-family: inherit; font-size: 14px; font-weight: 600; border: none; border-right: 1px solid var(--color-border); background: transparent; color: var(--color-muted); cursor: pointer; transition: background 200ms ease, color 200ms ease; }
+    .tab-btn:last-child { border-right: none; }
+    .tab-btn.active { background: var(--color-primary); color: #fff; }
+    .tab-btn:not(.active):hover { background: #f7f6f3; color: var(--color-ink); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .exercise-subnav { display: flex; gap: 8px; flex-wrap: wrap; padding: 16px 24px; border-bottom: 1px solid var(--color-border); }
+    .ex-btn { padding: 7px 16px; font-family: inherit; font-size: 13px; font-weight: 500; border: none; border-radius: 9999px; cursor: pointer; background: var(--color-surface); color: var(--color-muted); transition: background 200ms ease, color 200ms ease; }
+    .ex-btn.active { background: var(--color-primary); color: #fff; }
+    .ex-btn:not(.active):hover { background: #2a2a26; color: #c0bfbb; }
+    .exercise-split { display: grid; grid-template-columns: 1fr 1fr; height: 100vh; max-height: 900px; }
+    .exercise-left { padding: 32px; border-right: 1px solid var(--color-border); overflow-y: auto; }
+    .ex-kicker { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 8px; }
+    .ex-title { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 16px; }
+    .ex-explainer { font-size: 14px; line-height: 1.65; color: #3a3935; margin-bottom: 24px; }
+    .ex-explainer p { margin-bottom: 10px; }
+    .ex-explainer p:last-child { margin-bottom: 0; }
+    .task-rule { height: 1px; background: rgba(23,23,20,0.12); margin-bottom: 20px; }
+    .task-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 12px; }
+    .task-body { font-size: 14px; line-height: 1.65; color: #3a3935; margin-bottom: 20px; }
+    .task-body p { margin-bottom: 10px; }
+    .task-body ol { padding-left: 20px; margin: 8px 0 10px; }
+    .task-body li { margin-bottom: 4px; }
+    .ex-explainer code, .task-body code, .task-instruction code { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; background: #f0efeb; padding: 1px 5px; border-radius: 4px; color: var(--color-ink); }
+    .starter-block { background: var(--color-surface); border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; overflow-x: auto; }
+    .starter-block pre { font-family: "SF Mono", "Fira Code", "Menlo", monospace; font-size: 13px; line-height: 1.7; color: #c9d1e3; white-space: pre; margin: 0; }
+    .task-instruction { font-size: 14px; font-weight: 600; color: var(--color-ink); margin-bottom: 20px; }
+    .expected-output-wrap { border-top: 1px solid rgba(23,23,20,0.12); padding-top: 16px; }
+    .expected-output-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 8px; }
+    .expected-output-text { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; line-height: 1.6; color: var(--color-ink); background: #f0efeb; border-radius: 8px; padding: 12px 16px; white-space: pre; }
+    .exercise-right { display: flex; flex-direction: column; overflow: hidden; }
+    .playground-bar { background: var(--color-surface); padding: 10px 20px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .playground-bar-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-primary); }
+    .playground-bar-label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.6); letter-spacing: 0.04em; }
+    .exercise-right iframe { flex: 1; width: 100%; border: none; display: block; }
+    .answers-list { padding: 32px; display: flex; flex-direction: column; gap: 20px; }
+    .answer-card { border: 1px solid var(--color-border); border-radius: 20px; overflow: hidden; }
+    .answer-card-head { padding: 14px 24px; border-bottom: 1px solid var(--color-border); font-size: 15px; font-weight: 600; }
+    .answer-card-body { padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+    .answer-code { background: var(--color-surface); border-radius: 12px; padding: 20px; overflow-x: auto; }
+    .answer-code pre { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; line-height: 1.7; color: #c9d1e3; margin: 0; }
+    .answer-why-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 4px; }
+    .answer-why { font-size: 14px; line-height: 1.6; color: #3a3935; }
+    .answer-why code { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; background: #f0efeb; padding: 1px 5px; border-radius: 4px; color: var(--color-ink); }
+    .terms-wrap { padding: 32px; }
+    .terms-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .terms-table th { text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); border-bottom: 1px solid var(--color-border); }
+    .terms-table td { padding: 14px 16px; border-bottom: 1px solid rgba(23,23,20,0.12); vertical-align: top; line-height: 1.55; }
+    .terms-table tr:last-child td { border-bottom: none; }
+    .terms-table td:first-child { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; font-weight: 600; white-space: nowrap; width: 160px; }
+    .terms-table td:last-child { color: var(--color-muted); }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <a href="index.html" class="back-link">← Rust Bud</a>
+  <span class="header-sep">/</span>
+  <span class="header-title">Rust: Statements & Expressions</span>
+</header>
+
+<main class="main">
+  <div class="tab-container">
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="exercises">Exercises</button>
+      <button class="tab-btn" data-tab="answers">Answers</button>
+      <button class="tab-btn" data-tab="terms">Terms to Know</button>
+    </div>
+
+    <div class="tab-panel active" id="panel-exercises">
+      <div class="exercise-subnav" id="subnav"></div>
+      <div class="exercise-split">
+        <div class="exercise-left" id="ex-left"></div>
+        <div class="exercise-right" id="ex-right"></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-answers">
+      <div class="answers-list" id="answers-list"></div>
+    </div>
+
+    <div class="tab-panel" id="panel-terms">
+      <div class="terms-wrap">
+        <table class="terms-table">
+          <thead>
+            <tr><th>Term</th><th>What it means</th><th>When you use it</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Statement</td><td>A line that performs an action but produces no value — ends with <code>;</code></td><td>Variable declarations, assignments, most lines of code</td></tr>
+            <tr><td>Expression</td><td>A line that evaluates to a value — no semicolon at the end</td><td>The last line of a block or function that you want to return</td></tr>
+            <tr><td>;</td><td>The semicolon — turns an expression into a statement, throwing the value away</td><td>After every line that does not return a value</td></tr>
+            <tr><td>{ }</td><td>A block — can be an expression if its last line has no semicolon</td><td>Grouping code; the last expression becomes the block's value</td></tr>
+            <tr><td>()</td><td>The unit type — what you get when a semicolon kills an expression</td><td>Return type of functions that return nothing</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const EMBED = 'https://play.rust-lang.org/?version=stable&edition=2021&code=';
+
+  const exercises = [
+    {
+      num: 1,
+      title: 'Blocks as Expressions',
+      explainer: '<p>A <strong>statement</strong> performs an action but hands nothing back. Most lines ending with a semicolon are statements.</p><p>An <strong>expression</strong> evaluates to a value. A block of code in <code>{ }</code> is an expression if its last line has no semicolon — the block hands back whatever that last line evaluates to.</p><p>The instructor put it clearly: "the semicolon suppresses this expression and the unit type is assigned."</p>',
+      task: '<p>The code wants to run a block that computes <code>x * 2</code> and assign the result to <code>y</code>. Right now <code>y</code> holds <code>()</code> because the last line of the block has a semicolon.</p><ol><li>Run a block that computes <code>x * 2</code></li><li>Assign the result to <code>y</code></li><li>Assert <code>y == 6</code> and print <code>Success!</code></li></ol>',
+      starterCode: 'fn main() {\n    let x = 3;\n    let y = {\n        let doubled = x * 2;\n        doubled;\n    };\n    assert_eq!(y, 6);\n    println!("Success!");\n}',
+      instruction: 'Remove one character so the block hands back its value',
+      expectedOutput: 'Success!',
+      answerCode: 'fn main() {\n    let x = 3;\n    let y = {\n        let doubled = x * 2;\n        doubled\n    };\n    assert_eq!(y, 6);\n    println!("Success!");\n}',
+      why: 'Removing the semicolon after <code>doubled</code> turns it from a statement into an expression. The block now returns the value of <code>doubled</code>, which is <code>6</code>.'
+    },
+    {
+      num: 2,
+      title: 'Semicolon Throws Away the Value',
+      explainer: '<p>The semicolon is the switch between expression and statement. Add it to the last line of a block and the value is gone — the block returns <code>()</code> instead. Remove it and the value comes through.</p><p>This is intentional in Rust: you decide exactly what a block hands back just by whether or not you put a semicolon on the last line.</p>',
+      task: '<p>The code wants to use a block to compute <code>x + y</code> and assign the result to <code>result</code>. Right now the block ends with <code>x + y;</code> — the semicolon throws away the sum.</p><ol><li>Compute <code>x + y</code> inside a block</li><li>Assign the result to <code>result</code></li><li>Print <code>Result: 5</code></li></ol><p>Make it work in two separate ways.</p>',
+      starterCode: 'fn main() {\n    let x = 2;\n    let y = 3;\n    let result = {\n        x + y;\n    };\n    println!("Result: {}", result);\n}',
+      instruction: 'Make it work — try both ways separately in the Playground',
+      expectedOutput: 'Result: 5',
+      answerCode: '// Way 1 — remove the semicolon\nfn main() {\n    let x = 2;\n    let y = 3;\n    let result = {\n        x + y\n    };\n    println!("Result: {}", result);\n}\n\n// Way 2 — keep the semicolon, compare to unit type\n// fn main() {\n//     let x = 2;\n//     let y = 3;\n//     let result = { x + y; };\n//     assert_eq!(result, ());\n//     println!("Result: {:?}", result);\n// }',
+      why: 'Way 1: Removing the semicolon returns the sum. Way 2: Keeping it returns <code>()</code> — useful to prove you understand what the semicolon does.'
+    },
+    {
+      num: 3,
+      title: 'Variable Assignments Are Statements',
+      explainer: '<p>A variable assignment — <code>let x = 5;</code> — is a statement. It stores a value but the assignment itself produces nothing. This matters when you try to use an assignment as the last line of a block expecting a value.</p><p>The fix: return the variable itself on the next line, with no semicolon.</p>',
+      task: '<p>The code wants to set <code>x</code> to <code>1</code>, increment it by <code>2</code> inside a block, and assign the final value to <code>v</code>. Right now the block ends with the assignment <code>x += 2;</code> — a statement — so <code>v</code> gets <code>()</code>.</p><ol><li>Set <code>x</code> to <code>1</code> and increment by <code>2</code></li><li>Assign the final value to <code>v</code></li><li>Assert <code>v == 3</code> and print <code>Success!</code></li></ol>',
+      starterCode: 'fn main() {\n    let v = {\n        let mut x: i32 = 1;\n        x += 2;\n    };\n    assert_eq!(v, 3);\n    println!("Success!");\n}',
+      instruction: 'Fix this so <code>v</code> holds <code>3</code>. Do not remove any lines.',
+      expectedOutput: 'Success!',
+      answerCode: 'fn main() {\n    let v = {\n        let mut x: i32 = 1;\n        x += 2;\n        x\n    };\n    assert_eq!(v, 3);\n    println!("Success!");\n}',
+      why: 'Adding <code>x</code> as the final expression (no semicolon) returns the current value of <code>x</code> from the block. The assignment <code>x += 2</code> is a statement — it cannot be the return value by itself.'
+    },
+    {
+      num: 4,
+      title: 'Functions and the Semicolon Rule',
+      explainer: '<p>The same rule applies inside functions. The last expression in a function body becomes the return value — but only if there is no semicolon. A semicolon turns it into a statement and the function returns <code>()</code> instead.</p><p>The instructor said it directly: "if we omit the semicolon over here then we would have a return type of i32."</p>',
+      task: '<p>The code wants to call <code>add(1, 2)</code> and get back <code>3</code>. Right now <code>add</code> ends with <code>x + y;</code> — the semicolon means it returns <code>()</code>, not the sum.</p><ol><li>Call <code>add(1, 2)</code></li><li>Store the result in <code>s</code></li><li>Assert <code>s == 3</code> and print <code>Success!</code></li></ol>',
+      starterCode: 'fn add(x: i32, y: i32) -> i32 {\n    x + y;\n}\n\nfn main() {\n    let s = add(1, 2);\n    assert_eq!(s, 3);\n    println!("Success!");\n}',
+      instruction: 'Remove one character so <code>add</code> returns the correct value',
+      expectedOutput: 'Success!',
+      answerCode: 'fn add(x: i32, y: i32) -> i32 {\n    x + y\n}\n\nfn main() {\n    let s = add(1, 2);\n    assert_eq!(s, 3);\n    println!("Success!");\n}',
+      why: 'Removing the semicolon from <code>x + y</code> makes it an expression. The function returns its value to the caller instead of throwing it away.'
+    },
+    {
+      num: 5,
+      title: 'Build: Fee Calculation',
+      explainer: '<p>You now understand the full picture:</p><p>A <strong>statement</strong> (ends with <code>;</code>) does something and returns nothing — <code>()</code>.<br>An <strong>expression</strong> (no <code>;</code>) produces a value and hands it to the caller.<br>The last line of a block or function determines what gets returned.<br>Variable assignments are statements — return the variable explicitly if you want its value.</p><p>In a payment contract, fee calculations must return the actual fee. A semicolon on the last line means the caller gets <code>()</code> instead of the number — and the payment math breaks.</p>',
+      task: '<p>The contract calculates a 5% fee and should return the amount. Right now <code>calculate_fee</code> has a semicolon on its last line — it returns <code>()</code> instead of the fee.</p><ol><li>Compute the fee as 5% of the base amount</li><li>Return the fee from <code>calculate_fee</code></li><li>Print <code>Fee: 50000 lamports</code></li></ol>',
+      starterCode: 'fn calculate_fee(base: u64, rate: u64) -> u64 {\n    base * rate / 100;\n}\n\nfn main() {\n    let fee = calculate_fee(1_000_000, 5);\n    println!("Fee: {} lamports", fee);\n}',
+      instruction: 'Remove one character so the correct fee is returned and printed',
+      expectedOutput: 'Fee: 50000 lamports',
+      answerCode: 'fn calculate_fee(base: u64, rate: u64) -> u64 {\n    base * rate / 100\n}\n\nfn main() {\n    let fee = calculate_fee(1_000_000, 5);\n    println!("Fee: {} lamports", fee);\n}',
+      why: 'Removing the semicolon makes <code>base * rate / 100</code> an expression. The function returns its value — the calculated fee — to the caller.'
+    }
+  ];
+
+  let currentEx = 0;
+
+  function buildSubnav() {
+    const subnav = document.getElementById('subnav');
+    subnav.innerHTML = '';
+    exercises.forEach((ex, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'ex-btn' + (i === currentEx ? ' active' : '');
+      btn.textContent = 'Exercise ' + ex.num;
+      btn.addEventListener('click', () => selectExercise(i));
+      subnav.appendChild(btn);
+    });
+  }
+
+  function renderLeft(ex) {
+    const left = document.getElementById('ex-left');
+    left.innerHTML =
+      '<div class="ex-kicker">Exercise ' + ex.num + ' of ' + exercises.length + '</div>' +
+      '<div class="ex-title">' + ex.title + '</div>' +
+      '<div class="ex-explainer">' + ex.explainer + '</div>' +
+      '<div class="task-rule"></div>' +
+      '<div class="task-label">Your Task</div>' +
+      '<div class="task-body">' + ex.task + '</div>';
+    const starterWrap = document.createElement('div');
+    starterWrap.className = 'starter-block';
+    const starterPre = document.createElement('pre');
+    starterPre.textContent = ex.starterCode;
+    starterWrap.appendChild(starterPre);
+    left.appendChild(starterWrap);
+    const instr = document.createElement('p');
+    instr.className = 'task-instruction';
+    instr.innerHTML = ex.instruction;
+    left.appendChild(instr);
+    const outputWrap = document.createElement('div');
+    outputWrap.className = 'expected-output-wrap';
+    const outputLabel = document.createElement('div');
+    outputLabel.className = 'expected-output-label';
+    outputLabel.textContent = 'Expected Output';
+    const outputText = document.createElement('div');
+    outputText.className = 'expected-output-text';
+    outputText.textContent = ex.expectedOutput;
+    outputWrap.appendChild(outputLabel);
+    outputWrap.appendChild(outputText);
+    left.appendChild(outputWrap);
+  }
+
+  let iframeEl = null;
+
+  function renderRight(ex) {
+    const right = document.getElementById('ex-right');
+    if (!iframeEl) {
+      right.innerHTML =
+        '<div class="playground-bar">' +
+          '<div class="playground-bar-dot"></div>' +
+          '<span class="playground-bar-label">Rust Playground</span>' +
+        '</div>';
+      iframeEl = document.createElement('iframe');
+      right.appendChild(iframeEl);
+    }
+    iframeEl.src = EMBED + encodeURIComponent(ex.starterCode);
+  }
+
+  function selectExercise(i) {
+    currentEx = i;
+    buildSubnav();
+    renderLeft(exercises[i]);
+    renderRight(exercises[i]);
+  }
+
+  function buildAnswers() {
+    const list = document.getElementById('answers-list');
+    if (list.children.length > 0) return;
+    exercises.forEach(ex => {
+      const card = document.createElement('div');
+      card.className = 'answer-card';
+      const head = document.createElement('div');
+      head.className = 'answer-card-head';
+      head.textContent = 'Exercise ' + ex.num + ' — ' + ex.title;
+      const body = document.createElement('div');
+      body.className = 'answer-card-body';
+      const codeWrap = document.createElement('div');
+      codeWrap.className = 'answer-code';
+      const pre = document.createElement('pre');
+      pre.textContent = ex.answerCode;
+      codeWrap.appendChild(pre);
+      const whyLabel = document.createElement('div');
+      whyLabel.className = 'answer-why-label';
+      whyLabel.textContent = 'Why';
+      const whyText = document.createElement('div');
+      whyText.className = 'answer-why';
+      whyText.innerHTML = ex.why;
+      body.appendChild(codeWrap);
+      body.appendChild(whyLabel);
+      body.appendChild(whyText);
+      card.appendChild(head);
+      card.appendChild(body);
+      list.appendChild(card);
+    });
+  }
+
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId));
+    document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.toggle('active', panel.id === 'panel-' + tabId));
+    if (tabId === 'answers') buildAnswers();
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
+
+  buildSubnav();
+  renderLeft(exercises[0]);
+  renderRight(exercises[0]);
+</script>
+</body>
+</html>

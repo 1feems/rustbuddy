@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rust Exercises — Rust Bud</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg:        #FFFFFF;
+      --color-surface:   #1E1E1A;
+      --color-primary:   #FF7657;
+      --color-secondary: #DFFF65;
+      --color-ink:       #171714;
+      --color-muted:     #77766F;
+      --color-border:    #171714;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-ink);
+      min-height: 100vh;
+    }
+
+    /* ── Nav ── */
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 40px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .site-header-left { display: flex; align-items: center; gap: 10px; }
+    .site-name {
+      font-size: 16px; font-weight: 700; letter-spacing: -0.02em;
+      text-decoration: none; color: var(--color-ink);
+    }
+    .header-sep { color: var(--color-muted); font-size: 14px; }
+    .header-section { font-size: 14px; font-weight: 500; color: var(--color-muted); }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-link {
+      font-size: 13px; font-weight: 600; color: var(--color-muted);
+      text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase;
+    }
+    .nav-link:hover { color: var(--color-ink); }
+    .nav-link.active { color: var(--color-primary); }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 72px 40px 64px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: end;
+      border-bottom: 1px solid var(--color-border);
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .hero-page-label {
+      display: inline-flex;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--color-ink);
+      background: var(--color-secondary);
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 24px;
+    }
+    .hero-title {
+      font-size: clamp(48px, 6vw, 80px);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      color: var(--color-ink);
+    }
+    .hero-desc {
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.7;
+      color: var(--color-muted);
+      max-width: 360px;
+      padding-bottom: 8px;
+    }
+    .hero-desc strong { color: var(--color-ink); font-weight: 600; }
+
+    /* ── Cards Grid ── */
+    .cards-section {
+      padding: 48px 40px 80px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    /* ── Topic Card ── */
+    .topic-card {
+      border-radius: 20px;
+      padding: 22px 22px 24px;
+      min-height: 310px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-decoration: none;
+      transition: transform 200ms ease, box-shadow 200ms ease;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .topic-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 24px 52px -8px rgba(0,0,0,0.22);
+    }
+
+    /* ── Deck Colors ── */
+    .deck-lime   { background: linear-gradient(135deg, #A8D92F 0%, #C5E94E 40%, #EFF8A7 100%); }
+    .deck-orange { background: linear-gradient(135deg, #FF7657 0%, #F97316 50%, #E85D04 100%); }
+    .deck-cyan   { background: linear-gradient(135deg, #14A6C8 0%, #35BFDA 40%, #A8EDF0 100%); }
+    .deck-pink   { background: linear-gradient(135deg, #DE4775 0%, #EA6689 40%, #F6A56F 100%); }
+
+    /* ── Top ── */
+    .card-top { display: flex; align-items: flex-start; justify-content: space-between; }
+    .card-number {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase; padding-top: 2px;
+    }
+    .deck-lime  .card-number,
+    .deck-cyan  .card-number { color: rgba(0,0,0,0.45); }
+    .deck-orange .card-number,
+    .deck-pink   .card-number { color: rgba(255,255,255,0.6); }
+
+    .card-arrow {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .deck-lime  .card-arrow,
+    .deck-cyan  .card-arrow { background: rgba(0,0,0,0.12); }
+    .deck-orange .card-arrow,
+    .deck-pink   .card-arrow { background: rgba(255,255,255,0.18); }
+
+    .deck-lime  .card-arrow path,
+    .deck-cyan  .card-arrow path { stroke: rgba(0,0,0,0.6); }
+    .deck-orange .card-arrow path,
+    .deck-pink   .card-arrow path { stroke: rgba(255,255,255,0.85); }
+
+    /* ── Icon ── */
+    .card-icon {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center;
+      padding: 12px 0;
+    }
+
+    /* ── Bottom ── */
+    .card-title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+    }
+    .card-desc {
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.55;
+      margin-top: 7px;
+    }
+    .deck-lime  .card-title,
+    .deck-cyan  .card-title { color: #171714; }
+    .deck-orange .card-title,
+    .deck-pink   .card-title { color: #FFFFFF; }
+
+    .deck-lime  .card-desc,
+    .deck-cyan  .card-desc { color: rgba(0,0,0,0.55); }
+    .deck-orange .card-desc,
+    .deck-pink   .card-desc { color: rgba(255,255,255,0.7); }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header-left">
+      <a href="../index.html" class="site-name">Rust Bud</a>
+      <span class="header-sep">/</span>
+      <span class="header-section">Exercises</span>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html" class="nav-link active">Exercises</a>
+      <a href="../flashcards/index.html" class="nav-link">Flashcards</a>
+      <a href="../levels/level-01-data-types-functions.html" class="nav-link">Levels</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-page-label">Rust Exercises</div>
+      <h1 class="hero-title">Write Rust.<br>One concept<br>at a time.</h1>
+    </div>
+    <div class="hero-right">
+      <p class="hero-desc">
+        Each exercise page covers <strong>one Rust concept</strong> from variables to flow control. Read the exercise, write your fix, and run it in the Rust Playground. No setup needed.
+      </p>
+    </div>
+  </section>
+
+  <section class="cards-section">
+    <div class="cards-grid">
+
+      <!-- 01 Variables — Lime -->
+      <a href="variables.html" class="topic-card deck-lime">
+        <div class="card-top">
+          <span class="card-number">01 / Variables</span>
+          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </div>
+        <div class="card-icon">
+          <svg width="90" height="90" fill="none" viewBox="0 0 100 100">
+            <rect x="18" y="30" width="64" height="44" rx="6" stroke="#171714" stroke-width="3.5"/>
+            <line x1="18" y1="50" x2="82" y2="50" stroke="#171714" stroke-width="3.5"/>
+            <line x1="38" y1="30" x2="38" y2="74" stroke="#171714" stroke-width="3.5"/>
+            <circle cx="28" cy="40" r="4" fill="#171714"/>
+          </svg>
+        </div>
+        <div class="card-bottom">
+          <p class="card-title">Variables</p>
+          <p class="card-desc">Variables let you store a value and give it a name so you can use it in your code.</p>
+        </div>
+      </a>
+
+      <!-- 02 Numbers — Orange -->
+      <a href="numbers.html" class="topic-card deck-orange">
+        <div class="card-top">
+          <span class="card-number">02 / Numbers</span>
+          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </div>
+        <div class="card-icon">
+          <svg width="90" height="90" fill="none" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="36" stroke="rgba(255,255,255,0.25)" stroke-width="3"/>
+            <circle cx="50" cy="50" r="22" stroke="rgba(255,255,255,0.45)" stroke-width="3"/>
+            <circle cx="50" cy="50" r="9" fill="#FFFFFF"/>
+          </svg>
+        </div>
+        <div class="card-bottom">
+          <p class="card-title">Numbers</p>
+          <p class="card-desc">Rust has separate types for whole numbers and decimals, and each one has a fixed size.</p>
+        </div>
+      </a>
+
+      <!-- 03 Chars & Bools — Cyan -->
+      <a href="chars-bools.html" class="topic-card deck-cyan">
+        <div class="card-top">
+          <span class="card-number">03 / Chars &amp; Bools</span>
+          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </div>
+        <div class="card-icon">
+          <svg width="90" height="90" fill="none" viewBox="0 0 100 100">
+            <rect x="12" y="28" width="34" height="44" rx="17" stroke="rgba(0,0,0,0.35)" stroke-width="3"/>
+            <rect x="54" y="28" width="34" height="44" rx="4" fill="rgba(0,0,0,0.12)"/>
+            <line x1="71" y1="36" x2="71" y2="64" stroke="rgba(0,0,0,0.4)" stroke-width="3" stroke-linecap="round"/>
+            <line x1="58" y1="50" x2="84" y2="50" stroke="rgba(0,0,0,0.4)" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="card-bottom">
+          <p class="card-title">Chars &amp; Bools</p>
+          <p class="card-desc">A char holds a single character and a bool holds true or false.</p>
+        </div>
+      </a>
+
+      <!-- 04 Statements & Expressions — Pink -->
+      <a href="statements-expressions.html" class="topic-card deck-pink">
+        <div class="card-top">
+          <span class="card-number">04 / Statements &amp; Expressions</span>
+          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </div>
+        <div class="card-icon">
+          <svg width="90" height="90" fill="none" viewBox="0 0 100 100">
+            <line x1="16" y1="36" x2="84" y2="36" stroke="rgba(255,255,255,0.7)" stroke-width="3.5" stroke-linecap="round"/>
+            <line x1="16" y1="50" x2="64" y2="50" stroke="rgba(255,255,255,0.4)" stroke-width="3.5" stroke-linecap="round"/>
+            <line x1="16" y1="64" x2="74" y2="64" stroke="rgba(255,255,255,0.9)" stroke-width="3.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="card-bottom">
+          <p class="card-title">Statements &amp; Expressions</p>
+          <p class="card-desc">Expressions return a value and statements do not. This difference shapes how Rust reads your code.</p>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rust: Chars, Bools & Unit Types - Rust Bud</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --color-bg: #FFFFFF; --color-surface: #1E1E1A; --color-primary: #FF7657; --color-secondary: #DFFF65; --color-ink: #171714; --color-muted: #77766F; --color-border: #171714; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--color-bg); color: var(--color-ink); min-height: 100vh; }
+    .site-header { display: flex; align-items: center; gap: 10px; padding: 16px 32px; border-bottom: 1px solid var(--color-border); }
+    .back-link { font-size: 14px; color: var(--color-muted); text-decoration: none; transition: color 200ms ease; }
+    .back-link:hover { color: var(--color-ink); }
+    .header-sep { color: var(--color-muted); font-size: 14px; }
+    .header-title { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+    .main { padding: 32px; max-width: 1400px; margin: 0 auto; }
+    .tab-container { border: 1px solid var(--color-border); border-radius: 20px; overflow: hidden; }
+    .tab-bar { display: flex; border-bottom: 1px solid var(--color-border); }
+    .tab-btn { padding: 14px 28px; font-family: inherit; font-size: 14px; font-weight: 600; border: none; border-right: 1px solid var(--color-border); background: transparent; color: var(--color-muted); cursor: pointer; transition: background 200ms ease, color 200ms ease; }
+    .tab-btn:last-child { border-right: none; }
+    .tab-btn.active { background: var(--color-primary); color: #fff; }
+    .tab-btn:not(.active):hover { background: #f7f6f3; color: var(--color-ink); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .exercise-subnav { display: flex; gap: 8px; flex-wrap: wrap; padding: 16px 24px; border-bottom: 1px solid var(--color-border); }
+    .ex-btn { padding: 7px 16px; font-family: inherit; font-size: 13px; font-weight: 500; border: none; border-radius: 9999px; cursor: pointer; background: var(--color-surface); color: var(--color-muted); transition: background 200ms ease, color 200ms ease; }
+    .ex-btn.active { background: var(--color-primary); color: #fff; }
+    .ex-btn:not(.active):hover { background: #2a2a26; color: #c0bfbb; }
+    .exercise-split { display: grid; grid-template-columns: 1fr 1fr; height: 100vh; max-height: 900px; }
+    .exercise-left { padding: 32px; border-right: 1px solid var(--color-border); overflow-y: auto; }
+    .ex-kicker { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 8px; }
+    .ex-title { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 16px; }
+    .ex-explainer { font-size: 14px; line-height: 1.65; color: #3a3935; margin-bottom: 24px; }
+    .ex-explainer p { margin-bottom: 10px; }
+    .ex-explainer p:last-child { margin-bottom: 0; }
+    .task-rule { height: 1px; background: rgba(23,23,20,0.12); margin-bottom: 20px; }
+    .task-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 12px; }
+    .task-body { font-size: 14px; line-height: 1.65; color: #3a3935; margin-bottom: 20px; }
+    .task-body p { margin-bottom: 10px; }
+    .task-body ol { padding-left: 20px; margin: 8px 0 10px; }
+    .task-body li { margin-bottom: 4px; }
+    .ex-explainer code, .task-body code, .task-instruction code { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; background: #f0efeb; padding: 1px 5px; border-radius: 4px; color: var(--color-ink); }
+    .starter-block { background: var(--color-surface); border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; overflow-x: auto; }
+    .starter-block pre { font-family: "SF Mono", "Fira Code", "Menlo", monospace; font-size: 13px; line-height: 1.7; color: #c9d1e3; white-space: pre; margin: 0; }
+    .task-instruction { font-size: 14px; font-weight: 600; color: var(--color-ink); margin-bottom: 20px; }
+    .expected-output-wrap { border-top: 1px solid rgba(23,23,20,0.12); padding-top: 16px; }
+    .expected-output-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 8px; }
+    .expected-output-text { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; line-height: 1.6; color: var(--color-ink); background: #f0efeb; border-radius: 8px; padding: 12px 16px; white-space: pre; }
+    .exercise-right { display: flex; flex-direction: column; overflow: hidden; }
+    .playground-bar { background: var(--color-surface); padding: 10px 20px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .playground-bar-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-primary); }
+    .playground-bar-label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.6); letter-spacing: 0.04em; }
+    .exercise-right iframe { flex: 1; width: 100%; border: none; display: block; }
+    .answers-list { padding: 32px; display: flex; flex-direction: column; gap: 20px; }
+    .answer-card { border: 1px solid var(--color-border); border-radius: 20px; overflow: hidden; }
+    .answer-card-head { padding: 14px 24px; border-bottom: 1px solid var(--color-border); font-size: 15px; font-weight: 600; }
+    .answer-card-body { padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+    .answer-code { background: var(--color-surface); border-radius: 12px; padding: 20px; overflow-x: auto; }
+    .answer-code pre { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; line-height: 1.7; color: #c9d1e3; margin: 0; }
+    .answer-why-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 4px; }
+    .answer-why { font-size: 14px; line-height: 1.6; color: #3a3935; }
+    .answer-why code { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; background: #f0efeb; padding: 1px 5px; border-radius: 4px; color: var(--color-ink); }
+    .terms-wrap { padding: 32px; }
+    .terms-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .terms-table th { text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); border-bottom: 1px solid var(--color-border); }
+    .terms-table td { padding: 14px 16px; border-bottom: 1px solid rgba(23,23,20,0.12); vertical-align: top; line-height: 1.55; }
+    .terms-table tr:last-child td { border-bottom: none; }
+    .terms-table td:first-child { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; font-weight: 600; white-space: nowrap; width: 160px; }
+    .terms-table td:last-child { color: var(--color-muted); }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <a href="index.html" class="back-link">← Rust Bud</a>
+  <span class="header-sep">/</span>
+  <span class="header-title">Rust: Chars, Bools & Unit Types</span>
+</header>
+
+<main class="main">
+  <div class="tab-container">
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="exercises">Exercises</button>
+      <button class="tab-btn" data-tab="answers">Answers</button>
+      <button class="tab-btn" data-tab="terms">Terms to Know</button>
+    </div>
+
+    <div class="tab-panel active" id="panel-exercises">
+      <div class="exercise-subnav" id="subnav"></div>
+      <div class="exercise-split">
+        <div class="exercise-left" id="ex-left"></div>
+        <div class="exercise-right" id="ex-right"></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-answers">
+      <div class="answers-list" id="answers-list"></div>
+    </div>
+
+    <div class="tab-panel" id="panel-terms">
+      <div class="terms-wrap">
+        <table class="terms-table">
+          <thead>
+            <tr><th>Term</th><th>What it means</th><th>When you use it</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>char</td><td>A single character — always in single quotes, 4 bytes</td><td>Single letters, symbols, emoji</td></tr>
+            <tr><td>bool</td><td>Either true or false — 1 byte</td><td>Status flags: is_active, is_paid, is_valid</td></tr>
+            <tr><td>!</td><td>NOT operator — flips a bool</td><td>When you need the opposite of a condition</td></tr>
+            <tr><td>&amp;&amp;</td><td>AND operator — true only when both sides are true</td><td>Requiring multiple conditions to pass together</td></tr>
+            <tr><td>||</td><td>OR operator — true when either side is true</td><td>Accepting any one of several conditions</td></tr>
+            <tr><td>()</td><td>The unit type — holds nothing, size 0 bytes</td><td>Return type of functions that do something but return nothing</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const EMBED = 'https://play.rust-lang.org/?version=stable&edition=2021&code=';
+
+  const exercises = [
+    {
+      num: 1,
+      title: 'char Uses Single Quotes',
+      explainer: '<p>A <code>char</code> is a single character — one letter, one digit, one symbol. In Rust, every character in the world is supported. A <code>char</code> always takes 4 bytes in memory, regardless of which character it holds.</p><p>The critical rule: a <code>char</code> is always written in <strong>single quotes</strong> like <code>\'A\'</code>. Double quotes like <code>"A"</code> are for strings — a completely different type. If you use double quotes for a char, Rust will refuse to compile.</p>',
+      task: '<p>The code below wants to store the letter <code>A</code> as a <code>char</code>, pass it to a function, and print <code>Got: A</code>. Right now it fails because <code>letter</code> is using double quotes instead of single quotes.</p><ol><li>Store <code>A</code> as a <code>char</code></li><li>Pass it to <code>print_char</code></li><li>Print <code>Got: A</code></li></ol>',
+      starterCode: 'fn print_char(c: char) {\n    println!("Got: {}", c);\n}\n\nfn main() {\n    let letter: char = "A";\n    print_char(letter);\n}',
+      instruction: 'Change one character pair so <code>letter</code> is a valid <code>char</code>',
+      expectedOutput: 'Got: A',
+      answerCode: 'fn print_char(c: char) {\n    println!("Got: {}", c);\n}\n\nfn main() {\n    let letter: char = \'A\';\n    print_char(letter);\n}',
+      why: '<code>"A"</code> is a string literal — even with one character. <code>\'A\'</code> is a char. They are different types. Rust will not accept one where the other is expected.'
+    },
+    {
+      num: 2,
+      title: 'bool and the NOT Operator',
+      explainer: '<p>A <code>bool</code> holds exactly one of two values: <code>true</code> or <code>false</code>. Nothing in between. Rust uses bools to make decisions — if something is <code>true</code>, run this block; if <code>false</code>, skip it.</p><p>The <code>!</code> operator flips a bool. <code>!true</code> becomes <code>false</code>. <code>!false</code> becomes <code>true</code>. Think of it like flipping a switch.</p>',
+      task: '<p>The code below wants to print <code>Subscription is active.</code> only when <code>is_active</code> is <code>true</code>. Right now it fails to print because the condition uses <code>!is_active</code>, which flips the value to <code>false</code>.</p><ol><li>Set <code>is_active</code> to <code>true</code></li><li>Print the message only when active</li></ol>',
+      starterCode: 'fn main() {\n    let is_active: bool = true;\n    if !is_active {\n        println!("Subscription is active.");\n    }\n}',
+      instruction: 'Remove one character so the correct line prints',
+      expectedOutput: 'Subscription is active.',
+      answerCode: 'fn main() {\n    let is_active: bool = true;\n    if is_active {\n        println!("Subscription is active.");\n    }\n}',
+      why: 'Removing the <code>!</code> makes the condition <code>is_active</code> directly. Since <code>is_active</code> is <code>true</code>, the block runs and the message prints.'
+    },
+    {
+      num: 3,
+      title: 'bool and the AND Operator',
+      explainer: '<p>The <code>&amp;&amp;</code> operator (AND) takes two bools and produces one. It only outputs <code>true</code> when <strong>both</strong> inputs are <code>true</code>. If either input is <code>false</code>, the result is <code>false</code>.</p><p>Think of it like a security check: the subscriber must have an active account AND enough funds. Both conditions must pass or the payment is blocked.</p>',
+      task: '<p>The code below wants to print <code>Payment approved.</code> only when both <code>is_active</code> and <code>has_funds</code> are <code>true</code>. Right now <code>has_funds</code> is missing its value.</p><ol><li>Set <code>is_active</code> to <code>true</code></li><li>Set <code>has_funds</code> so both conditions pass</li><li>Print <code>Payment approved.</code></li></ol>',
+      starterCode: 'fn main() {\n    let is_active: bool = true;\n    let has_funds: bool = ___;\n\n    if is_active && has_funds {\n        println!("Payment approved.");\n    }\n}',
+      instruction: 'Fill in the blank so both conditions are true and the payment is approved',
+      expectedOutput: 'Payment approved.',
+      answerCode: 'fn main() {\n    let is_active: bool = true;\n    let has_funds: bool = true;\n\n    if is_active && has_funds {\n        println!("Payment approved.");\n    }\n}',
+      why: '<code>&amp;&amp;</code> requires both sides to be <code>true</code>. Setting <code>has_funds = true</code> makes both conditions pass and the block runs.'
+    },
+    {
+      num: 4,
+      title: 'The Unit Type',
+      explainer: '<p>When a function in Rust does not return a value, it implicitly returns the <strong>unit type</strong>, written as <code>()</code>. The unit type holds nothing — its size is zero bytes. You rarely write it yourself; Rust adds it automatically.</p><p>Think of it as Rust\'s way of saying "this function did its job but has nothing to hand back." A variable assigned the result of such a function will hold <code>()</code>.</p>',
+      task: '<p>The code below wants to call <code>log_payment()</code>, store its return value, assert it is the unit type, and print <code>Done.</code>. Right now the assert fails because it compares to <code>5</code> instead of <code>()</code>.</p><ol><li>Call <code>log_payment()</code></li><li>Assert the return value is the unit type</li><li>Print <code>Done.</code></li></ol>',
+      starterCode: 'fn log_payment() {\n    println!("Payment logged.");\n}\n\nfn main() {\n    let result = log_payment();\n    assert_eq!(result, 5);\n    println!("Done.");\n}',
+      instruction: 'Replace <code>5</code> with the unit type so the assert passes',
+      expectedOutput: 'Payment logged.\nDone.',
+      answerCode: 'fn log_payment() {\n    println!("Payment logged.");\n}\n\nfn main() {\n    let result = log_payment();\n    assert_eq!(result, ());\n    println!("Done.");\n}',
+      why: '<code>log_payment</code> prints but returns nothing. When a function returns nothing, Rust implicitly returns <code>()</code> — the unit type. Replacing <code>5</code> with <code>()</code> makes the assert pass.'
+    },
+    {
+      num: 5,
+      title: 'Build: Subscription Gate',
+      explainer: '<p>You now know the three small types that show up constantly in contracts:</p><p><code>char</code> for single-character codes like a plan tier label.<br><code>bool</code> for yes/no flags like active, approved, or valid.<br><code>()</code> for functions that act but return nothing.</p><p>This exercise puts them together into a real subscription check.</p>',
+      task: '<p>The contract checks whether a subscriber can be charged before processing a payment. Right now it has two bugs: <code>plan</code> uses double quotes, and <code>is_active</code> is set to the wrong value.</p><ol><li>Set <code>plan</code> to the character <code>\'P\'</code> for Pro tier</li><li>Set <code>is_active</code> to <code>true</code></li><li>Check both with <code>&amp;&amp;</code></li><li>Print <code>Charging Pro subscriber.</code></li></ol>',
+      starterCode: 'fn main() {\n    let plan: char = "P";\n    let is_active: bool = false;\n\n    if plan == \'P\' && is_active {\n        println!("Charging Pro subscriber.");\n    }\n}',
+      instruction: 'Fix both bugs so the payment message prints',
+      expectedOutput: 'Charging Pro subscriber.',
+      answerCode: 'fn main() {\n    let plan: char = \'P\';\n    let is_active: bool = true;\n\n    if plan == \'P\' && is_active {\n        println!("Charging Pro subscriber.");\n    }\n}',
+      why: '<code>"P"</code> is a string — change to <code>\'P\'</code> for a char. <code>false</code> blocks the AND check — change to <code>true</code> so both conditions pass.'
+    }
+  ];
+
+  let currentEx = 0;
+
+  function buildSubnav() {
+    const subnav = document.getElementById('subnav');
+    subnav.innerHTML = '';
+    exercises.forEach((ex, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'ex-btn' + (i === currentEx ? ' active' : '');
+      btn.textContent = 'Exercise ' + ex.num;
+      btn.addEventListener('click', () => selectExercise(i));
+      subnav.appendChild(btn);
+    });
+  }
+
+  function renderLeft(ex) {
+    const left = document.getElementById('ex-left');
+    left.innerHTML =
+      '<div class="ex-kicker">Exercise ' + ex.num + ' of ' + exercises.length + '</div>' +
+      '<div class="ex-title">' + ex.title + '</div>' +
+      '<div class="ex-explainer">' + ex.explainer + '</div>' +
+      '<div class="task-rule"></div>' +
+      '<div class="task-label">Your Task</div>' +
+      '<div class="task-body">' + ex.task + '</div>';
+    const starterWrap = document.createElement('div');
+    starterWrap.className = 'starter-block';
+    const starterPre = document.createElement('pre');
+    starterPre.textContent = ex.starterCode;
+    starterWrap.appendChild(starterPre);
+    left.appendChild(starterWrap);
+    const instr = document.createElement('p');
+    instr.className = 'task-instruction';
+    instr.innerHTML = ex.instruction;
+    left.appendChild(instr);
+    const outputWrap = document.createElement('div');
+    outputWrap.className = 'expected-output-wrap';
+    const outputLabel = document.createElement('div');
+    outputLabel.className = 'expected-output-label';
+    outputLabel.textContent = 'Expected Output';
+    const outputText = document.createElement('div');
+    outputText.className = 'expected-output-text';
+    outputText.textContent = ex.expectedOutput;
+    outputWrap.appendChild(outputLabel);
+    outputWrap.appendChild(outputText);
+    left.appendChild(outputWrap);
+  }
+
+  let iframeEl = null;
+
+  function renderRight(ex) {
+    const right = document.getElementById('ex-right');
+    if (!iframeEl) {
+      right.innerHTML =
+        '<div class="playground-bar">' +
+          '<div class="playground-bar-dot"></div>' +
+          '<span class="playground-bar-label">Rust Playground</span>' +
+        '</div>';
+      iframeEl = document.createElement('iframe');
+      right.appendChild(iframeEl);
+    }
+    iframeEl.src = EMBED + encodeURIComponent(ex.starterCode);
+  }
+
+  function selectExercise(i) {
+    currentEx = i;
+    buildSubnav();
+    renderLeft(exercises[i]);
+    renderRight(exercises[i]);
+  }
+
+  function buildAnswers() {
+    const list = document.getElementById('answers-list');
+    if (list.children.length > 0) return;
+    exercises.forEach(ex => {
+      const card = document.createElement('div');
+      card.className = 'answer-card';
+      const head = document.createElement('div');
+      head.className = 'answer-card-head';
+      head.textContent = 'Exercise ' + ex.num + ' — ' + ex.title;
+      const body = document.createElement('div');
+      body.className = 'answer-card-body';
+      const codeWrap = document.createElement('div');
+      codeWrap.className = 'answer-code';
+      const pre = document.createElement('pre');
+      pre.textContent = ex.answerCode;
+      codeWrap.appendChild(pre);
+      const whyLabel = document.createElement('div');
+      whyLabel.className = 'answer-why-label';
+      whyLabel.textContent = 'Why';
+      const whyText = document.createElement('div');
+      whyText.className = 'answer-why';
+      whyText.innerHTML = ex.why;
+      body.appendChild(codeWrap);
+      body.appendChild(whyLabel);
+      body.appendChild(whyText);
+      card.appendChild(head);
+      card.appendChild(body);
+      list.appendChild(card);
+    });
+  }
+
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId));
+    document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.toggle('active', panel.id === 'panel-' + tabId));
+    if (tabId === 'answers') buildAnswers();
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
+
+  buildSubnav();
+  renderLeft(exercises[0]);
+  renderRight(exercises[0]);
+</script>
+</body>
+</html>

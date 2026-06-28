@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Variables — Rust Flashcards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg:        #FFFFFF;
+      --color-ink:       #171714;
+      --color-muted:     #77766F;
+      --color-border:    #171714;
+      --color-primary:   #FF7657;
+      --color-secondary: #DFFF65;
+
+      --grad-lime-front: linear-gradient(135deg, #A8D92F 0%, #C5E94E 40%, #EFF8A7 100%);
+      --grad-lime-back:  linear-gradient(135deg, #F1FADC 0%, #FAFDF0 100%);
+
+      --card-w: 240px;
+      --card-h: 340px;
+      --card-radius: 20px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-ink);
+      min-height: 100vh;
+    }
+
+    /* ── Nav ── */
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 40px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .site-header-left { display: flex; align-items: center; gap: 10px; }
+    .back-link {
+      font-size: 14px; font-weight: 500; color: var(--color-muted);
+      text-decoration: none;
+    }
+    .back-link:hover { color: var(--color-ink); }
+    .header-sep { color: var(--color-muted); font-size: 14px; }
+    .header-title { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; }
+    .card-count-badge {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--color-ink);
+      background: var(--color-secondary);
+      padding: 4px 10px; border-radius: 100px;
+    }
+
+    /* ── Page header ── */
+    .page-header {
+      padding: 48px 40px 40px;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+    .page-title {
+      font-size: clamp(40px, 5vw, 64px);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+    .page-hint {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--color-muted);
+      padding-bottom: 4px;
+    }
+
+    /* ── Cards grid ── */
+    .cards-section {
+      padding: 40px;
+    }
+    .cards-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    /* ── Flip card ── */
+    .flip-card {
+      width: var(--card-w);
+      height: var(--card-h);
+      perspective: 1000px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 420ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .flip-card.flipped .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flip-card-front,
+    .flip-card-back {
+      position: absolute;
+      inset: 0;
+      border-radius: var(--card-radius);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px 20px 22px;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+
+    /* Front — lime gradient */
+    .flip-card-front {
+      background: var(--grad-lime-front);
+    }
+
+    /* Back — pale lime */
+    .flip-card-back {
+      background: var(--grad-lime-back);
+      transform: rotateY(180deg);
+      border: 1px solid rgba(168,217,47,0.3);
+    }
+
+    /* Front top */
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    .card-num {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: rgba(0,0,0,0.4);
+    }
+    .card-flip-hint {
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      color: rgba(0,0,0,0.3);
+    }
+
+    /* Front center — big term display */
+    .card-center {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 0;
+    }
+    .card-term {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      color: #171714;
+      text-align: center;
+    }
+    .card-term code {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 28px;
+      background: rgba(0,0,0,0.08);
+      padding: 4px 10px;
+      border-radius: 8px;
+    }
+
+    /* Front bottom */
+    .card-bottom {}
+    .card-category {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: rgba(0,0,0,0.35);
+    }
+
+    /* Back top */
+    .back-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    .back-label {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: rgba(0,0,0,0.35);
+    }
+
+    /* Back center */
+    .back-center {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 12px;
+      padding: 12px 0;
+    }
+    .back-definition {
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 1.55;
+      color: #171714;
+    }
+    .back-example {
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: rgba(0,0,0,0.5);
+      font-style: italic;
+    }
+    .back-example code {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-style: normal;
+      font-size: 11px;
+      background: rgba(0,0,0,0.07);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #171714;
+    }
+
+    /* Back bottom */
+    .back-bottom {}
+    .back-term {
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(0,0,0,0.4);
+      letter-spacing: -0.01em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <header class="site-header">
+    <div class="site-header-left">
+      <a href="index.html" class="back-link">Flashcards</a>
+      <span class="header-sep">/</span>
+      <span class="header-title">Variables</span>
+    </div>
+    <span class="card-count-badge">11 Terms</span>
+  </header>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <h1 class="page-title">Variables</h1>
+    <p class="page-hint">Click any card to flip</p>
+  </div>
+
+  <!-- Cards -->
+  <section class="cards-section">
+    <div class="cards-grid">
+
+      <!-- 1. Variable -->
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <div class="card-top"><span class="card-num">01</span><span class="card-flip-hint">Tap to flip</span></div>
+            <div class="card-center"><p class="card-term">Variable</p></div>
+            <div class="card-bottom"><p class="card-category">Variables</p></div>
+          </div>
+          <div class="flip-card-back">
+            <div class="back-top"><span class="back-label">Definition</span></div>
+            <div class="back-center">
+              <p class="back-definition">A named place to store a value in your program.</p>
+              <p class="back-example">Example: <code>let age = 25;</code></p>
+            </div>
+            <div class="back-bottom"><p class="back-term">Variable</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. let -->
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <div class="card-top"><span class="card-num">02</span><span class="card-flip-hint">Tap to flip</span></div>
+            <div class="card-center"><p class="card-term"><code>let</code></p></div>
+            <div class="card-bottom"><p class="card-category">Variables</p></div>
+          </div>
+          <div class="flip-card-back">
+            <div class="back-top"><span class="back-label">Definition</span></div>
+            <div class="back-center">
+              <p class="back-definition">The keyword that creates a new variable.</p>
+              <p class="back-example">Example: <code>let name = "Rust";</code></p>
+            </div>
+            <div class="back-bottom"><p class="back-term">let</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. mut -->
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <div class="card-top"><span class="card-num">03</span><span class="card-flip-hint">Tap to flip</span></div>
+            <div class="card-center"><p class="card-term"><code>mut</code></p></div>
+            <div class="card-bottom"><p class="card-category">Variables</p></div>
+          </div>
+          <div class="flip-card-back">
+            <div class="back-top"><span class="back-label">Definition</span></div>
+            <div class="back-center">
+              <p class="back-definition">Marks a variable as changeable after it is first set.</p>
+              <p class="back-example">Example: <code>let mut count = 0;</code></p>
+            </div>
+            <div class="back-bottom"><p class="back-term">mut</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Immutable -->
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <div class="card-top"><span class="card-num">04</span><span class="card-flip-hint">Tap to flip</span></div>
+            <div class="card-center"><p class="card-term">Immutable</p></div>
+            <div class="card-bottom"><p class="card-category">Variables</p></div>
+          </div>
+          <div class="flip-card-back">
+            <div class="back-top"><span class="back-label">Definition</span></div>
+            <div class="back-center">
+              <p class="back-definition">Cannot be changed after it is set. The default for every variable in Rust.</p>
+              <p class="back-example">No <code>mut</code> means the value is locked.</p>
+            </div>
+            <div class="back-bottom"><p class="back-term">Immutable</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Shadowing -->
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <div class="card-top"><span class="card-num">05</span><span class="card-flip-hint">Tap to flip</span></div>
+            <div class="card-center"><p class="card-term">Shadowing</p></div>
+            <div class="card-bottom"><p class="card-category">Variables</p></div>
+          </div>
+          <div class="flip-card-back">
+            <div class="back-top"><span class="back-label">Definition</span></div>
+            <div class="back-center">
+              <p class="back-definition">Reusing a variable name with a new <code>let</code>. The old value is replaced.</p>
+              <p class="back-example"><code>let x = 5; let x = x + 1;</code></p>
+            </div>
+            <div class="back-bottom"><p class="back-term">Shadowing</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. const -->
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <div class="card-top"><span class="card-num">06</span><span class="card-flip-hint">Tap to flip</span></div>
+            <div class="card-center"><p class="card-term"><code>const</code></p></div>
+            <div class="card-bottom"><p class="card-category">Variables</p></div>
+          </div>
+          <div class="flip-card-back">
+            <div class="back-top"><span class="back-label">Definition</span></div>
+            <div class="back-center">
+              <p class="back-definition">A value that never changes. Must have an explicit type and cannot be computed at runtime.</p>
+              <p class="back-example"><code>const MAX_FEE: u64 = 50_000;</code></p>
+            </div>
+            <div class="back-bottom"><p class="back-term">const</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. _ -->
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <div class="card-top"><span class="card-num">07</span><span class="card-flip-hint">Tap to flip</span></div>
+            <div class="card-center"><p class="card-term"><code>_</code></p></div>
+            <div class="card-bottom"><p class="card-category">Variables</p></div>
+          </div>
+          <div class="flip-card-back">
+            <div class="back-top"><span class="back-label">Definition</span></div>
+            <div class="back-center">
+              <p class="back-definition">Tells the compiler you know a variable is unused so it does not warn you.</p>
+              <p class="back-example"><code>let _unused = 5;</code></p>
+            </div>
+            <div class="back-bottom"><p class="back-term">_</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. Destructuring -->
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <div class="card-top"><span class="card-num">08</span><span class="card-flip-hint">Tap to flip</span></div>
+            <div class="card-center"><p class="card-term">Destructuring</p></div>
+            <div class="card-bottom"><p class="card-category">Variables</p></div>
+          </div>
+          <div class="flip-card-back">
+            <div class="back-top"><span class="back-label">Definition</span></div>
+            <div class="back-center">
+              <p class="back-definition">Unpacking a tuple or struct into separate named variables in one line.</p>
+              <p class="back-example"><code>let (plan, fee) = (1_000u64, 50u64);</code></p>
+            </div>
+            <div class="back-bottom"><p class="back-term">Destructuring</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9. Unit type () -->
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <div class="card-top"><span class="card-num">09</span><span class="card-flip-hint">Tap to flip</span></div>
+            <div class="card-center"><p class="card-term"><code>()</code></p></div>
+            <div class="card-bottom"><p class="card-category">Variables</p></div>
+          </div>
+          <div class="flip-card-back">
+            <div class="back-top"><span class="back-label">Definition</span></div>
+            <div class="back-center">
+              <p class="back-definition">Rust's empty value. Means "nothing." Returned by functions that do not give anything back.</p>
+              <p class="back-example">Called the unit type.</p>
+            </div>
+            <div class="back-bottom"><p class="back-term">Unit type ()</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 10. as -->
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <div class="card-top"><span class="card-num">10</span><span class="card-flip-hint">Tap to flip</span></div>
+            <div class="card-center"><p class="card-term"><code>as</code></p></div>
+            <div class="card-bottom"><p class="card-category">Variables</p></div>
+          </div>
+          <div class="flip-card-back">
+            <div class="back-top"><span class="back-label">Definition</span></div>
+            <div class="back-center">
+              <p class="back-definition">Converts a value from one type to another.</p>
+              <p class="back-example"><code>let x: i32 = 5; let y = x as f64;</code></p>
+            </div>
+            <div class="back-bottom"><p class="back-term">as</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 11. println! -->
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <div class="card-top"><span class="card-num">11</span><span class="card-flip-hint">Tap to flip</span></div>
+            <div class="card-center"><p class="card-term"><code>println!</code></p></div>
+            <div class="card-bottom"><p class="card-category">Variables</p></div>
+          </div>
+          <div class="flip-card-back">
+            <div class="back-top"><span class="back-label">Definition</span></div>
+            <div class="back-center">
+              <p class="back-definition">A macro that prints a line to the terminal. Used to see the value of your variables.</p>
+              <p class="back-example"><code>println!("{}", name);</code></p>
+            </div>
+            <div class="back-bottom"><p class="back-term">println!</p></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</body>
+</html>

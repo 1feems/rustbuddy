@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Level 01 — Data Types + Functions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-page-bg: #F1EFEA;
+      --color-card-shell: #FFFFFF;
+      --color-ink: #0B0D12;
+      --color-muted: #4B5563;
+      --color-rule: rgba(11,13,18,0.16);
+      --color-focus: #111111;
+      --grad-blue: linear-gradient(135deg, #5D8FEA 0%, #7EA9EF 50%, #A5C6F3 100%);
+      --back-blue: linear-gradient(135deg, #EAF2FF 0%, #F6FAFF 100%);
+      --font-ui: "Space Grotesk", Inter, system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-ui);
+      background: var(--color-page-bg);
+      color: var(--color-ink);
+      min-height: 100vh;
+      padding: 32px 40px 60px;
+    }
+
+    /* Back link */
+    .back-link {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--color-muted);
+      text-decoration: none;
+      margin-bottom: 28px;
+      letter-spacing: 0.01em;
+    }
+    .back-link:hover { color: var(--color-ink); }
+
+    /* Level header */
+    .level-header {
+      background: var(--grad-blue);
+      border-radius: 12px;
+      padding: 32px 36px 28px;
+      margin-bottom: 36px;
+      position: relative;
+      overflow: hidden;
+    }
+    .level-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 80px; height: 80px;
+      background: rgba(255,255,255,0.08);
+      clip-path: polygon(100% 0, 100% 100%, 0 100%);
+    }
+    .level-num {
+      display: block;
+      font-size: 10px;
+      font-weight: 800;
+      color: rgba(255,255,255,0.65);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .level-title {
+      display: block;
+      font-size: 36px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      margin-bottom: 10px;
+    }
+    .level-concepts {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.75);
+      letter-spacing: 0.02em;
+    }
+
+    /* Two-column layout */
+    .level-body {
+      display: grid;
+      grid-template-columns: 2fr 3fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    /* Story card */
+    .story {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .section-label {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      color: var(--color-muted);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: block;
+    }
+    .story p {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--color-ink);
+    }
+    .story p + p { margin-top: 10px; }
+
+    /* Cheat sheet */
+    .cheat-sheet-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    /* Mini flashcard */
+    .mini-card {
+      aspect-ratio: 260 / 330;
+      perspective: 700px;
+      cursor: pointer;
+    }
+    .mini-card:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 4px; border-radius: 4px; }
+    .mini-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+    .mini-card.flipped .mini-card-inner { transform: rotateY(180deg); }
+    .mini-face, .mini-back {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      background: white;
+      border-radius: 4px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.11);
+      overflow: hidden;
+    }
+    .mini-back { transform: rotateY(180deg); }
+
+    /* Card front */
+    .mini-rust-label {
+      position: absolute;
+      top: 8px; left: 9px;
+      font-size: 7px;
+      font-weight: 800;
+      color: var(--color-muted);
+      z-index: 2;
+      letter-spacing: 0.04em;
+    }
+    .mini-panel {
+      position: absolute;
+      top: 6px; left: 6px; right: 6px;
+      bottom: 28px;
+      border-radius: 4px;
+      background: var(--grad-blue);
+      clip-path: polygon(14% 0%, 100% 0%, 100% 86%, 86% 100%, 0% 100%, 0% 14%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mini-icon {
+      font-size: 22px;
+      line-height: 1;
+      filter: brightness(0) invert(1);
+      opacity: 0.92;
+    }
+    .mini-footer-strip {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      padding: 0 7px;
+      background: white;
+    }
+    .mini-term {
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      color: var(--color-ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Card back */
+    .mini-back-panel {
+      position: absolute;
+      top: 6px; left: 6px; right: 6px;
+      bottom: 0;
+      border-radius: 4px;
+      background: var(--back-blue);
+      clip-path: polygon(14% 0%, 100% 0%, 100% 86%, 86% 100%, 0% 100%, 0% 14%);
+      padding: 14px 8px 8px;
+      overflow: hidden;
+    }
+    .mini-back-rust { font-size: 7px; font-weight: 800; color: var(--color-muted); letter-spacing: 0.04em; margin-bottom: 6px; display: block; }
+    .mini-back-title { font-size: 9px; font-weight: 900; text-transform: uppercase; color: var(--color-ink); margin-bottom: 5px; letter-spacing: -0.01em; }
+    .mini-back-sec { font-size: 7px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: var(--color-muted); margin-top: 5px; margin-bottom: 2px; }
+    .mini-back-body { font-size: 7.5px; line-height: 1.45; color: var(--color-ink); }
+    .mini-back-code { font-family: "SF Mono", "Fira Code", monospace; font-size: 7px; line-height: 1.4; color: #334; }
+
+    /* Right panel */
+    .code-wrap {
+      background: #16213e;
+      border-radius: 10px;
+      padding: 22px;
+      margin-bottom: 14px;
+    }
+    .code-file-label {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.35);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    pre.code {
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #c9d1e3;
+      white-space: pre;
+      overflow-x: auto;
+    }
+    .blank { color: #FFD166; font-weight: 700; }
+    .comment { color: #5a6a8a; }
+
+    .playground-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--color-ink);
+      text-decoration: none;
+      background: white;
+      border-radius: 8px;
+      padding: 11px 18px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: box-shadow 150ms ease-out, transform 150ms ease-out;
+    }
+    .playground-btn:hover { box-shadow: 0 5px 18px rgba(0,0,0,0.13); transform: translateY(-1px); }
+
+    details.hint {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      margin-bottom: 14px;
+      overflow: hidden;
+    }
+    details.hint summary {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--color-muted);
+      padding: 14px 18px;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+    }
+    details.hint summary::-webkit-details-marker { display: none; }
+    details.hint[open] summary { color: var(--color-ink); border-bottom: 1px solid var(--color-rule); }
+    .hint-body { padding: 14px 18px; font-size: 13px; line-height: 1.65; color: var(--color-ink); }
+
+    .win-box {
+      background: white;
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border-left: 3px solid #5D8FEA;
+    }
+    .win-box p { font-size: 13px; line-height: 1.6; color: var(--color-ink); }
+    code { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 3px; }
+
+    .done-btn {
+      width: 100%;
+      padding: 15px;
+      background: var(--grad-blue);
+      color: white;
+      font-family: var(--font-ui);
+      font-size: 14px;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      letter-spacing: -0.01em;
+      transition: opacity 150ms, transform 150ms;
+    }
+    .done-btn:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+    .done-btn:disabled { background: linear-gradient(135deg, #5bba7e 0%, #7dcf98 100%); cursor: default; transform: none; }
+
+    @media (max-width: 768px) {
+      body { padding: 20px 16px 48px; }
+      .level-body { grid-template-columns: 1fr; }
+      .level-title { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+
+  <a href="index.html" class="back-link">← My Rust Journey</a>
+
+  <header class="level-header">
+    <span class="level-num">Level 01</span>
+    <span class="level-title">Data Types<br>+ Functions</span>
+    <span class="level-concepts">u64 · bool · fn · -></span>
+  </header>
+
+  <div class="level-body">
+
+    <!-- Left Panel -->
+    <div class="panel-left">
+
+      <div class="story">
+        <span class="section-label">The Setup</span>
+        <p>A subscriber wants to pay. The contract needs to store the payment amount, whether they're active, and their wallet address.</p>
+        <p>Then it needs to check: did they send enough? Your job is to pick the right types and complete the validation function.</p>
+      </div>
+
+      <span class="section-label">Cheat Sheet — tap to flip</span>
+      <div class="cheat-sheet-grid" id="cheatSheet"></div>
+
+    </div>
+
+    <!-- Right Panel -->
+    <div class="panel-right">
+
+      <div class="code-wrap">
+        <div class="code-file-label">Starter Code — fix the blanks</div>
+        <pre class="code"><span class="comment">// Replace each ??? with the correct type or operator.</span>
+
+fn is_payment_valid(
+    amount: <span class="blank">???</span>,
+    price:  <span class="blank">???</span>,
+) -> <span class="blank">???</span> {
+    amount <span class="blank">???</span> price
+}
+
+fn main() {
+    <span class="comment">// Should print: true</span>
+    println!("{}", is_payment_valid(100, 50));
+    <span class="comment">// Should ALSO print: true (watch the operator)</span>
+    println!("{}", is_payment_valid(50, 50));
+    <span class="comment">// Should print: false</span>
+    println!("{}", is_payment_valid(30, 50));
+}</pre>
+      </div>
+
+      <a href="#" id="playgroundLink" class="playground-btn" target="_blank" rel="noopener">
+        ↗ &nbsp;Open in Rust Playground
+      </a>
+
+      <details class="hint">
+        <summary>+ Hint</summary>
+        <div class="hint-body">
+          Payment amounts are whole numbers that can never be negative — and in Solana they're measured in lamports, which can reach into the billions. Which integer type handles that? And does "valid" mean strictly greater than, or at least equal to?
+        </div>
+      </details>
+
+      <div class="win-box">
+        <span class="section-label">Done When</span>
+        <p>The function returns <code>true</code> when <code>amount >= price</code> (including equal) and <code>false</code> otherwise. All three test cases print correctly. Code compiles in Rust Playground.</p>
+      </div>
+
+      <button class="done-btn" id="doneBtn">Mark as done →</button>
+
+    </div>
+  </div>
+
+  <script>
+    // ── Supabase config ─────────────────────────────────────────────
+    // Fill in your project URL and anon key for persistent progress.
+    // Leave blank to use localStorage only.
+    const SUPABASE_URL = '';
+    const SUPABASE_ANON_KEY = '';
+    const LEVEL = 1;
+    // ────────────────────────────────────────────────────────────────
+
+    const terms = [
+      {
+        term: 'u64',
+        icon: '#',
+        meaning: 'Unsigned 64-bit integer. A whole number, never negative.',
+        when: 'Payment amounts, balances, timestamps.',
+        example: 'let price: u64 = 100;'
+      },
+      {
+        term: 'bool',
+        icon: '✓',
+        meaning: 'true or false — nothing else.',
+        when: 'Status flags: is_paid, is_active.',
+        example: 'let active: bool = true;'
+      },
+      {
+        term: '&str',
+        icon: '"A"',
+        meaning: 'A borrowed piece of text you can read but not grow.',
+        when: 'Labels, names, short messages.',
+        example: 'let name: &str = "Alice";'
+      },
+      {
+        term: 'fn',
+        icon: 'ƒ',
+        meaning: 'The keyword that starts every function.',
+        when: 'Every function you write.',
+        example: 'fn greet() { }'
+      },
+      {
+        term: '->',
+        icon: '→',
+        meaning: 'Separates the parameters from the return type.',
+        when: 'When a function gives a value back.',
+        example: 'fn check() -> bool'
+      },
+      {
+        term: 'return type',
+        icon: '⟵',
+        meaning: 'The type of value the function sends back.',
+        when: 'Declared after ->. Must match what you return.',
+        example: '-> bool  means return true or false'
+      },
+    ];
+
+    const grid = document.getElementById('cheatSheet');
+    terms.forEach(t => {
+      const card = document.createElement('div');
+      card.className = 'mini-card';
+      card.tabIndex = 0;
+      card.setAttribute('role', 'button');
+      card.setAttribute('aria-label', `Flip ${t.term} card`);
+      card.innerHTML = `
+        <div class="mini-card-inner">
+          <div class="mini-face">
+            <span class="mini-rust-label">Rust</span>
+            <div class="mini-panel">
+              <span class="mini-icon">${t.icon}</span>
+            </div>
+            <div class="mini-footer-strip">
+              <span class="mini-term">${t.term}</span>
+            </div>
+          </div>
+          <div class="mini-back">
+            <div class="mini-back-panel">
+              <span class="mini-back-rust">Rust</span>
+              <div class="mini-back-title">${t.term}</div>
+              <div class="mini-back-sec">Meaning</div>
+              <div class="mini-back-body">${t.meaning}</div>
+              <div class="mini-back-sec">When</div>
+              <div class="mini-back-body">${t.when}</div>
+              <div class="mini-back-sec">Example</div>
+              <div class="mini-back-code">${t.example}</div>
+            </div>
+          </div>
+        </div>`;
+      const flip = () => { card.classList.toggle('flipped'); card.setAttribute('aria-pressed', card.classList.contains('flipped')); };
+      card.addEventListener('click', flip);
+      card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } });
+      grid.appendChild(card);
+    });
+
+    // Pre-fill Rust Playground with working-but-buggy starter code
+    const starterCode = `// Fix the types and the operator.
+// Hint: Solana payments are measured in lamports — they can reach billions.
+
+fn is_payment_valid(amount: u8, price: u8) -> bool {
+    amount > price   // is this the right operator?
+}
+
+fn main() {
+    println!("{}", is_payment_valid(100, 50));  // true ✓
+    println!("{}", is_payment_valid(50, 50));   // false ✗  should be true!
+    println!("{}", is_payment_valid(30, 50));   // false ✓
+}`;
+    document.getElementById('playgroundLink').href =
+      'https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&code=' +
+      encodeURIComponent(starterCode);
+
+    // Progress
+    const KEY = `rust_game_level_${LEVEL}_done`;
+
+    function markComplete() {
+      const btn = document.getElementById('doneBtn');
+      btn.textContent = 'Level Complete ✓';
+      btn.disabled = true;
+    }
+
+    async function saveProgress() {
+      if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+        try {
+          await fetch(`${SUPABASE_URL}/rest/v1/game_progress`, {
+            method: 'POST',
+            headers: {
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+              'Content-Type': 'application/json',
+              'Prefer': 'resolution=merge-duplicates'
+            },
+            body: JSON.stringify({ level: LEVEL, completed: true, completed_at: new Date().toISOString() })
+          });
+        } catch(e) { console.warn('Supabase unavailable, using localStorage.', e); }
+      }
+      localStorage.setItem(KEY, 'true');
+      markComplete();
+    }
+
+    if (localStorage.getItem(KEY) === 'true') markComplete();
+    document.getElementById('doneBtn').addEventListener('click', saveProgress);
+  </script>
+
+</body>
+</html>

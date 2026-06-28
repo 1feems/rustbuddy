@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rust Flashcards — Game Colors</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Game design system tokens */
+      --color-bg:       #FFFFFF;
+      --color-surface:  #1E1E1A;
+      --color-primary:  #FF7657;
+      --color-secondary:#DFFF65;
+      --color-ink:      #171714;
+      --color-muted:    #77766F;
+
+      /* Card structure */
+      --card-shell: #1E1E1A;
+      --card-w: 260px;
+      --card-h: 360px;
+      --shell-pad: 14px;
+      --footer-h: 62px;
+      --radius-card: 20px; /* game uses 20px */
+
+      /* Orange deck — game primary */
+      --grad-orange:
+        radial-gradient(circle at 50% 38%, rgba(255,255,255,.22) 0%, rgba(255,255,255,0) 32%),
+        linear-gradient(135deg, #FF7657 0%, #F97316 50%, #E85D04 100%);
+      --grad-orange-back:
+        radial-gradient(circle at 50% 32%, rgba(255,255,255,.50) 0%, rgba(255,255,255,0) 34%),
+        linear-gradient(135deg, #FFF0EC 0%, #FFF8F5 100%);
+
+      /* Cyan deck */
+      --grad-cyan:
+        radial-gradient(circle at 50% 38%, rgba(255,255,255,.22) 0%, rgba(255,255,255,0) 32%),
+        linear-gradient(135deg, #14A6C8 0%, #35BFDA 34%, #6BD5E6 68%, #A8EDF0 100%);
+      --grad-cyan-back:
+        radial-gradient(circle at 50% 32%, rgba(255,255,255,.50) 0%, rgba(255,255,255,0) 34%),
+        linear-gradient(135deg, #DFFAFF 0%, #F5FEFF 100%);
+
+      /* Pink deck */
+      --grad-pink:
+        radial-gradient(circle at 50% 38%, rgba(255,255,255,.20) 0%, rgba(255,255,255,0) 32%),
+        linear-gradient(135deg, #DE4775 0%, #EA6689 34%, #F0868A 68%, #F6A56F 100%);
+      --grad-pink-back:
+        radial-gradient(circle at 50% 32%, rgba(255,255,255,.50) 0%, rgba(255,255,255,0) 34%),
+        linear-gradient(135deg, #FFE9EF 0%, #FFF2EE 100%);
+
+      /* Lime deck */
+      --grad-lime:
+        radial-gradient(circle at 50% 38%, rgba(255,255,255,.25) 0%, rgba(255,255,255,0) 32%),
+        linear-gradient(135deg, #A8D92F 0%, #C5E94E 34%, #DAF06F 68%, #EFF8A7 100%);
+      --grad-lime-back:
+        radial-gradient(circle at 50% 32%, rgba(255,255,255,.50) 0%, rgba(255,255,255,0) 34%),
+        linear-gradient(135deg, #F1FADC 0%, #FAFDF0 100%);
+
+      /* Gold deck */
+      --grad-gold:
+        radial-gradient(circle at 50% 38%, rgba(255,255,255,.22) 0%, rgba(255,255,255,0) 32%),
+        linear-gradient(135deg, #D99700 0%, #EDB51F 34%, #F3C84F 68%, #FFDF86 100%);
+      --grad-gold-back:
+        radial-gradient(circle at 50% 32%, rgba(255,255,255,.50) 0%, rgba(255,255,255,0) 34%),
+        linear-gradient(135deg, #FFF8DC 0%, #FFFDF0 100%);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: #FFFFFF;
+      font-family: "Inter", system-ui, sans-serif;
+      color: var(--color-ink);
+    }
+
+    .proof-wrap { padding: 60px 48px; }
+
+    .proof-hint {
+      color: rgba(255,255,255,0.4);
+      font-size: 11px;
+      font-weight: 700;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin: 0 0 28px;
+    }
+
+    .proof { display: flex; gap: 40px; align-items: flex-start; }
+
+    /* Card shell — game uses gradient border treatment */
+    .card-shell-wrap {
+      padding: 1px;
+      border-radius: 21px;
+      background: linear-gradient(
+        to right bottom,
+        rgba(23,23,20,0.8),
+        rgba(23,23,20,0.2),
+        rgba(0,0,0,0.05)
+      );
+      display: inline-block;
+    }
+
+    .flashcard {
+      width: var(--card-w);
+      height: var(--card-h);
+      perspective: 1000px;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      padding: 0;
+      display: block;
+    }
+
+    .flashcard-inner {
+      width: 100%; height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    .flashcard.is-flipped .flashcard-inner { transform: rotateY(180deg); }
+
+    .flashcard-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      background: var(--card-shell);
+      border-radius: var(--radius-card);
+      padding: var(--shell-pad);
+      box-shadow:
+        0px 20px 25px -5px rgba(0,0,0,0.10),
+        0px 8px 10px -6px rgba(0,0,0,0.10);
+      overflow: hidden;
+    }
+
+    .flashcard-back { transform: rotateY(180deg); }
+
+    /* FRONT */
+    .card-front {
+      position: relative;
+      display: grid;
+      grid-template-rows: 1fr var(--footer-h);
+      width: 100%;
+      height: 100%;
+    }
+
+    .card-label {
+      position: absolute;
+      top: 6px;
+      left: 0;
+      z-index: 10;
+      font-size: 9px;
+      font-weight: 800;
+      line-height: 1;
+      color: rgba(255,255,255,0.7);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .card-panel {
+      position: relative;
+      clip-path: path('M 41 0 L 218 0 a 14 14 0 0 1 14 14 L 232 226 Q 232 242 225 249 L 205 264 Q 204 270 196 270 L 14 270 a 14 14 0 0 1 -14 -14 L 0 35 L 12 35 Q 18 35 21 29 L 32 6 Q 36 0 41 0 Z');
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.10), transparent 34%),
+        linear-gradient(315deg, rgba(0,0,0,.10), transparent 48%);
+      pointer-events: none;
+    }
+
+    /* Deck color assignments */
+    .deck-orange .card-panel { background: var(--grad-orange); }
+    .deck-cyan   .card-panel { background: var(--grad-cyan); }
+    .deck-pink   .card-panel { background: var(--grad-pink); }
+    .deck-lime   .card-panel { background: var(--grad-lime); }
+    .deck-orange .back-panel { background: var(--grad-orange-back); }
+    .deck-cyan   .back-panel { background: var(--grad-cyan-back); }
+    .deck-pink   .back-panel { background: var(--grad-pink-back); }
+    .deck-lime   .back-panel { background: var(--grad-lime-back); }
+
+    /* Lime deck — icon dark for contrast on bright lime */
+    .deck-lime .card-icon { color: rgba(23,23,20,.85); }
+
+    .card-icon {
+      width: 108px; height: 108px;
+      position: relative; z-index: 1;
+      color: rgba(255,255,255,.92);
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.22));
+    }
+
+    .card-icon svg { width: 100%; height: 100%; display: block; }
+
+    .card-footer {
+      background: var(--card-shell);
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+    }
+
+    .card-title {
+      font-size: 28px;
+      font-weight: 900;
+      line-height: .9;
+      letter-spacing: -0.04em;
+      text-transform: uppercase;
+      color: #FFFFFF;
+    }
+
+    /* BACK */
+    .card-back {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .back-panel {
+      position: relative;
+      height: 100%;
+      padding: 42px 18px 18px;
+      clip-path: path('M 41 0 L 218 0 a 14 14 0 0 1 14 14 L 232 286 Q 232 302 225 309 L 205 326 Q 204 332 196 332 L 14 332 a 14 14 0 0 1 -14 -14 L 0 35 L 12 35 Q 18 35 21 29 L 32 6 Q 36 0 41 0 Z');
+    }
+
+    .back-title {
+      margin: 0 0 14px;
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      text-transform: uppercase;
+      color: var(--color-ink);
+    }
+
+    .back-section {
+      margin-top: 11px;
+      padding-top: 11px;
+      border-top: 1px solid rgba(23,23,20,.14);
+    }
+
+    .back-section:first-of-type { border-top: 0; padding-top: 0; }
+
+    .back-section h3 {
+      margin: 0 0 4px;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-ink);
+    }
+
+    .back-section p,
+    .back-section code {
+      margin: 0;
+      font-size: 11.5px;
+      line-height: 1.35;
+      color: var(--color-ink);
+    }
+
+    .deck-tag {
+      color: rgba(255,255,255,0.35);
+      font-size: 10px;
+      font-weight: 700;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-top: 12px;
+    }
+
+    /* Orange accent dot on active state */
+    .flashcard:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 6px;
+      border-radius: var(--radius-card);
+    }
+  </style>
+</head>
+<body>
+  <div class="proof-wrap">
+    <p class="proof-hint">Click to flip</p>
+    <div class="proof">
+
+      <!-- CARD 1: bool — orange deck -->
+      <div>
+        <div class="card-shell-wrap">
+          <button class="flashcard deck-cyan" onclick="this.classList.toggle('is-flipped')" aria-label="bool">
+            <div class="flashcard-inner">
+              <div class="flashcard-face">
+                <div class="card-front">
+                  <span class="card-label">Rust</span>
+                  <div class="card-panel">
+                    <div class="card-icon" aria-hidden="true">
+                      <svg viewBox="0 0 120 120" fill="none">
+                        <rect x="10" y="38" width="100" height="44" rx="22" fill="currentColor" opacity=".85"/>
+                        <circle cx="82" cy="60" r="19" fill="white" opacity=".95"/>
+                        <circle cx="82" cy="60" r="11" fill="currentColor" opacity=".45"/>
+                      </svg>
+                    </div>
+                  </div>
+                  <footer class="card-footer">
+                    <h1 class="card-title">bool</h1>
+                  </footer>
+                </div>
+              </div>
+              <div class="flashcard-face flashcard-back">
+                <div class="card-back">
+                  <span class="card-label">Rust</span>
+                  <div class="back-panel">
+                    <h2 class="back-title">bool</h2>
+                    <section class="back-section">
+                      <h3>Meaning</h3>
+                      <p>A value that is either true or false. Nothing else.</p>
+                    </section>
+                    <section class="back-section">
+                      <h3>When to use it</h3>
+                      <p>Use it when something can only be on or off — like whether a payment is valid or a user is logged in.</p>
+                    </section>
+                    <section class="back-section">
+                      <h3>Example</h3>
+                      <code>let is_active: bool = true;</code>
+                    </section>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </button>
+        </div>
+        <p class="deck-tag">Data Types</p>
+      </div>
+
+      <!-- CARD 2: fn — lime deck -->
+      <div>
+        <div class="card-shell-wrap">
+          <button class="flashcard deck-pink" onclick="this.classList.toggle('is-flipped')" aria-label="fn">
+            <div class="flashcard-inner">
+              <div class="flashcard-face">
+                <div class="card-front">
+                  <span class="card-label">Rust</span>
+                  <div class="card-panel">
+                    <div class="card-icon" aria-hidden="true">
+                      <svg viewBox="0 0 120 120" fill="none">
+                        <rect x="14" y="50" width="56" height="20" rx="4" fill="currentColor" opacity=".85"/>
+                        <polygon points="70,36 106,60 70,84" fill="currentColor" opacity=".9"/>
+                      </svg>
+                    </div>
+                  </div>
+                  <footer class="card-footer">
+                    <h1 class="card-title">fn</h1>
+                  </footer>
+                </div>
+              </div>
+              <div class="flashcard-face flashcard-back">
+                <div class="card-back">
+                  <span class="card-label">Rust</span>
+                  <div class="back-panel">
+                    <h2 class="back-title">fn</h2>
+                    <section class="back-section">
+                      <h3>Meaning</h3>
+                      <p>A keyword that defines a function — a named block of code you can call by name.</p>
+                    </section>
+                    <section class="back-section">
+                      <h3>When to use it</h3>
+                      <p>Use it any time you want to give a set of instructions a name so you can reuse them.</p>
+                    </section>
+                    <section class="back-section">
+                      <h3>Example</h3>
+                      <code>fn greet() {<br>&nbsp;&nbsp;println!("hello");<br>}</code>
+                    </section>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </button>
+        </div>
+        <p class="deck-tag">Functions</p>
+      </div>
+
+      <!-- CARD 3: Ownership — dark deck -->
+      <div>
+        <div class="card-shell-wrap">
+          <button class="flashcard deck-lime" onclick="this.classList.toggle('is-flipped')" aria-label="Ownership">
+            <div class="flashcard-inner">
+              <div class="flashcard-face">
+                <div class="card-front">
+                  <span class="card-label">Rust</span>
+                  <div class="card-panel">
+                    <div class="card-icon" aria-hidden="true">
+                      <svg viewBox="0 0 120 120" fill="none">
+                        <circle cx="44" cy="52" r="22" stroke="currentColor" stroke-width="9" fill="none" opacity=".9"/>
+                        <rect x="60" y="48" width="46" height="9" rx="4" fill="currentColor" opacity=".9"/>
+                        <rect x="88" y="57" width="9" height="14" rx="3" fill="currentColor" opacity=".9"/>
+                        <rect x="74" y="57" width="9" height="10" rx="3" fill="currentColor" opacity=".9"/>
+                      </svg>
+                    </div>
+                  </div>
+                  <footer class="card-footer">
+                    <h1 class="card-title">Ownership</h1>
+                  </footer>
+                </div>
+              </div>
+              <div class="flashcard-face flashcard-back">
+                <div class="card-back">
+                  <span class="card-label">Rust</span>
+                  <div class="back-panel">
+                    <h2 class="back-title">Ownership</h2>
+                    <section class="back-section">
+                      <h3>Meaning</h3>
+                      <p>Rust's rule that every value has exactly one owner. When the owner is done, the value is gone.</p>
+                    </section>
+                    <section class="back-section">
+                      <h3>When to use it</h3>
+                      <p>You are always using it. Every variable you create has an owner — Rust tracks this automatically.</p>
+                    </section>
+                    <section class="back-section">
+                      <h3>Example</h3>
+                      <code>let name = String::from("Alice");<br>// name owns this string</code>
+                    </section>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </button>
+        </div>
+        <p class="deck-tag">Ownership</p>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.flashcard').forEach(card => {
+      card.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          card.classList.toggle('is-flipped');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

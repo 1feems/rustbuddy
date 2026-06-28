@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rust: Variables - Rust Bud</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg:        #FFFFFF;
+      --color-surface:   #1E1E1A;
+      --color-primary:   #FF7657;
+      --color-secondary: #DFFF65;
+      --color-ink:       #171714;
+      --color-muted:     #77766F;
+      --color-border:    #171714;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-ink);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .site-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 32px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .back-link {
+      font-size: 14px;
+      color: var(--color-muted);
+      text-decoration: none;
+      transition: color 200ms ease;
+    }
+    .back-link:hover { color: var(--color-ink); }
+    .header-sep { color: var(--color-muted); font-size: 14px; }
+    .header-title { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+
+    /* ── Main ── */
+    .main {
+      padding: 32px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* ── Tab Container ── */
+    .tab-container {
+      border: 1px solid var(--color-border);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    /* ── Tab Bar ── */
+    .tab-bar {
+      display: flex;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .tab-btn {
+      padding: 14px 28px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-right: 1px solid var(--color-border);
+      background: transparent;
+      color: var(--color-muted);
+      cursor: pointer;
+      transition: background 200ms ease, color 200ms ease;
+    }
+    .tab-btn:last-child { border-right: none; }
+    .tab-btn.active { background: var(--color-primary); color: #fff; }
+    .tab-btn:not(.active):hover { background: #f7f6f3; color: var(--color-ink); }
+
+    /* ── Tab Panels ── */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Exercise Sub-nav ── */
+    .exercise-subnav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .ex-btn {
+      padding: 7px 16px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      border: none;
+      border-radius: 9999px;
+      cursor: pointer;
+      background: var(--color-surface);
+      color: var(--color-muted);
+      transition: background 200ms ease, color 200ms ease;
+    }
+    .ex-btn.active { background: var(--color-primary); color: #fff; }
+    .ex-btn:not(.active):hover { background: #2a2a26; color: #c0bfbb; }
+
+    /* ── Exercise Split ── */
+    .exercise-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      height: 100vh;
+      max-height: 900px;
+    }
+
+    /* Left panel */
+    .exercise-left {
+      padding: 32px;
+      border-right: 1px solid var(--color-border);
+      overflow-y: auto;
+    }
+    .ex-kicker {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-muted);
+      margin-bottom: 8px;
+    }
+    .ex-title {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+    .ex-explainer {
+      font-size: 14px;
+      line-height: 1.65;
+      color: #3a3935;
+      margin-bottom: 24px;
+    }
+    .ex-explainer p { margin-bottom: 10px; }
+    .ex-explainer p:last-child { margin-bottom: 0; }
+
+    .task-rule {
+      height: 1px;
+      background: rgba(23,23,20,0.12);
+      margin-bottom: 20px;
+    }
+    .task-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-muted);
+      margin-bottom: 12px;
+    }
+    .task-body {
+      font-size: 14px;
+      line-height: 1.65;
+      color: #3a3935;
+      margin-bottom: 20px;
+    }
+    .task-body p { margin-bottom: 10px; }
+    .task-body ol {
+      padding-left: 20px;
+      margin: 8px 0 10px;
+    }
+    .task-body li { margin-bottom: 4px; }
+
+    /* Inline code in left panel */
+    .ex-explainer code,
+    .task-body code,
+    .task-instruction code {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 12px;
+      background: #f0efeb;
+      padding: 1px 5px;
+      border-radius: 4px;
+      color: var(--color-ink);
+    }
+
+    /* Starter code block in left panel */
+    .starter-block {
+      background: var(--color-surface);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      overflow-x: auto;
+    }
+    .starter-block pre {
+      font-family: "SF Mono", "Fira Code", "Menlo", monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #c9d1e3;
+      white-space: pre;
+      margin: 0;
+    }
+
+    .task-instruction {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-ink);
+      margin-bottom: 20px;
+    }
+
+    /* Expected output in left panel */
+    .expected-output-wrap {
+      border-top: 1px solid rgba(23,23,20,0.12);
+      padding-top: 16px;
+    }
+    .expected-output-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-muted);
+      margin-bottom: 8px;
+    }
+    .expected-output-text {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--color-ink);
+      background: #f0efeb;
+      border-radius: 8px;
+      padding: 12px 16px;
+      white-space: pre;
+    }
+
+    /* Right panel - iframe */
+    .exercise-right {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .playground-bar {
+      background: var(--color-surface);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .playground-bar-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--color-primary);
+    }
+    .playground-bar-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 0.04em;
+    }
+    .exercise-right iframe {
+      flex: 1;
+      width: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* ── Answers Panel ── */
+    .answers-list {
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .answer-card {
+      border: 1px solid var(--color-border);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .answer-card-head {
+      padding: 14px 24px;
+      border-bottom: 1px solid var(--color-border);
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .answer-card-body {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .answer-code {
+      background: var(--color-surface);
+      border-radius: 12px;
+      padding: 20px;
+      overflow-x: auto;
+    }
+    .answer-code pre {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #c9d1e3;
+      margin: 0;
+    }
+    .answer-why-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-muted);
+      margin-bottom: 4px;
+    }
+    .answer-why {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #3a3935;
+    }
+    .answer-why code {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 12px;
+      background: #f0efeb;
+      padding: 1px 5px;
+      border-radius: 4px;
+      color: var(--color-ink);
+    }
+
+    /* ── Overview Panel ── */
+    .overview-wrap { padding: 40px 48px; max-width: 720px; }
+    .overview-topic {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-muted);
+      margin-bottom: 10px;
+    }
+    .overview-headline {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+    .overview-desc {
+      font-size: 16px;
+      line-height: 1.65;
+      color: #3a3935;
+      margin-bottom: 36px;
+    }
+    .overview-divider {
+      height: 1px;
+      background: rgba(23,23,20,0.12);
+      margin-bottom: 28px;
+    }
+    .overview-ref-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-muted);
+      margin-bottom: 16px;
+    }
+
+    /* ── Terms Panel ── */
+    .terms-wrap { padding: 32px; }
+    .terms-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .terms-table th {
+      text-align: left;
+      padding: 10px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-muted);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .terms-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(23,23,20,0.12);
+      vertical-align: top;
+      line-height: 1.55;
+    }
+    .terms-table tr:last-child td { border-bottom: none; }
+    .terms-table td:first-child {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      width: 160px;
+    }
+    .terms-table td:last-child { color: var(--color-muted); }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <a href="index.html" class="back-link">← Rust Bud</a>
+  <span class="header-sep">/</span>
+  <span class="header-title">Rust: Variables</span>
+</header>
+
+<main class="main">
+  <div class="tab-container">
+
+    <div class="tab-bar">
+      <button class="tab-btn" data-tab="overview">Overview</button>
+      <button class="tab-btn active" data-tab="exercises">Exercises</button>
+      <button class="tab-btn" data-tab="answers">Answers</button>
+      <button class="tab-btn" data-tab="terms">Terms to Know</button>
+    </div>
+
+    <!-- Overview -->
+    <div class="tab-panel" id="panel-overview">
+      <div class="overview-wrap">
+        <div class="overview-topic">Topic</div>
+        <div class="overview-headline">Variables</div>
+        <div class="overview-desc">Every value has a name and a type. Rust makes you explicit about both.</div>
+        <div class="overview-divider"></div>
+        <div class="overview-ref-label">Quick Reference</div>
+        <table class="terms-table">
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>What it means</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>let x = 5</td>
+              <td>Declare a variable and give it a value</td>
+            </tr>
+            <tr>
+              <td>let mut x = 5</td>
+              <td>Declare a variable you can change later</td>
+            </tr>
+            <tr>
+              <td>i32</td>
+              <td>A whole number — can be positive or negative</td>
+            </tr>
+            <tr>
+              <td>u64</td>
+              <td>A whole number — always positive, used for lamports</td>
+            </tr>
+            <tr>
+              <td>Scope</td>
+              <td>A variable only exists inside the { } block where it was declared</td>
+            </tr>
+            <tr>
+              <td>Shadowing</td>
+              <td>Declaring a new variable with the same name — the new one takes over</td>
+            </tr>
+            <tr>
+              <td>Destructuring</td>
+              <td>Unpacking a tuple into separate variables in one line</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Exercises -->
+    <div class="tab-panel active" id="panel-exercises">
+      <div class="exercise-subnav" id="subnav"></div>
+      <div class="exercise-split">
+        <div class="exercise-left" id="ex-left"></div>
+        <div class="exercise-right" id="ex-right"></div>
+      </div>
+    </div>
+
+    <!-- Answers -->
+    <div class="tab-panel" id="panel-answers">
+      <div class="answers-list" id="answers-list"></div>
+    </div>
+
+    <!-- Terms to Know -->
+    <div class="tab-panel" id="panel-terms">
+      <div class="terms-wrap">
+        <table class="terms-table">
+          <thead>
+            <tr>
+              <th>Term</th>
+              <th>What it means</th>
+              <th>When you use it</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>let</td>
+              <td>Creates a new variable</td>
+              <td>Every time you store a value</td>
+            </tr>
+            <tr>
+              <td>mut</td>
+              <td>Allows a variable to change after it is set</td>
+              <td>When your program needs to update state</td>
+            </tr>
+            <tr>
+              <td>u64</td>
+              <td>Unsigned 64-bit integer - whole number, no negatives</td>
+              <td>Payment amounts, token balances, timestamps</td>
+            </tr>
+            <tr>
+              <td>u8</td>
+              <td>Unsigned 8-bit integer - whole number 0 to 255</td>
+              <td>Bytes, wallet address components</td>
+            </tr>
+            <tr>
+              <td>bool</td>
+              <td>True or false - nothing else</td>
+              <td>Status flags: is_paid, is_verified</td>
+            </tr>
+            <tr>
+              <td>[u8; 32]</td>
+              <td>An array of 32 unsigned bytes</td>
+              <td>Wallet addresses on Solana</td>
+            </tr>
+            <tr>
+              <td>&amp;str</td>
+              <td>A piece of text</td>
+              <td>Labels, names, error messages</td>
+            </tr>
+            <tr>
+              <td>f64</td>
+              <td>A decimal number</td>
+              <td>Rarely used in Solana - integer math is preferred</td>
+            </tr>
+            <tr>
+              <td>as</td>
+              <td>Converts one type to another</td>
+              <td>When you need to use two different types together</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  const EMBED = 'https://play.rust-lang.org/?version=stable&edition=2021&code=';
+
+  const exercises = [
+    {
+      num: 1,
+      title: 'Binding',
+      explainer: '<p>In Rust, declaring a variable and giving it a value are two separate steps. The <code>:</code> labels the type - what kind of value it holds. The <code>=</code> assigns the actual value. Both must happen before you can use the variable.</p><p>In smart contracts, every value must be initialized before it can be used in a check or calculation.</p>',
+      task: '<p>The code below wants to:</p><ol><li>Set <code>x</code> to <code>5</code></li><li>Assert it equals <code>5</code></li><li>Print <code>Success!</code></li></ol><p>Right now it fails because <code>x</code> was declared but never given a value.</p>',
+      starterCode: 'fn main() {\n    let x: i32;\n    assert_eq!(x, 5);\n    println!("Success!");\n}',
+      instruction: 'Fix this so it compiles and prints <code>Success!</code>',
+      expectedOutput: 'Success!',
+      answerCode: 'fn main() {\n    let x: i32 = 5;\n    assert_eq!(x, 5);\n    println!("Success!");\n}',
+      why: '<code>x</code> was declared but never assigned. Adding <code>= 5</code> gives it a value so the assert passes and the code compiles.'
+    },
+    {
+      num: 2,
+      title: 'Mutability',
+      explainer: '<p>In Rust, every variable is locked by default. Once you give it a value, that value can\'t change.</p><p>If you need to change it later, add <code>mut</code> (short for <strong>mutable</strong>) when you declare it. This unlocks the variable so its value can be updated.</p><p>In smart contracts, values often need to change, such as applying a discount, adding a fee, or updating a balance.</p>',
+      task: '<p>The code below wants to:</p><ol><li>Start <code>x</code> at <code>1</code></li><li>Add <code>2</code> to <code>x</code></li><li>Print <code>x = 3</code></li></ol><p>Right now it fails because <code>x</code> is locked and cannot be changed.</p>',
+      starterCode: 'fn main() {\n    let ___ x: i32 = 1;\n    x += 2;\n    println!("x = {}", x);\n}',
+      instruction: 'Fill in <code>___</code> so the code compiles and prints <code>x = 3</code>',
+      expectedOutput: 'x = 3',
+      answerCode: 'fn main() {\n    let mut x: i32 = 1;\n    x += 2;\n    println!("x = {}", x);\n}',
+      why: 'Variables are immutable by default. Replacing <code>___</code> with <code>mut</code> unlocks <code>x</code> so <code>x += 2</code> can run.'
+    },
+    {
+      num: 3,
+      title: 'Scope',
+      explainer: '<p>Every <code>{ }</code> block in Rust creates a scope. A variable declared inside a scope only exists inside that scope. Once the closing <code>}</code> is reached, the variable is gone.</p><p>Think of it like rooms - a variable only exists in the room where it was declared.</p><p>In smart contracts, a wallet address declared inside a helper block won\'t be visible to the main payment logic.</p>',
+      task: '<p>The code below wants to:</p><ol><li>Declare <code>x = 10</code> and <code>y = 5</code></li><li>Print both inside an inner block</li><li>Print both outside the inner block</li></ol><p>Right now it fails because <code>y</code> is declared inside the block and isn\'t visible outside it.</p>',
+      starterCode: 'fn main() {\n    let x: i32 = 10;\n\n    {\n        let y: i32 = 5;\n        println!("x = {}, y = {}", x, y);\n    }\n\n    println!("x = {}, y = {}", x, y);\n}',
+      instruction: 'Fix this with the least amount of changes so both print statements can see <code>y</code>',
+      expectedOutput: 'x = 10, y = 5\nx = 10, y = 5',
+      answerCode: 'fn main() {\n    let x: i32 = 10;\n    let y: i32 = 5;\n\n    {\n        println!("x = {}, y = {}", x, y);\n    }\n\n    println!("x = {}, y = {}", x, y);\n}',
+      why: 'Moving <code>y</code> outside the inner block makes it visible to both print statements. Variables only live in the <code>{ }</code> block where they are declared.'
+    },
+    {
+      num: 4,
+      title: 'Shadowing',
+      explainer: '<p>Shadowing means declaring a new variable with the same name. The new one hides the old one inside its scope. When you leave that scope, the old variable is visible again.</p><p>This is different from mutation - shadowing creates a brand new variable. The old one still exists, just hidden.</p><p>In smart contracts, shadowing is useful when a subscriber upgrades and the old plan value gets replaced by the new one.</p>',
+      task: '<p>The code below wants to:</p><ol><li>Set outer <code>x</code> to <code>5</code></li><li>Shadow <code>x</code> inside a block with <code>12</code></li><li>Assert the inner <code>x</code> equals the shadowed value</li><li>Assert the outer <code>x</code> is restored after the block exits</li><li>Print <code>Success!</code></li></ol>',
+      starterCode: 'fn main() {\n    let x: i32 = 5;\n\n    {\n        let x = 12;\n        assert_eq!(x, ___);\n    }\n\n    assert_eq!(x, ___);\n    println!("Success!");\n}',
+      instruction: 'Fill in the two blanks so both asserts pass',
+      expectedOutput: 'Success!',
+      answerCode: 'fn main() {\n    let x: i32 = 5;\n\n    {\n        let x = 12;\n        assert_eq!(x, 12);\n    }\n\n    assert_eq!(x, 5);\n    println!("Success!");\n}',
+      why: 'Inside the block the shadowed <code>x</code> is <code>12</code>. Once the block exits, the original <code>x = 5</code> is visible again. Each <code>let x</code> is a new variable - the old one is hidden, not replaced.'
+    },
+    {
+      num: 5,
+      title: 'Build: Subscription Variables',
+      explainer: '<p>Before a Solana payment contract can do anything, it needs to know four things: who is subscribing, how much they owe, what plan they are on, and whether their subscription is active.</p><p>Each piece of information has a type. Getting the types right is the first step in any contract.</p>',
+      task: '<p>Declare four variables for a subscription contract:</p><ol><li><code>wallet</code> - type <code>&amp;str</code>, value <code>"ABC123"</code></li><li><code>amount</code> - type <code>u64</code>, value <code>1_000_000</code></li><li><code>plan</code> - type <code>&amp;str</code>, value <code>"pro"</code></li><li><code>is_active</code> - type <code>bool</code>, value <code>true</code></li></ol>',
+      starterCode: 'fn main() {\n    // Your code here\n}',
+      instruction: 'Write the four variables then print them all on one line to match the expected output',
+      expectedOutput: 'Wallet: ABC123, Amount: 1000000, Plan: pro, Active: true',
+      answerCode: 'fn main() {\n    let wallet: &str = "ABC123";\n    let amount: u64 = 1_000_000;\n    let plan: &str = "pro";\n    let is_active: bool = true;\n    println!("Wallet: {}, Amount: {}, Plan: {}, Active: {}", wallet, amount, plan, is_active);\n}',
+      why: 'Each variable gets the type that matches what it holds: <code>&amp;str</code> for text, <code>u64</code> for a positive whole number, <code>bool</code> for true/false. These are the core types a Solana contract uses to track a subscriber.'
+    }
+  ];
+
+  let currentEx = 0;
+
+  function buildSubnav() {
+    const subnav = document.getElementById('subnav');
+    subnav.innerHTML = '';
+    exercises.forEach((ex, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'ex-btn' + (i === currentEx ? ' active' : '');
+      btn.textContent = 'Exercise ' + ex.num;
+      btn.addEventListener('click', () => selectExercise(i));
+      subnav.appendChild(btn);
+    });
+  }
+
+  function renderLeft(ex) {
+    const left = document.getElementById('ex-left');
+
+    left.innerHTML =
+      '<div class="ex-kicker">Exercise ' + ex.num + ' of ' + exercises.length + '</div>' +
+      '<div class="ex-title">' + ex.title + '</div>' +
+      '<div class="ex-explainer">' + ex.explainer + '</div>' +
+      '<div class="task-rule"></div>' +
+      '<div class="task-label">Your Task</div>' +
+      '<div class="task-body">' + ex.task + '</div>';
+
+    // Starter code block
+    const starterWrap = document.createElement('div');
+    starterWrap.className = 'starter-block';
+    const starterPre = document.createElement('pre');
+    starterPre.textContent = ex.starterCode;
+    starterWrap.appendChild(starterPre);
+    left.appendChild(starterWrap);
+
+    // Fix instruction
+    const instr = document.createElement('p');
+    instr.className = 'task-instruction';
+    instr.innerHTML = ex.instruction;
+    left.appendChild(instr);
+
+    // Expected output
+    const outputWrap = document.createElement('div');
+    outputWrap.className = 'expected-output-wrap';
+    const outputLabel = document.createElement('div');
+    outputLabel.className = 'expected-output-label';
+    outputLabel.textContent = 'Expected Output';
+    const outputText = document.createElement('div');
+    outputText.className = 'expected-output-text';
+    outputText.textContent = ex.expectedOutput;
+    outputWrap.appendChild(outputLabel);
+    outputWrap.appendChild(outputText);
+    left.appendChild(outputWrap);
+  }
+
+  let iframeEl = null;
+
+  function renderRight(ex) {
+    const right = document.getElementById('ex-right');
+
+    if (!iframeEl) {
+      right.innerHTML =
+        '<div class="playground-bar">' +
+          '<div class="playground-bar-dot"></div>' +
+          '<span class="playground-bar-label">Rust Playground</span>' +
+        '</div>';
+
+      iframeEl = document.createElement('iframe');
+      right.appendChild(iframeEl);
+    }
+
+    iframeEl.src = EMBED + encodeURIComponent(ex.starterCode);
+  }
+
+  function selectExercise(i) {
+    currentEx = i;
+    buildSubnav();
+    renderLeft(exercises[i]);
+    renderRight(exercises[i]);
+  }
+
+  function buildAnswers() {
+    const list = document.getElementById('answers-list');
+    if (list.children.length > 0) return;
+    exercises.forEach(ex => {
+      const card = document.createElement('div');
+      card.className = 'answer-card';
+
+      const head = document.createElement('div');
+      head.className = 'answer-card-head';
+      head.textContent = 'Exercise ' + ex.num + ' - ' + ex.title;
+
+      const body = document.createElement('div');
+      body.className = 'answer-card-body';
+
+      const codeWrap = document.createElement('div');
+      codeWrap.className = 'answer-code';
+      const pre = document.createElement('pre');
+      pre.textContent = ex.answerCode;
+      codeWrap.appendChild(pre);
+
+      const whyLabel = document.createElement('div');
+      whyLabel.className = 'answer-why-label';
+      whyLabel.textContent = 'Why';
+
+      const whyText = document.createElement('div');
+      whyText.className = 'answer-why';
+      whyText.innerHTML = ex.why;
+
+      body.appendChild(codeWrap);
+      body.appendChild(whyLabel);
+      body.appendChild(whyText);
+      card.appendChild(head);
+      card.appendChild(body);
+      list.appendChild(card);
+    });
+  }
+
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === tabId);
+    });
+    document.querySelectorAll('.tab-panel').forEach(panel => {
+      panel.classList.toggle('active', panel.id === 'panel-' + tabId);
+    });
+    if (tabId === 'answers') buildAnswers();
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
+
+  // Init
+  buildSubnav();
+  renderLeft(exercises[0]);
+  renderRight(exercises[0]);
+</script>
+</body>
+</html>

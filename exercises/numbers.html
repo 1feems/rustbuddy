@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rust: Numbers - Rust Bud</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg:        #FFFFFF;
+      --color-surface:   #1E1E1A;
+      --color-primary:   #FF7657;
+      --color-secondary: #DFFF65;
+      --color-ink:       #171714;
+      --color-muted:     #77766F;
+      --color-border:    #171714;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--color-bg); color: var(--color-ink); min-height: 100vh; }
+    .site-header { display: flex; align-items: center; gap: 10px; padding: 16px 32px; border-bottom: 1px solid var(--color-border); }
+    .back-link { font-size: 14px; color: var(--color-muted); text-decoration: none; transition: color 200ms ease; }
+    .back-link:hover { color: var(--color-ink); }
+    .header-sep { color: var(--color-muted); font-size: 14px; }
+    .header-title { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+    .main { padding: 32px; max-width: 1400px; margin: 0 auto; }
+    .tab-container { border: 1px solid var(--color-border); border-radius: 20px; overflow: hidden; }
+    .tab-bar { display: flex; border-bottom: 1px solid var(--color-border); }
+    .tab-btn { padding: 14px 28px; font-family: inherit; font-size: 14px; font-weight: 600; border: none; border-right: 1px solid var(--color-border); background: transparent; color: var(--color-muted); cursor: pointer; transition: background 200ms ease, color 200ms ease; }
+    .tab-btn:last-child { border-right: none; }
+    .tab-btn.active { background: var(--color-primary); color: #fff; }
+    .tab-btn:not(.active):hover { background: #f7f6f3; color: var(--color-ink); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .exercise-subnav { display: flex; gap: 8px; flex-wrap: wrap; padding: 16px 24px; border-bottom: 1px solid var(--color-border); }
+    .ex-btn { padding: 7px 16px; font-family: inherit; font-size: 13px; font-weight: 500; border: none; border-radius: 9999px; cursor: pointer; background: var(--color-surface); color: var(--color-muted); transition: background 200ms ease, color 200ms ease; }
+    .ex-btn.active { background: var(--color-primary); color: #fff; }
+    .ex-btn:not(.active):hover { background: #2a2a26; color: #c0bfbb; }
+    .exercise-split { display: grid; grid-template-columns: 1fr 1fr; height: 100vh; max-height: 900px; }
+    .exercise-left { padding: 32px; border-right: 1px solid var(--color-border); overflow-y: auto; }
+    .ex-kicker { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 8px; }
+    .ex-title { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 16px; }
+    .ex-explainer { font-size: 14px; line-height: 1.65; color: #3a3935; margin-bottom: 24px; }
+    .ex-explainer p { margin-bottom: 10px; }
+    .ex-explainer p:last-child { margin-bottom: 0; }
+    .task-rule { height: 1px; background: rgba(23,23,20,0.12); margin-bottom: 20px; }
+    .task-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 12px; }
+    .task-body { font-size: 14px; line-height: 1.65; color: #3a3935; margin-bottom: 20px; }
+    .task-body p { margin-bottom: 10px; }
+    .task-body ol { padding-left: 20px; margin: 8px 0 10px; }
+    .task-body li { margin-bottom: 4px; }
+    .ex-explainer code, .task-body code, .task-instruction code { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; background: #f0efeb; padding: 1px 5px; border-radius: 4px; color: var(--color-ink); }
+    .starter-block { background: var(--color-surface); border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; overflow-x: auto; }
+    .starter-block pre { font-family: "SF Mono", "Fira Code", "Menlo", monospace; font-size: 13px; line-height: 1.7; color: #c9d1e3; white-space: pre; margin: 0; }
+    .task-instruction { font-size: 14px; font-weight: 600; color: var(--color-ink); margin-bottom: 20px; }
+    .expected-output-wrap { border-top: 1px solid rgba(23,23,20,0.12); padding-top: 16px; }
+    .expected-output-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 8px; }
+    .expected-output-text { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; line-height: 1.6; color: var(--color-ink); background: #f0efeb; border-radius: 8px; padding: 12px 16px; white-space: pre; }
+    .exercise-right { display: flex; flex-direction: column; overflow: hidden; }
+    .playground-bar { background: var(--color-surface); padding: 10px 20px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .playground-bar-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-primary); }
+    .playground-bar-label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.6); letter-spacing: 0.04em; }
+    .exercise-right iframe { flex: 1; width: 100%; border: none; display: block; }
+    .answers-list { padding: 32px; display: flex; flex-direction: column; gap: 20px; }
+    .answer-card { border: 1px solid var(--color-border); border-radius: 20px; overflow: hidden; }
+    .answer-card-head { padding: 14px 24px; border-bottom: 1px solid var(--color-border); font-size: 15px; font-weight: 600; }
+    .answer-card-body { padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+    .answer-code { background: var(--color-surface); border-radius: 12px; padding: 20px; overflow-x: auto; }
+    .answer-code pre { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; line-height: 1.7; color: #c9d1e3; margin: 0; }
+    .answer-why-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 4px; }
+    .answer-why { font-size: 14px; line-height: 1.6; color: #3a3935; }
+    .answer-why code { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; background: #f0efeb; padding: 1px 5px; border-radius: 4px; color: var(--color-ink); }
+    .terms-wrap { padding: 32px; }
+    .terms-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .terms-table th { text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); border-bottom: 1px solid var(--color-border); }
+    .terms-table td { padding: 14px 16px; border-bottom: 1px solid rgba(23,23,20,0.12); vertical-align: top; line-height: 1.55; }
+    .terms-table tr:last-child td { border-bottom: none; }
+    .terms-table td:first-child { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; font-weight: 600; white-space: nowrap; width: 160px; }
+    .terms-table td:last-child { color: var(--color-muted); }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <a href="index.html" class="back-link">← Rust Bud</a>
+  <span class="header-sep">/</span>
+  <span class="header-title">Rust: Numbers & Binary</span>
+</header>
+
+<main class="main">
+  <div class="tab-container">
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="exercises">Exercises</button>
+      <button class="tab-btn" data-tab="answers">Answers</button>
+      <button class="tab-btn" data-tab="terms">Terms to Know</button>
+    </div>
+
+    <div class="tab-panel active" id="panel-exercises">
+      <div class="exercise-subnav" id="subnav"></div>
+      <div class="exercise-split">
+        <div class="exercise-left" id="ex-left"></div>
+        <div class="exercise-right" id="ex-right"></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-answers">
+      <div class="answers-list" id="answers-list"></div>
+    </div>
+
+    <div class="tab-panel" id="panel-terms">
+      <div class="terms-wrap">
+        <table class="terms-table">
+          <thead>
+            <tr><th>Term</th><th>What it means</th><th>When you use it</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>i32</td><td>Signed 32-bit integer — can be positive or negative</td><td>Default for whole numbers when sign doesn't matter</td></tr>
+            <tr><td>u64</td><td>Unsigned 64-bit integer — always positive, very large</td><td>Lamport amounts, token balances, timestamps in Solana</td></tr>
+            <tr><td>u8</td><td>Unsigned 8-bit integer — 0 to 255 only</td><td>Small counts, byte values</td></tr>
+            <tr><td>f64</td><td>64-bit floating point — a decimal number</td><td>Default for decimals (rarely used in Solana contracts)</td></tr>
+            <tr><td>as</td><td>Casts a value from one number type to another</td><td>When two variables have mismatched number types</td></tr>
+            <tr><td>Type inference</td><td>Rust guesses the type from the value you assign</td><td>When you skip the type annotation — Rust picks i32 or f64</td></tr>
+            <tr><td>Overflow</td><td>A number too big for its type — causes a panic</td><td>When you hit it, switch to a larger type</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const EMBED = 'https://play.rust-lang.org/?version=stable&edition=2021&code=';
+
+  const exercises = [
+    {
+      num: 1,
+      title: 'Signed vs Unsigned',
+      explainer: '<p>In Rust, every number has a type. The type tells Rust two things: how big the number can be, and whether it can be negative.</p><p><strong>Signed integers</strong> (<code>i8</code>, <code>i16</code>, <code>i32</code>, <code>i64</code>) can be positive or negative. The <code>i</code> stands for the minus sign that could be in front of it.</p><p><strong>Unsigned integers</strong> (<code>u8</code>, <code>u16</code>, <code>u32</code>, <code>u64</code>) are always positive. No minus sign — hence unsigned.</p><p>The default integer type in Rust is <code>i32</code>. In a Solana contract, payment amounts are <code>u64</code> — always positive, large enough for any lamport value.</p>',
+      task: '<p>The code below wants to store a negative adjustment and a payment amount, then print both. Right now it fails because the type annotations are missing.</p><ol><li>Store a negative balance adjustment as <code>i32</code></li><li>Store a payment amount as <code>u64</code></li><li>Print both</li></ol>',
+      starterCode: 'fn main() {\n    let adjustment: ___ = -500;\n    let amount: ___ = 1_000_000u64;\n    println!("Adjustment: {}", adjustment);\n    println!("Amount: {}", amount);\n}',
+      instruction: 'Fill in the two blanks so the code compiles and prints both values',
+      expectedOutput: 'Adjustment: -500\nAmount: 1000000',
+      answerCode: 'fn main() {\n    let adjustment: i32 = -500;\n    let amount: u64 = 1_000_000u64;\n    println!("Adjustment: {}", adjustment);\n    println!("Amount: {}", amount);\n}',
+      why: '<code>adjustment</code> can go negative so it needs a signed type like <code>i32</code>. <code>amount</code> is always positive and large, so it needs <code>u64</code>.'
+    },
+    {
+      num: 2,
+      title: 'Type Inference and Mismatch',
+      explainer: '<p>Rust infers the type of a variable from what you assign to it. Write <code>let x = 5</code> and Rust picks <code>i32</code> — the default integer type. If you want a different type, you must say so explicitly.</p><p>You cannot assign a variable of one type directly to a variable of a different type. Rust will refuse to compile. The simplest fix: remove the type annotation and let Rust infer the same type.</p>',
+      task: '<p>The code below wants to set <code>x</code> to <code>5</code>, assign it to <code>y</code>, and then to <code>z</code>. Right now it fails because <code>y</code> is typed as <code>u32</code> but <code>x</code> is <code>i32</code> — a type mismatch.</p><ol><li>Set <code>x</code> to <code>5</code> (Rust infers <code>i32</code>)</li><li>Assign <code>x</code> to <code>y</code></li><li>Assign <code>y</code> to <code>z</code></li><li>Print all three</li></ol>',
+      starterCode: 'fn main() {\n    let x = 5;\n    let y: u32 = x;\n    let z = y;\n    println!("x={} y={} z={}", x, y, z);\n}',
+      instruction: 'Remove the type annotation from <code>y</code> so Rust infers the same type as <code>x</code>',
+      expectedOutput: 'x=5 y=5 z=5',
+      answerCode: 'fn main() {\n    let x = 5;\n    let y = x;\n    let z = y;\n    println!("x={} y={} z={}", x, y, z);\n}',
+      why: 'Removing <code>: u32</code> lets Rust infer <code>i32</code> from <code>x</code>. Both variables share the same type so the assignment compiles.'
+    },
+    {
+      num: 3,
+      title: 'Casting with as',
+      explainer: '<p>Sometimes you need to convert a number from one type to another — for example, turning an <code>i32</code> into a <code>u64</code>. Rust does not do this automatically. You must use the <code>as</code> keyword to cast it explicitly.</p><p>Think of <code>as</code> like a label swap: you are telling Rust "treat this value as this other type."</p>',
+      task: '<p>The code below wants to start with <code>fee</code> as an <code>i32</code>, convert it to <code>u64</code>, and print the result. Right now <code>lamports</code> is missing the cast.</p><ol><li>Start with <code>fee: i32 = 5000</code></li><li>Convert it to <code>u64</code> using <code>as</code></li><li>Print <code>Lamports: 5000</code></li></ol>',
+      starterCode: 'fn main() {\n    let fee: i32 = 5000;\n    let lamports: u64 = ___;\n    println!("Lamports: {}", lamports);\n}',
+      instruction: 'Fill in the blank to convert <code>fee</code> to <code>u64</code>',
+      expectedOutput: 'Lamports: 5000',
+      answerCode: 'fn main() {\n    let fee: i32 = 5000;\n    let lamports: u64 = fee as u64;\n    println!("Lamports: {}", lamports);\n}',
+      why: '<code>fee as u64</code> converts the <code>i32</code> value into a <code>u64</code>. Without <code>as</code>, Rust refuses to assign across different types.'
+    },
+    {
+      num: 4,
+      title: 'Overflow: Picking the Right Type',
+      explainer: '<p>Every integer type has a maximum value it can hold. A <code>u8</code> can only go up to 255. If you try to store 270 in a <code>u8</code>, the number overflows and the program panics.</p><p>The fix is to use a bigger type. <code>u16</code> holds up to 65,535. <code>u64</code> holds numbers in the quintillions — more than enough for any Solana payment amount.</p>',
+      task: '<p>The code below wants to add <code>base</code> and <code>fee</code> together and print the total. Right now it fails because both variables are typed as <code>u8</code> and the result overflows.</p><ol><li><code>base = 250</code></li><li><code>fee = 20</code></li><li>Print <code>Total: 270</code></li></ol>',
+      starterCode: 'fn main() {\n    let base: u8 = 250;\n    let fee: u8 = 20;\n    let total = base + fee;\n    println!("Total: {}", total);\n}',
+      instruction: 'Change the type annotation so the addition does not overflow',
+      expectedOutput: 'Total: 270',
+      answerCode: 'fn main() {\n    let base: u16 = 250;\n    let fee: u16 = 20;\n    let total = base + fee;\n    println!("Total: {}", total);\n}',
+      why: '<code>u8</code> maxes out at 255. Changing both to <code>u16</code> (or larger) gives enough room for 270.'
+    },
+    {
+      num: 5,
+      title: 'Build: Annotate a Payment',
+      explainer: '<p>You now know the four things that matter for numbers in a Solana contract:</p><p>1. Use <code>u64</code> for lamport amounts — always positive, large enough for any payment.<br>2. Use a signed type like <code>i32</code> when a value could be negative.<br>3. Annotate the type explicitly when the default <code>i32</code> is wrong.<br>4. Use <code>as</code> to convert between types when needed.</p><p>This exercise puts them together into a real payment calculation.</p>',
+      task: '<p>The contract below tracks a subscription payment: a base amount, a discount to subtract, and a final total. All three variables are missing type annotations and <code>total</code> is not computed.</p><ol><li>Set <code>base_amount</code> to <code>1_000_000</code> lamports as <code>u64</code></li><li>Set <code>discount</code> to <code>50_000</code> as <code>u64</code></li><li>Compute <code>total</code> as <code>base_amount - discount</code></li><li>Print <code>Payment: 950000 lamports</code></li></ol>',
+      starterCode: 'fn main() {\n    let base_amount: ___ = 1_000_000;\n    let discount: ___ = 50_000;\n    let total: ___ = ___;\n    println!("Payment: {} lamports", total);\n}',
+      instruction: 'Fill in the blanks so the code compiles and prints the correct total',
+      expectedOutput: 'Payment: 950000 lamports',
+      answerCode: 'fn main() {\n    let base_amount: u64 = 1_000_000;\n    let discount: u64 = 50_000;\n    let total: u64 = base_amount - discount;\n    println!("Payment: {} lamports", total);\n}',
+      why: 'Lamport amounts are always positive and large — <code>u64</code> is the correct type. All three variables share the same type so the subtraction compiles cleanly.'
+    }
+  ];
+
+  let currentEx = 0;
+
+  function buildSubnav() {
+    const subnav = document.getElementById('subnav');
+    subnav.innerHTML = '';
+    exercises.forEach((ex, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'ex-btn' + (i === currentEx ? ' active' : '');
+      btn.textContent = 'Exercise ' + ex.num;
+      btn.addEventListener('click', () => selectExercise(i));
+      subnav.appendChild(btn);
+    });
+  }
+
+  function renderLeft(ex) {
+    const left = document.getElementById('ex-left');
+    left.innerHTML =
+      '<div class="ex-kicker">Exercise ' + ex.num + ' of ' + exercises.length + '</div>' +
+      '<div class="ex-title">' + ex.title + '</div>' +
+      '<div class="ex-explainer">' + ex.explainer + '</div>' +
+      '<div class="task-rule"></div>' +
+      '<div class="task-label">Your Task</div>' +
+      '<div class="task-body">' + ex.task + '</div>';
+    const starterWrap = document.createElement('div');
+    starterWrap.className = 'starter-block';
+    const starterPre = document.createElement('pre');
+    starterPre.textContent = ex.starterCode;
+    starterWrap.appendChild(starterPre);
+    left.appendChild(starterWrap);
+    const instr = document.createElement('p');
+    instr.className = 'task-instruction';
+    instr.innerHTML = ex.instruction;
+    left.appendChild(instr);
+    const outputWrap = document.createElement('div');
+    outputWrap.className = 'expected-output-wrap';
+    const outputLabel = document.createElement('div');
+    outputLabel.className = 'expected-output-label';
+    outputLabel.textContent = 'Expected Output';
+    const outputText = document.createElement('div');
+    outputText.className = 'expected-output-text';
+    outputText.textContent = ex.expectedOutput;
+    outputWrap.appendChild(outputLabel);
+    outputWrap.appendChild(outputText);
+    left.appendChild(outputWrap);
+  }
+
+  let iframeEl = null;
+
+  function renderRight(ex) {
+    const right = document.getElementById('ex-right');
+    if (!iframeEl) {
+      right.innerHTML =
+        '<div class="playground-bar">' +
+          '<div class="playground-bar-dot"></div>' +
+          '<span class="playground-bar-label">Rust Playground</span>' +
+        '</div>';
+      iframeEl = document.createElement('iframe');
+      right.appendChild(iframeEl);
+    }
+    iframeEl.src = EMBED + encodeURIComponent(ex.starterCode);
+  }
+
+  function selectExercise(i) {
+    currentEx = i;
+    buildSubnav();
+    renderLeft(exercises[i]);
+    renderRight(exercises[i]);
+  }
+
+  function buildAnswers() {
+    const list = document.getElementById('answers-list');
+    if (list.children.length > 0) return;
+    exercises.forEach(ex => {
+      const card = document.createElement('div');
+      card.className = 'answer-card';
+      const head = document.createElement('div');
+      head.className = 'answer-card-head';
+      head.textContent = 'Exercise ' + ex.num + ' — ' + ex.title;
+      const body = document.createElement('div');
+      body.className = 'answer-card-body';
+      const codeWrap = document.createElement('div');
+      codeWrap.className = 'answer-code';
+      const pre = document.createElement('pre');
+      pre.textContent = ex.answerCode;
+      codeWrap.appendChild(pre);
+      const whyLabel = document.createElement('div');
+      whyLabel.className = 'answer-why-label';
+      whyLabel.textContent = 'Why';
+      const whyText = document.createElement('div');
+      whyText.className = 'answer-why';
+      whyText.innerHTML = ex.why;
+      body.appendChild(codeWrap);
+      body.appendChild(whyLabel);
+      body.appendChild(whyText);
+      card.appendChild(head);
+      card.appendChild(body);
+      list.appendChild(card);
+    });
+  }
+
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === tabId);
+    });
+    document.querySelectorAll('.tab-panel').forEach(panel => {
+      panel.classList.toggle('active', panel.id === 'panel-' + tabId);
+    });
+    if (tabId === 'answers') buildAnswers();
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
+
+  buildSubnav();
+  renderLeft(exercises[0]);
+  renderRight(exercises[0]);
+</script>
+</body>
+</html>
