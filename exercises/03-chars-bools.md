@@ -1,6 +1,6 @@
-# Practice — Chars, Bools & Unit Types
+# Practice - Chars, Bools & Unit Types
 
-> DRAFT FOR REVIEW — Follows `EXERCISE-STYLE-GUIDE.md`
+> DRAFT FOR REVIEW - Follows `EXERCISE-STYLE-GUIDE.md`
 
 Work through each exercise in the [Rust Playground](https://play.rust-lang.org).  
 Read the explainer, paste the starter code, fix it, then move on.  
@@ -12,20 +12,20 @@ Check your answer only after you've tried.
 
 | Concept | What it means |
 |---|---|
-| `char` | A single character — always in single quotes `'a'`, size 4 bytes |
+| `char` | A single character, always in single quotes `'a'`, size 4 bytes |
 | `bool` | A value that is either `true` or `false`, size 1 byte |
-| `!` | The NOT operator — flips a bool: `!true` becomes `false` |
-| `&&` | The AND operator — true only when BOTH sides are true |
-| `\|\|` | The OR operator — true when EITHER side is true |
-| `()` | The unit type — what Rust returns when a function gives back nothing |
+| `!` | The NOT operator, flips a bool: `!true` becomes `false` |
+| `&&` | The AND operator, true only when BOTH sides are true |
+| `\|\|` | The OR operator, true when EITHER side is true |
+| `()` | The unit type, what Rust returns when a function gives back nothing |
 
 ---
 
-## Exercise 1 — char Uses Single Quotes
+## Exercise 1 - char Uses Single Quotes
 
-A `char` is a single character — one letter, one digit, one symbol. In Rust, every character in the world is supported (emoji, Chinese characters, accented letters — all of it). A `char` takes up 4 bytes in memory, regardless of which character it holds.
+A `char` is a single character, one letter, one digit, one symbol. In Rust, every character in the world is supported (emoji, Chinese characters, accented letters, all of it). A `char` takes up 4 bytes in memory, regardless of which character it holds.
 
-The important rule: a `char` is always written in **single quotes** `'a'`. Double quotes `"a"` are for strings — a completely different type. If you use double quotes for a char, Rust will refuse to compile.
+The important rule: a `char` is always written in **single quotes** `'a'`. Double quotes `"a"` are for strings, a completely different type. If you use double quotes for a char, Rust will refuse to compile.
 
 The code below wants to:
 1. Store the letter `A` as a `char`
@@ -56,7 +56,7 @@ Got: A
 <details>
 <summary>Common mistake</summary>
 
-`"A"` is a string literal — it holds a sequence of characters, even if there's only one. `'A'` is a char — it holds exactly one character. They are different types and Rust will not accept one where the other is expected.
+`"A"` is a string literal, it holds a sequence of characters, even if there's only one. `'A'` is a char, it holds exactly one character. They are different types and Rust will not accept one where the other is expected.
 
 </details>
 
@@ -80,9 +80,9 @@ fn main() {
 
 ---
 
-## Exercise 2 — bool and the NOT Operator
+## Exercise 2 - bool and the NOT Operator
 
-A `bool` holds exactly one of two values: `true` or `false`. Nothing in between. Rust uses bools to make decisions — if something is `true`, do this; if `false`, do something else (or nothing).
+A `bool` holds exactly one of two values: `true` or `false`. Nothing in between. Rust uses bools to make decisions, if something is `true`, do this; if `false`, do something else (or nothing).
 
 The `!` operator flips a bool. `!true` becomes `false`. `!false` becomes `true`. Think of it like flipping a switch.
 
@@ -113,7 +113,7 @@ Subscription is active.
 <answer>
 <summary>Answer</summary>
 
-Remove the `!` — you want the condition to be `is_active`, not the flipped version:
+Remove the `!`, you want the condition to be `is_active`, not the flipped version:
 
 ```rust
 fn main() {
@@ -128,7 +128,7 @@ fn main() {
 
 ---
 
-## Exercise 3 — bool and the AND Operator
+## Exercise 3 - bool and the AND Operator
 
 The `&&` operator (AND) takes two bools and produces one. It only outputs `true` when BOTH inputs are `true`. If either input is `false`, the result is `false`.
 
@@ -176,9 +176,9 @@ fn main() {
 
 ---
 
-## Exercise 4 — The Unit Type
+## Exercise 4 - The Unit Type
 
-When a function in Rust does not return a value, it implicitly returns the **unit type**, written as `()`. The unit type holds nothing — its size is zero bytes. You rarely write it yourself; Rust adds it automatically.
+When a function in Rust does not return a value, it implicitly returns the **unit type**, written as `()`. The unit type holds nothing, its size is zero bytes. You rarely write it yourself; Rust adds it automatically.
 
 Think of it as Rust's way of saying "this function did its job but has nothing to hand back."
 
@@ -216,7 +216,7 @@ Done.
 <answer>
 <summary>Answer</summary>
 
-Replace `5` with `()` — that is what `log_payment` implicitly returns:
+Replace `5` with `()`, that is what `log_payment` implicitly returns:
 
 ```rust
 fn log_payment() {
@@ -234,13 +234,13 @@ fn main() {
 
 ---
 
-## Exercise 5 — bool and the OR Operator
+## Exercise 5 - bool and the OR Operator
 
-The `||` operator (OR) takes two bools and produces one. It outputs `true` when EITHER input is `true`. Both do not need to be true — just one.
+The `||` operator (OR) takes two bools and produces one. It outputs `true` when EITHER input is `true`. Both do not need to be true, just one.
 
 Compare it to AND:
-- `&&` (AND): BOTH must be true — like needing a key AND a passcode
-- `||` (OR): EITHER can be true — like a door that opens with a key OR a code
+- `&&` (AND): BOTH must be true, like needing a key AND a passcode
+- `||` (OR): EITHER can be true, like a door that opens with a key OR a code
 
 The code below wants to:
 1. Check whether a user has trial access OR a paid account
@@ -269,7 +269,7 @@ Access granted.
 <answer>
 <summary>Answer</summary>
 
-Change `&&` to `||` — access is granted when either condition is true:
+Change `&&` to `||`, access is granted when either condition is true:
 
 ```rust
 fn main() {
@@ -286,14 +286,14 @@ fn main() {
 
 ---
 
-## Exercise 6 — Contract Build: Subscription Gate
+## Exercise 6 - Contract Build: Subscription Gate
 
 You now know the four small types that show up constantly in contracts:
 
 - `char` for single-character codes (like a plan tier label)
 - `bool` for yes/no flags (active, approved, valid)
 - `()` for functions that act but return nothing
-- `||` and `&&` to combine bool conditions — OR for either, AND for both
+- `||` and `&&` to combine bool conditions, OR for either, AND for both
 
 This exercise puts them together. The contract checks whether a subscriber can be charged before processing a payment.
 

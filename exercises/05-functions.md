@@ -29,9 +29,9 @@ Check your answer only after you've tried.
 
 ### Exercise 1 - Return Type Annotation
 
-A function is a named block of reusable code. It can take inputs, do something with them, and hand a value back to whoever called it. In Rust, if your function hands back a value, you must declare what type it returns — written as `-> type` after the parentheses.
+A function is a named block of reusable code. It can take inputs, do something with them, and hand a value back to whoever called it. In Rust, if your function hands back a value, you must declare what type it returns, written as `-> type` after the parentheses.
 
-The instructor said it directly: "functions always have to annotate types for their arguments." The return type is the same idea — you are telling Rust what is coming back.
+The instructor said it directly: "functions always have to annotate types for their arguments." The return type is the same idea, you are telling Rust what is coming back.
 
 In a payment contract, a helper like `add` must declare its return type so the caller knows what value it will receive.
 
@@ -41,7 +41,7 @@ The code below wants to:
 2. Store the result in `result`
 3. Print `Result: 7`
 
-Right now it fails because the function has no return type and the last line has a semicolon — which means no value gets returned.
+Right now it fails because the function has no return type and the last line has a semicolon, which means no value gets returned.
 
 **Fix this in two ways:**
 1. Add the return type annotation `-> i32`
@@ -86,7 +86,7 @@ fn main() {
 
 You practiced this in the Statements & Expressions exercises. Now it shows up inside a function.
 
-The last line of a function body is what the function hands back to the caller — but only if there is no semicolon. The semicolon throws the value away. The function then returns `()` (nothing) even though you declared a return type of `i32`. Rust will refuse to compile because you promised a number but handed back nothing.
+The last line of a function body is what the function hands back to the caller, but only if there is no semicolon. The semicolon throws the value away. The function then returns `()` (nothing) even though you declared a return type of `i32`. Rust will refuse to compile because you promised a number but handed back nothing.
 
 The instructor explained it this way: "if we omit the semicolon, the result of this operation will get returned."
 
@@ -140,11 +140,11 @@ fn main() {
 
 ### Exercise 3 - Diverging Function
 
-A **diverging function** is a function that never returns to the caller. Instead of handing back a value, it stops the program entirely. The return type `-> !` — an exclamation mark — is how you tell Rust this function will never hand control back.
+A **diverging function** is a function that never returns to the caller. Instead of handing back a value, it stops the program entirely. The return type `-> !`, an exclamation mark, is how you tell Rust this function will never hand control back.
 
 The instructor described the causes: "panicking, looping forever, or quitting the program." The most common tool is `panic!()`, which stops the program immediately with an error.
 
-In a payment contract, a validation function that detects an invalid plan should abort immediately. There is no safe value to return — the right move is to stop.
+In a payment contract, a validation function that detects an invalid plan should abort immediately. There is no safe value to return, the right move is to stop.
 
 #### Your Task
 
@@ -153,7 +153,7 @@ The code below wants to:
 1. Call `never_return()`
 2. Never reach the `println!` in `main`
 
-Right now the function prints and exits normally — it does not diverge, so execution continues into `main`.
+Right now the function prints and exits normally, it does not diverge, so execution continues into `main`.
 
 **Solve this in two ways so the `println!` in `main` never runs:**
 
@@ -211,9 +211,9 @@ fn main() {
 ### Exercise 4 - unimplemented! Macro
 
 The instructor named three macros that all create diverging functions:
-- `panic!()` — stops the program because something went wrong
-- `todo!()` — stops the program because you haven't written this yet
-- `unimplemented!()` — stops the program because this case is not supported yet
+- `panic!()`, stops the program because something went wrong
+- `todo!()`, stops the program because you haven't written this yet
+- `unimplemented!()`, stops the program because this case is not supported yet
 
 `unimplemented!()` is especially useful inside a `match` statement when you are building out a function tier by tier. It lets the code compile while signaling "I haven't written this arm yet." If the program hits that arm at runtime, it stops.
 
@@ -273,11 +273,11 @@ fn main() {
 
 ### Exercise 5 - Match Fill-in-the-Blank
 
-`match` checks a value against a list of patterns and runs the first one that matches — like a multi-way switch. Every arm of a `match` must produce the same type. That is why `panic!()` is allowed inside a `match` that returns `i32`: `panic!()` has return type `!`, which Rust allows to stand in for any type because it never actually returns anything.
+`match` checks a value against a list of patterns and runs the first one that matches, like a multi-way switch. Every arm of a `match` must produce the same type. That is why `panic!()` is allowed inside a `match` that returns `i32`: `panic!()` has return type `!`, which Rust allows to stand in for any type because it never actually returns anything.
 
-The instructor showed this exact pattern: a bool matched against `true` (returns a value) and `false` (prints something and panics). The `false` arm never produces an `i32` — but `panic!()` satisfies Rust's type checker anyway.
+The instructor showed this exact pattern: a bool matched against `true` (returns a value) and `false` (prints something and panics). The `false` arm never produces an `i32`, but `panic!()` satisfies Rust's type checker anyway.
 
-In a payment contract, a subscription check might return a fee if the subscription is active — and abort entirely if it is not.
+In a payment contract, a subscription check might return a fee if the subscription is active, and abort entirely if it is not.
 
 #### Your Task
 
@@ -335,12 +335,12 @@ fn main() {
 
 You have now practiced every part of a function:
 
-- `fn name(arg: type) -> return_type` — the signature: name, inputs with types, output type
-- The body in `{ }` — where the work happens
-- The last expression without a semicolon — what gets returned to the caller
-- `-> !` — for functions that never return
-- `panic!()`, `todo!()`, `unimplemented!()` — for diverging functions and placeholders
-- `match` — for choosing what to do based on a value
+- `fn name(arg: type) -> return_type`, the signature: name, inputs with types, output type
+- The body in `{ }`, where the work happens
+- The last expression without a semicolon, what gets returned to the caller
+- `-> !`, for functions that never return
+- `panic!()`, `todo!()`, `unimplemented!()`, for diverging functions and placeholders
+- `match`, for choosing what to do based on a value
 
 Write a function from scratch using all of these rules.
 
