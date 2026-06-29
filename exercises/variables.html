@@ -555,7 +555,7 @@
       num: 1,
       title: 'Binding',
       explainer: '<p>In Rust, declaring a variable and giving it a value are two separate steps. The <code>:</code> labels the type - what kind of value it holds. The <code>=</code> assigns the actual value. Both must happen before you can use the variable.</p><p>In smart contracts, every value must be initialized before it can be used in a check or calculation.</p>',
-      task: '<p><strong>Binding</strong> means giving a variable its value — tying a name to a piece of data. Until you bind it, the variable is just a label with nothing attached.</p><p>Right now it fails because <code>x</code> was declared but never given a value.</p><p>The code wants to:</p><ol><li>Set <code>x</code> to <code>5</code></li><li>Check that it equals <code>5</code></li><li>Print <code>Success!</code></li></ol><p class="task-note"><strong>Note:</strong> <code>:</code> — "is of type." It labels what kind of value the variable will hold.</p>',
+      task: '<p><strong>Binding</strong> means giving a variable its value, by tying a name to a piece of data. Until you bind it, the variable is just a label with nothing attached.</p><p>Right now it fails because <code>x</code> was declared but never given a value.</p><p>The code wants to:</p><ol><li>Set <code>x</code> to <code>5</code></li><li>Check that it equals <code>5</code></li><li>Print <code>Success!</code></li></ol><p class="task-note"><strong>Note:</strong> <code>:</code> — "is of type." It labels what kind of value the variable will hold.</p>',
       starterCode: 'fn main() {\n    let x: i32;\n    assert_eq!(x, 5);\n    println!("Success!");\n}',
       instruction: 'Fix this so it compiles and prints <code>Success!</code>',
       expectedOutput: 'Success!',
