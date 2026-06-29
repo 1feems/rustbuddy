@@ -216,7 +216,7 @@
       num: 4,
       title: 'Overflow: Picking the Right Type',
       explainer: '<p>Every integer type has a maximum value it can hold. A <code>u8</code> can only go up to 255. If you try to store 270 in a <code>u8</code>, the number overflows and the program panics.</p><p>The fix is to use a bigger type. <code>u16</code> holds up to 65,535. <code>u64</code> holds numbers in the quintillions — more than enough for any Solana payment amount.</p>',
-      task: '<p>A contract adds a base amount and a fee. The result is 270, but both variables are typed as <code>u8</code>, which only holds up to 255.</p><p>Right now it fails because the result overflows <code>u8</code>'s maximum value.</p><ol><li><code>base = 250</code></li><li><code>fee = 20</code></li><li>Print <code>Total: 270</code></li></ol>',
+      task: '<p>A contract adds a base amount and a fee. The result is 270, but both variables are typed as <code>u8</code>, which only holds up to 255.</p><p>Right now it fails because the result overflows the <code>u8</code> maximum of 255.</p><ol><li><code>base = 250</code></li><li><code>fee = 20</code></li><li>Print <code>Total: 270</code></li></ol>',
       starterCode: 'fn main() {\n    let base: u8 = 250;\n    let fee: u8 = 20;\n    let total = base + fee;\n    println!("Total: {}", total);\n}',
       instruction: 'Change the type annotation so the addition does not overflow',
       expectedOutput: 'Total: 270',
