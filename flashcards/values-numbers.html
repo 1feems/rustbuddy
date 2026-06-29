@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Variables — Rust Flashcards</title>
+  <title>Values &amp; Numbers — Rust Flashcards</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -14,7 +14,6 @@
       --color-muted:     #77766F;
       --color-border:    #171714;
       --color-primary:   #FF7657;
-      --color-secondary: #DFFF65;
       --color-surface:   #1E1E1A;
 
       --card-shell: #1E1E1A;
@@ -50,22 +49,13 @@
       border-bottom: 1px solid var(--color-border);
     }
     .site-header-left { display: flex; align-items: center; gap: 10px; }
-    .site-name {
-      font-size: 15px; font-weight: 700; letter-spacing: -0.02em;
-      text-decoration: none; color: var(--color-ink);
-    }
-    .back-link {
-      font-size: 14px; color: var(--color-muted);
-      text-decoration: none; transition: color 200ms ease;
-    }
+    .site-name { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; text-decoration: none; color: var(--color-ink); }
+    .back-link { font-size: 14px; color: var(--color-muted); text-decoration: none; transition: color 200ms ease; }
     .back-link:hover { color: var(--color-ink); }
     .header-sep { color: var(--color-muted); font-size: 14px; }
     .header-title { font-size: 14px; font-weight: 500; color: var(--color-muted); }
     .nav-links { display: flex; gap: 24px; }
-    .nav-link {
-      font-size: 13px; font-weight: 600; color: var(--color-muted);
-      text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase;
-    }
+    .nav-link { font-size: 13px; font-weight: 600; color: var(--color-muted); text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase; }
     .nav-link:hover { color: var(--color-ink); }
     .nav-link.active { color: var(--color-primary); }
 
@@ -77,38 +67,18 @@
       align-items: flex-end;
       justify-content: space-between;
     }
-    .page-title {
-      font-size: clamp(36px, 4vw, 56px);
-      font-weight: 900;
-      letter-spacing: -0.04em;
-      line-height: 1;
-    }
-    .page-hint {
-      font-size: 13px;
-      color: var(--color-muted);
-      padding-bottom: 4px;
-    }
+    .page-title { font-size: clamp(32px, 4vw, 52px); font-weight: 900; letter-spacing: -0.04em; line-height: 1; }
+    .page-hint { font-size: 13px; color: var(--color-muted); padding-bottom: 4px; }
 
     /* ── Cards section ── */
-    .cards-section {
-      padding: 40px 32px 80px;
-    }
-    .cards-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 24px;
-    }
+    .cards-section { padding: 40px 32px 80px; }
+    .cards-grid { display: flex; flex-wrap: wrap; gap: 24px; }
 
-    /* ── Card shell wrapper (gradient border) ── */
+    /* ── Card shell wrapper ── */
     .card-shell-wrap {
       padding: 1px;
       border-radius: calc(var(--radius-card) + 1px);
-      background: linear-gradient(
-        to right bottom,
-        rgba(23,23,20,0.8),
-        rgba(23,23,20,0.2),
-        rgba(0,0,0,0.05)
-      );
+      background: linear-gradient(to right bottom, rgba(23,23,20,0.8), rgba(23,23,20,0.2), rgba(0,0,0,0.05));
       display: inline-block;
     }
 
@@ -157,15 +127,11 @@
 
     .card-label {
       position: absolute;
-      top: 6px;
-      left: 0;
+      top: 6px; left: 0;
       z-index: 10;
-      font-size: 9px;
-      font-weight: 800;
-      line-height: 1;
+      font-size: 9px; font-weight: 800; line-height: 1;
       color: rgba(255,255,255,0.55);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+      text-transform: uppercase; letter-spacing: 0.08em;
     }
 
     .card-panel {
@@ -179,11 +145,8 @@
 
     .card-panel::after {
       content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(145deg, rgba(255,255,255,.10), transparent 34%),
-        linear-gradient(315deg, rgba(0,0,0,.10), transparent 48%);
+      position: absolute; inset: 0;
+      background: linear-gradient(145deg, rgba(255,255,255,.10), transparent 34%), linear-gradient(315deg, rgba(0,0,0,.10), transparent 48%);
       pointer-events: none;
     }
 
@@ -196,32 +159,18 @@
 
     .card-icon svg { width: 100%; height: 100%; display: block; }
 
-    .card-footer {
-      background: var(--card-shell);
-      display: flex;
-      align-items: center;
-      padding: 0 10px;
-    }
+    .card-footer { background: var(--card-shell); display: flex; align-items: center; padding: 0 10px; }
 
     .card-title {
-      font-size: 28px;
-      font-weight: 900;
-      line-height: .9;
-      letter-spacing: -0.04em;
-      text-transform: uppercase;
-      color: #FFFFFF;
-      overflow-wrap: anywhere;
+      font-size: 28px; font-weight: 900; line-height: .9;
+      letter-spacing: -0.04em; text-transform: uppercase;
+      color: #FFFFFF; overflow-wrap: anywhere;
     }
-
-    .card-title.long { font-size: 21px; line-height: .95; }
-    .card-title.medium { font-size: 24px; }
+    .card-title.long { font-size: 20px; line-height: .95; }
+    .card-title.medium { font-size: 23px; }
 
     /* ── BACK ── */
-    .card-back {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
+    .card-back { position: relative; width: 100%; height: 100%; }
 
     .back-panel {
       position: relative;
@@ -233,58 +182,42 @@
 
     .back-title {
       margin: 0 0 14px;
-      font-size: 26px;
-      font-weight: 900;
-      letter-spacing: -0.04em;
-      text-transform: uppercase;
-      color: var(--color-ink);
-      overflow-wrap: anywhere;
+      font-size: 26px; font-weight: 900;
+      letter-spacing: -0.04em; text-transform: uppercase;
+      color: var(--color-ink); overflow-wrap: anywhere;
     }
+    .back-title.long { font-size: 19px; margin-bottom: 10px; }
+    .back-title.medium { font-size: 22px; }
 
-    .back-title.long { font-size: 20px; margin-bottom: 10px; }
-
-    .back-section {
-      margin-top: 11px;
-      padding-top: 11px;
-      border-top: 1px solid rgba(23,23,20,.14);
-    }
-
+    .back-section { margin-top: 11px; padding-top: 11px; border-top: 1px solid rgba(23,23,20,.14); }
     .back-section:first-of-type { border-top: 0; padding-top: 0; }
 
     .back-section h3 {
       margin: 0 0 4px;
-      font-size: 10px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
+      font-size: 10px; font-weight: 900;
+      text-transform: uppercase; letter-spacing: 0.06em;
       color: var(--color-ink);
     }
 
-    .back-section p,
-    .back-section code {
+    .back-section p, .back-section code {
       margin: 0;
       font-family: inherit;
-      font-size: 11.5px;
-      line-height: 1.4;
+      font-size: 11.5px; line-height: 1.4;
       color: var(--color-ink);
     }
 
-    .back-section code {
-      font-family: "SF Mono", "Fira Code", monospace;
-      font-size: 11px;
-    }
+    .back-section code { font-family: "SF Mono", "Fira Code", monospace; font-size: 11px; }
   </style>
 </head>
 <body>
 
-  <!-- Nav -->
   <header class="site-header">
     <div class="site-header-left">
       <a href="../index.html" class="site-name">Rust Buddy</a>
       <span class="header-sep">/</span>
       <a href="index.html" class="back-link">Flashcards</a>
       <span class="header-sep">/</span>
-      <span class="header-title">Variables</span>
+      <span class="header-title">Values &amp; Numbers</span>
     </div>
     <nav class="nav-links">
       <a href="../exercises/index.html" class="nav-link">Exercises</a>
@@ -293,19 +226,17 @@
     </nav>
   </header>
 
-  <!-- Page header -->
   <div class="page-header">
-    <h1 class="page-title">Variables</h1>
+    <h1 class="page-title">Values &amp; Numbers</h1>
     <p class="page-hint">Click any card to flip</p>
   </div>
 
-  <!-- Cards -->
   <section class="cards-section">
     <div class="cards-grid">
 
-      <!-- 1. Variable -->
+      <!-- 1. Integer -->
       <div class="card-shell-wrap">
-        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="Variable">
+        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="Integer">
           <div class="flashcard-inner">
             <div class="flashcard-face">
               <div class="card-front">
@@ -323,7 +254,7 @@
                 </div>
                 </div>
                 <footer class="card-footer">
-                  <h1 class="card-title medium">Variable</h1>
+                  <h1 class="card-title medium">Integer</h1>
                 </footer>
               </div>
             </div>
@@ -331,18 +262,18 @@
               <div class="card-back">
                 <span class="card-label">Rust</span>
                 <div class="back-panel">
-                  <h2 class="back-title medium">Variable</h2>
+                  <h2 class="back-title medium">Integer</h2>
                   <section class="back-section">
                     <h3>Meaning</h3>
-                    <p>A named place to store a value in your program.</p>
+                    <p>A whole number with no decimal point.</p>
                   </section>
                   <section class="back-section">
                     <h3>When to use it</h3>
-                    <p>Every time you need to remember a piece of data in your code.</p>
+                    <p>Counts, balances, token amounts — most numbers you write in Rust.</p>
                   </section>
                   <section class="back-section">
                     <h3>Example</h3>
-                    <code>let age = 25;</code>
+                    <code>let score: i32 = 100;</code>
                   </section>
                 </div>
               </div>
@@ -351,9 +282,9 @@
         </button>
       </div>
 
-      <!-- 2. let -->
+      <!-- 2. Signed integer i -->
       <div class="card-shell-wrap">
-        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="let">
+        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="Signed integer">
           <div class="flashcard-inner">
             <div class="flashcard-face">
               <div class="card-front">
@@ -371,7 +302,7 @@
                 </div>
                 </div>
                 <footer class="card-footer">
-                  <h1 class="card-title">let</h1>
+                  <h1 class="card-title long">Signed int <code style="font-size:18px">i</code></h1>
                 </footer>
               </div>
             </div>
@@ -379,18 +310,18 @@
               <div class="card-back">
                 <span class="card-label">Rust</span>
                 <div class="back-panel">
-                  <h2 class="back-title">let</h2>
+                  <h2 class="back-title long">Signed int i</h2>
                   <section class="back-section">
                     <h3>Meaning</h3>
-                    <p>The keyword that creates a new variable.</p>
+                    <p>A whole number that can be negative (<code>i8</code>, <code>i32</code>, <code>i64</code>).</p>
                   </section>
                   <section class="back-section">
                     <h3>When to use it</h3>
-                    <p>Every time you store a value in your program.</p>
+                    <p>Temperatures, gains and losses — anything that can go below zero.</p>
                   </section>
                   <section class="back-section">
                     <h3>Example</h3>
-                    <code>let name = "Rust";</code>
+                    <code>let temp: i32 = -5;</code>
                   </section>
                 </div>
               </div>
@@ -399,9 +330,9 @@
         </button>
       </div>
 
-      <!-- 3. mut -->
+      <!-- 3. Unsigned integer u -->
       <div class="card-shell-wrap">
-        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="mut">
+        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="Unsigned integer">
           <div class="flashcard-inner">
             <div class="flashcard-face">
               <div class="card-front">
@@ -419,7 +350,7 @@
                 </div>
                 </div>
                 <footer class="card-footer">
-                  <h1 class="card-title">mut</h1>
+                  <h1 class="card-title long">Unsigned int <code style="font-size:18px">u</code></h1>
                 </footer>
               </div>
             </div>
@@ -427,18 +358,18 @@
               <div class="card-back">
                 <span class="card-label">Rust</span>
                 <div class="back-panel">
-                  <h2 class="back-title">mut</h2>
+                  <h2 class="back-title long">Unsigned int u</h2>
                   <section class="back-section">
                     <h3>Meaning</h3>
-                    <p>Allows a variable to change after it is set.</p>
+                    <p>A whole number that cannot be negative (<code>u8</code>, <code>u32</code>, <code>u64</code>).</p>
                   </section>
                   <section class="back-section">
                     <h3>When to use it</h3>
-                    <p>When your program needs to update a value — like a counter or running total.</p>
+                    <p>Balances, counts, addresses — values that are always zero or higher.</p>
                   </section>
                   <section class="back-section">
                     <h3>Example</h3>
-                    <code>let mut count = 0;<br>count = count + 1;</code>
+                    <code>let balance: u64 = 1_000_000;</code>
                   </section>
                 </div>
               </div>
@@ -447,9 +378,9 @@
         </button>
       </div>
 
-      <!-- 4. Immutable -->
+      <!-- 4. u64 -->
       <div class="card-shell-wrap">
-        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="Immutable">
+        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="u64">
           <div class="flashcard-inner">
             <div class="flashcard-face">
               <div class="card-front">
@@ -467,7 +398,7 @@
                 </div>
                 </div>
                 <footer class="card-footer">
-                  <h1 class="card-title long">Immutable</h1>
+                  <h1 class="card-title">u64</h1>
                 </footer>
               </div>
             </div>
@@ -475,18 +406,18 @@
               <div class="card-back">
                 <span class="card-label">Rust</span>
                 <div class="back-panel">
-                  <h2 class="back-title long">Immutable</h2>
+                  <h2 class="back-title">u64</h2>
                   <section class="back-section">
                     <h3>Meaning</h3>
-                    <p>Cannot be changed after it is set. The default for every variable in Rust.</p>
+                    <p>Unsigned 64-bit integer — a whole number, no negatives, up to 18 quintillion.</p>
                   </section>
                   <section class="back-section">
                     <h3>When to use it</h3>
-                    <p>Most of the time. Variables are locked by default unless you add <code>mut</code>.</p>
+                    <p>Payment amounts, token balances, timestamps.</p>
                   </section>
                   <section class="back-section">
                     <h3>Example</h3>
-                    <code>let x = 5; // locked</code>
+                    <code>let lamports: u64 = 5_000_000;</code>
                   </section>
                 </div>
               </div>
@@ -495,9 +426,9 @@
         </button>
       </div>
 
-      <!-- 5. Shadowing -->
+      <!-- 5. u8 -->
       <div class="card-shell-wrap">
-        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="Shadowing">
+        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="u8">
           <div class="flashcard-inner">
             <div class="flashcard-face">
               <div class="card-front">
@@ -515,7 +446,7 @@
                 </div>
                 </div>
                 <footer class="card-footer">
-                  <h1 class="card-title long">Shadowing</h1>
+                  <h1 class="card-title">u8</h1>
                 </footer>
               </div>
             </div>
@@ -523,18 +454,18 @@
               <div class="card-back">
                 <span class="card-label">Rust</span>
                 <div class="back-panel">
-                  <h2 class="back-title long">Shadowing</h2>
+                  <h2 class="back-title">u8</h2>
                   <section class="back-section">
                     <h3>Meaning</h3>
-                    <p>Reusing a variable name with a new <code>let</code>. The old value is replaced.</p>
+                    <p>Unsigned 8-bit integer — stores 0 to 255.</p>
                   </section>
                   <section class="back-section">
                     <h3>When to use it</h3>
-                    <p>When you want to transform a value while keeping the same name.</p>
+                    <p>Bytes and wallet address components.</p>
                   </section>
                   <section class="back-section">
                     <h3>Example</h3>
-                    <code>let x = 5;<br>let x = x + 1; // x is now 6</code>
+                    <code>let byte: u8 = 255;</code>
                   </section>
                 </div>
               </div>
@@ -543,9 +474,9 @@
         </button>
       </div>
 
-      <!-- 6. const -->
+      <!-- 6. Floating point f -->
       <div class="card-shell-wrap">
-        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="const">
+        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="Floating point">
           <div class="flashcard-inner">
             <div class="flashcard-face">
               <div class="card-front">
@@ -563,7 +494,7 @@
                 </div>
                 </div>
                 <footer class="card-footer">
-                  <h1 class="card-title">const</h1>
+                  <h1 class="card-title long">Float <code style="font-size:18px">f</code></h1>
                 </footer>
               </div>
             </div>
@@ -571,18 +502,18 @@
               <div class="card-back">
                 <span class="card-label">Rust</span>
                 <div class="back-panel">
-                  <h2 class="back-title">const</h2>
+                  <h2 class="back-title long">Float f</h2>
                   <section class="back-section">
                     <h3>Meaning</h3>
-                    <p>A value that never changes and must have an explicit type.</p>
+                    <p>A decimal number (<code>f32</code>, <code>f64</code>).</p>
                   </section>
                   <section class="back-section">
                     <h3>When to use it</h3>
-                    <p>For fixed values that never change, like a maximum fee or a game speed.</p>
+                    <p>Measurements that need fractions — rarely used in Solana.</p>
                   </section>
                   <section class="back-section">
                     <h3>Example</h3>
-                    <code>const MAX: u64 = 50_000;</code>
+                    <code>let ratio: f64 = 3.14;</code>
                   </section>
                 </div>
               </div>
@@ -591,9 +522,9 @@
         </button>
       </div>
 
-      <!-- 7. _ -->
+      <!-- 7. f64 -->
       <div class="card-shell-wrap">
-        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="Underscore">
+        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="f64">
           <div class="flashcard-inner">
             <div class="flashcard-face">
               <div class="card-front">
@@ -611,7 +542,7 @@
                 </div>
                 </div>
                 <footer class="card-footer">
-                  <h1 class="card-title">_</h1>
+                  <h1 class="card-title">f64</h1>
                 </footer>
               </div>
             </div>
@@ -619,18 +550,18 @@
               <div class="card-back">
                 <span class="card-label">Rust</span>
                 <div class="back-panel">
-                  <h2 class="back-title">_</h2>
+                  <h2 class="back-title">f64</h2>
                   <section class="back-section">
                     <h3>Meaning</h3>
-                    <p>Tells the compiler you know a variable is unused so it does not warn you.</p>
+                    <p>A 64-bit decimal number.</p>
                   </section>
                   <section class="back-section">
                     <h3>When to use it</h3>
-                    <p>When you declare a variable you are not using yet, or need to skip a value in a pattern.</p>
+                    <p>Avoid in Solana — use integer lamports instead to prevent rounding errors.</p>
                   </section>
                   <section class="back-section">
                     <h3>Example</h3>
-                    <code>let _unused = 5;</code>
+                    <code>let price: f64 = 9.99;</code>
                   </section>
                 </div>
               </div>
@@ -639,9 +570,9 @@
         </button>
       </div>
 
-      <!-- 8. Destructuring -->
+      <!-- 8. bool -->
       <div class="card-shell-wrap">
-        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="Destructuring">
+        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="bool">
           <div class="flashcard-inner">
             <div class="flashcard-face">
               <div class="card-front">
@@ -659,7 +590,7 @@
                 </div>
                 </div>
                 <footer class="card-footer">
-                  <h1 class="card-title long">Destructuring</h1>
+                  <h1 class="card-title">bool</h1>
                 </footer>
               </div>
             </div>
@@ -667,18 +598,18 @@
               <div class="card-back">
                 <span class="card-label">Rust</span>
                 <div class="back-panel">
-                  <h2 class="back-title long">Destructuring</h2>
+                  <h2 class="back-title">bool</h2>
                   <section class="back-section">
                     <h3>Meaning</h3>
-                    <p>Unpacking a tuple or struct into separate named variables in one line.</p>
+                    <p><code>true</code> or <code>false</code> — nothing else.</p>
                   </section>
                   <section class="back-section">
                     <h3>When to use it</h3>
-                    <p>When a function returns multiple values you want to name individually.</p>
+                    <p>Status flags: <code>is_paid</code>, <code>is_verified</code>, <code>is_active</code>.</p>
                   </section>
                   <section class="back-section">
                     <h3>Example</h3>
-                    <code>let (a, b) = (10, 20);</code>
+                    <code>let is_active: bool = true;</code>
                   </section>
                 </div>
               </div>
@@ -687,9 +618,9 @@
         </button>
       </div>
 
-      <!-- 9. () unit type -->
+      <!-- 9. char -->
       <div class="card-shell-wrap">
-        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="Unit type">
+        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="char">
           <div class="flashcard-inner">
             <div class="flashcard-face">
               <div class="card-front">
@@ -707,7 +638,7 @@
                 </div>
                 </div>
                 <footer class="card-footer">
-                  <h1 class="card-title">()</h1>
+                  <h1 class="card-title">char</h1>
                 </footer>
               </div>
             </div>
@@ -715,18 +646,18 @@
               <div class="card-back">
                 <span class="card-label">Rust</span>
                 <div class="back-panel">
-                  <h2 class="back-title">()</h2>
+                  <h2 class="back-title">char</h2>
                   <section class="back-section">
                     <h3>Meaning</h3>
-                    <p>Rust's empty value. Means "nothing" — the unit type.</p>
+                    <p>One single character — always in single quotes.</p>
                   </section>
                   <section class="back-section">
                     <h3>When to use it</h3>
-                    <p>When a function returns nothing meaningful, it returns <code>()</code> automatically.</p>
+                    <p>Single symbols, not strings — <code>'A'</code>, <code>'🔥'</code>.</p>
                   </section>
                   <section class="back-section">
                     <h3>Example</h3>
-                    <code>fn greet() {<br>&nbsp;&nbsp;println!("Hi");<br>} // returns ()</code>
+                    <code>let grade: char = 'A';</code>
                   </section>
                 </div>
               </div>
@@ -735,9 +666,9 @@
         </button>
       </div>
 
-      <!-- 10. as -->
+      <!-- 10. &str -->
       <div class="card-shell-wrap">
-        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="as">
+        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="&str">
           <div class="flashcard-inner">
             <div class="flashcard-face">
               <div class="card-front">
@@ -755,7 +686,7 @@
                 </div>
                 </div>
                 <footer class="card-footer">
-                  <h1 class="card-title">as</h1>
+                  <h1 class="card-title">&amp;str</h1>
                 </footer>
               </div>
             </div>
@@ -763,18 +694,18 @@
               <div class="card-back">
                 <span class="card-label">Rust</span>
                 <div class="back-panel">
-                  <h2 class="back-title">as</h2>
+                  <h2 class="back-title">&amp;str</h2>
                   <section class="back-section">
                     <h3>Meaning</h3>
-                    <p>Converts a value from one type to another.</p>
+                    <p>A piece of text — a borrowed string slice.</p>
                   </section>
                   <section class="back-section">
                     <h3>When to use it</h3>
-                    <p>When you need two different types to work together in a calculation.</p>
+                    <p>Labels, names, error messages — text you only need to read.</p>
                   </section>
                   <section class="back-section">
                     <h3>Example</h3>
-                    <code>let y = x as f64;</code>
+                    <code>let name: &amp;str = "Rust";</code>
                   </section>
                 </div>
               </div>
@@ -783,7 +714,199 @@
         </button>
       </div>
 
-      <!-- 11. println! -->
+      <!-- 11. String -->
+      <div class="card-shell-wrap">
+        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="String">
+          <div class="flashcard-inner">
+            <div class="flashcard-face">
+              <div class="card-front">
+                <span class="card-label">Rust</span>
+                <div class="card-panel">
+                  <div class="card-icon" aria-hidden="true">
+                  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;">
+                    <g transform="matrix(1.913876,0,0,1.913876,-35.980861,-35.789474)" fill="currentColor">
+                      <path d="M71.05,23.68C44.99,23.68 23.78,44.9 23.78,70.95C23.78,97 45,118.22 71.05,118.22C97.1,118.22 118.32,97 118.32,70.95C118.32,44.9 97.1,23.68 71.05,23.68ZM70.98,27.88C72.65,27.923 74.001,29.314 74,30.99C74,32.696 72.596,34.1 70.89,34.1C69.184,34.1 67.78,32.696 67.78,30.99C67.78,30.99 67.78,30.989 67.78,30.989C67.78,29.283 69.184,27.879 70.89,27.879C70.92,27.879 70.95,27.879 70.98,27.88ZM78.1,33C89.144,35.069 98.735,41.899 104.3,51.66L100.63,59.94C100,61.37 100.65,63.05 102.07,63.69L109.13,66.82C109.349,69.027 109.376,71.249 109.21,73.46L105.28,73.46C104.89,73.46 104.73,73.72 104.73,74.1L104.73,75.9C104.73,80.14 102.34,81.07 100.24,81.3C98.24,81.53 96.03,80.46 95.75,79.24C94.57,72.61 92.61,71.2 89.51,68.75C93.36,66.31 97.36,62.7 97.36,57.88C97.36,52.67 93.79,49.39 91.36,47.78C87.94,45.53 84.16,45.08 83.14,45.08L42.54,45.08C48.153,38.81 55.681,34.562 63.95,33L68.74,38.02C69.82,39.15 71.61,39.2 72.74,38.11L78.1,33ZM33.9,56.02C35.572,56.068 36.921,57.457 36.92,59.13C36.92,60.836 35.516,62.24 33.81,62.24C32.104,62.24 30.7,60.836 30.7,59.13C30.7,59.13 30.7,59.129 30.7,59.129C30.7,57.423 32.104,56.019 33.81,56.019C33.84,56.019 33.87,56.019 33.9,56.02ZM108.05,56.16C109.722,56.208 111.071,57.597 111.07,59.27C111.07,60.976 109.666,62.38 107.96,62.38C106.254,62.38 104.85,60.976 104.85,59.27C104.85,59.27 104.85,59.269 104.85,59.269C104.85,57.563 106.254,56.159 107.96,56.159C107.99,56.159 108.02,56.159 108.05,56.16ZM39.76,56.66L45.18,56.66L45.18,81.1L34.24,81.1C32.889,76.356 32.468,71.394 33,66.49L39.7,63.51C41.13,62.87 41.78,61.2 41.14,59.77L39.76,56.66ZM62.38,56.92L75.29,56.92C75.96,56.92 80,57.69 80,60.72C80,63.23 76.9,64.13 74.35,64.13L62.37,64.13L62.38,56.92ZM62.38,74.48L72.27,74.48C73.17,74.48 77.1,74.74 78.35,79.76C78.74,81.3 79.61,86.32 80.2,87.93C80.79,89.73 83.18,93.33 85.73,93.33L101.87,93.33C100.788,94.779 99.605,96.149 98.33,97.43L91.76,96.02C90.23,95.69 88.72,96.67 88.39,98.2L86.83,105.48C76.684,110.076 65.022,110.021 54.92,105.33L53.36,98.05C53.03,96.52 51.53,95.54 50,95.87L43.57,97.25C42.377,96.019 41.268,94.71 40.25,93.33L71.52,93.33C71.87,93.33 72.11,93.27 72.11,92.94L72.11,81.88C72.11,81.56 71.87,81.49 71.52,81.49L62.37,81.49L62.38,74.48ZM47.95,99.81C49.622,99.858 50.971,101.247 50.97,102.92C50.97,104.626 49.566,106.03 47.86,106.03C46.154,106.03 44.75,104.626 44.75,102.92C44.75,102.92 44.75,102.919 44.75,102.919C44.75,101.213 46.154,99.809 47.86,99.809C47.89,99.809 47.92,99.809 47.95,99.81ZM94,99.95C95.672,99.998 97.021,101.387 97.02,103.06C97.02,104.766 95.616,106.17 93.91,106.17C92.204,106.17 90.8,104.766 90.8,103.06C90.8,103.06 90.8,103.059 90.8,103.059C90.8,101.353 92.204,99.949 93.91,99.949C93.94,99.949 93.97,99.949 94,99.95Z" style="fill-rule:nonzero;"/>
+                    </g>
+                    <g transform="matrix(1.913876,0,0,1.913876,-35.980861,-35.789474)" fill="currentColor" style="stroke:currentColor;stroke-width:3px;">
+                      <path d="M115.68,70.95C115.68,95.433 95.533,115.58 71.05,115.58C46.567,115.58 26.42,95.433 26.42,70.95C26.42,46.467 46.567,26.32 71.05,26.32C95.533,26.32 115.68,46.467 115.68,70.95ZM114.84,66.64L121.8,70.95L114.84,75.26L120.82,80.85L113.16,83.72L117.94,90.37L109.85,91.69L113.25,99.15L105.06,98.86L106.94,106.84L98.96,104.96L99.25,113.15L91.79,109.75L90.47,117.84L83.82,113.06L80.95,120.72L75.36,114.74L71.05,121.7L66.74,114.74L61.15,120.72L58.28,113.06L51.63,117.84L50.31,109.75L42.85,113.15L43.14,104.96L35.16,106.84L37.04,98.86L28.85,99.15L32.25,91.69L24.16,90.37L28.94,83.72L21.28,80.85L27.26,75.26L20.3,70.95L27.26,66.64L21.28,61.05L28.94,58.18L24.16,51.53L32.25,50.21L28.85,42.75L37.04,43.04L35.16,35.06L43.14,36.94L42.85,28.75L50.31,32.15L51.63,24.06L58.28,28.84L61.15,21.18L66.74,27.16L71.05,20.2L75.36,27.16L80.95,21.18L83.82,28.84L90.47,24.06L91.79,32.15L99.25,28.75L98.96,36.94L106.94,35.06L105.06,43.04L113.25,42.75L109.85,50.21L117.94,51.53L113.16,58.18L120.82,61.05L114.84,66.64Z"/>
+                    </g>
+                  </svg>
+                </div>
+                </div>
+                <footer class="card-footer">
+                  <h1 class="card-title medium">String</h1>
+                </footer>
+              </div>
+            </div>
+            <div class="flashcard-face flashcard-back">
+              <div class="card-back">
+                <span class="card-label">Rust</span>
+                <div class="back-panel">
+                  <h2 class="back-title medium">String</h2>
+                  <section class="back-section">
+                    <h3>Meaning</h3>
+                    <p>Owned, growable text.</p>
+                  </section>
+                  <section class="back-section">
+                    <h3>When to use it</h3>
+                    <p>Text you need to build or change at runtime.</p>
+                  </section>
+                  <section class="back-section">
+                    <h3>Example</h3>
+                    <code>let s = String::from("hello");</code>
+                  </section>
+                </div>
+              </div>
+            </div>
+          </div>
+        </button>
+      </div>
+
+      <!-- 12. Tuple -->
+      <div class="card-shell-wrap">
+        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="Tuple">
+          <div class="flashcard-inner">
+            <div class="flashcard-face">
+              <div class="card-front">
+                <span class="card-label">Rust</span>
+                <div class="card-panel">
+                  <div class="card-icon" aria-hidden="true">
+                  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;">
+                    <g transform="matrix(1.913876,0,0,1.913876,-35.980861,-35.789474)" fill="currentColor">
+                      <path d="M71.05,23.68C44.99,23.68 23.78,44.9 23.78,70.95C23.78,97 45,118.22 71.05,118.22C97.1,118.22 118.32,97 118.32,70.95C118.32,44.9 97.1,23.68 71.05,23.68ZM70.98,27.88C72.65,27.923 74.001,29.314 74,30.99C74,32.696 72.596,34.1 70.89,34.1C69.184,34.1 67.78,32.696 67.78,30.99C67.78,30.99 67.78,30.989 67.78,30.989C67.78,29.283 69.184,27.879 70.89,27.879C70.92,27.879 70.95,27.879 70.98,27.88ZM78.1,33C89.144,35.069 98.735,41.899 104.3,51.66L100.63,59.94C100,61.37 100.65,63.05 102.07,63.69L109.13,66.82C109.349,69.027 109.376,71.249 109.21,73.46L105.28,73.46C104.89,73.46 104.73,73.72 104.73,74.1L104.73,75.9C104.73,80.14 102.34,81.07 100.24,81.3C98.24,81.53 96.03,80.46 95.75,79.24C94.57,72.61 92.61,71.2 89.51,68.75C93.36,66.31 97.36,62.7 97.36,57.88C97.36,52.67 93.79,49.39 91.36,47.78C87.94,45.53 84.16,45.08 83.14,45.08L42.54,45.08C48.153,38.81 55.681,34.562 63.95,33L68.74,38.02C69.82,39.15 71.61,39.2 72.74,38.11L78.1,33ZM33.9,56.02C35.572,56.068 36.921,57.457 36.92,59.13C36.92,60.836 35.516,62.24 33.81,62.24C32.104,62.24 30.7,60.836 30.7,59.13C30.7,59.13 30.7,59.129 30.7,59.129C30.7,57.423 32.104,56.019 33.81,56.019C33.84,56.019 33.87,56.019 33.9,56.02ZM108.05,56.16C109.722,56.208 111.071,57.597 111.07,59.27C111.07,60.976 109.666,62.38 107.96,62.38C106.254,62.38 104.85,60.976 104.85,59.27C104.85,59.27 104.85,59.269 104.85,59.269C104.85,57.563 106.254,56.159 107.96,56.159C107.99,56.159 108.02,56.159 108.05,56.16ZM39.76,56.66L45.18,56.66L45.18,81.1L34.24,81.1C32.889,76.356 32.468,71.394 33,66.49L39.7,63.51C41.13,62.87 41.78,61.2 41.14,59.77L39.76,56.66ZM62.38,56.92L75.29,56.92C75.96,56.92 80,57.69 80,60.72C80,63.23 76.9,64.13 74.35,64.13L62.37,64.13L62.38,56.92ZM62.38,74.48L72.27,74.48C73.17,74.48 77.1,74.74 78.35,79.76C78.74,81.3 79.61,86.32 80.2,87.93C80.79,89.73 83.18,93.33 85.73,93.33L101.87,93.33C100.788,94.779 99.605,96.149 98.33,97.43L91.76,96.02C90.23,95.69 88.72,96.67 88.39,98.2L86.83,105.48C76.684,110.076 65.022,110.021 54.92,105.33L53.36,98.05C53.03,96.52 51.53,95.54 50,95.87L43.57,97.25C42.377,96.019 41.268,94.71 40.25,93.33L71.52,93.33C71.87,93.33 72.11,93.27 72.11,92.94L72.11,81.88C72.11,81.56 71.87,81.49 71.52,81.49L62.37,81.49L62.38,74.48ZM47.95,99.81C49.622,99.858 50.971,101.247 50.97,102.92C50.97,104.626 49.566,106.03 47.86,106.03C46.154,106.03 44.75,104.626 44.75,102.92C44.75,102.92 44.75,102.919 44.75,102.919C44.75,101.213 46.154,99.809 47.86,99.809C47.89,99.809 47.92,99.809 47.95,99.81ZM94,99.95C95.672,99.998 97.021,101.387 97.02,103.06C97.02,104.766 95.616,106.17 93.91,106.17C92.204,106.17 90.8,104.766 90.8,103.06C90.8,103.06 90.8,103.059 90.8,103.059C90.8,101.353 92.204,99.949 93.91,99.949C93.94,99.949 93.97,99.949 94,99.95Z" style="fill-rule:nonzero;"/>
+                    </g>
+                    <g transform="matrix(1.913876,0,0,1.913876,-35.980861,-35.789474)" fill="currentColor" style="stroke:currentColor;stroke-width:3px;">
+                      <path d="M115.68,70.95C115.68,95.433 95.533,115.58 71.05,115.58C46.567,115.58 26.42,95.433 26.42,70.95C26.42,46.467 46.567,26.32 71.05,26.32C95.533,26.32 115.68,46.467 115.68,70.95ZM114.84,66.64L121.8,70.95L114.84,75.26L120.82,80.85L113.16,83.72L117.94,90.37L109.85,91.69L113.25,99.15L105.06,98.86L106.94,106.84L98.96,104.96L99.25,113.15L91.79,109.75L90.47,117.84L83.82,113.06L80.95,120.72L75.36,114.74L71.05,121.7L66.74,114.74L61.15,120.72L58.28,113.06L51.63,117.84L50.31,109.75L42.85,113.15L43.14,104.96L35.16,106.84L37.04,98.86L28.85,99.15L32.25,91.69L24.16,90.37L28.94,83.72L21.28,80.85L27.26,75.26L20.3,70.95L27.26,66.64L21.28,61.05L28.94,58.18L24.16,51.53L32.25,50.21L28.85,42.75L37.04,43.04L35.16,35.06L43.14,36.94L42.85,28.75L50.31,32.15L51.63,24.06L58.28,28.84L61.15,21.18L66.74,27.16L71.05,20.2L75.36,27.16L80.95,21.18L83.82,28.84L90.47,24.06L91.79,32.15L99.25,28.75L98.96,36.94L106.94,35.06L105.06,43.04L113.25,42.75L109.85,50.21L117.94,51.53L113.16,58.18L120.82,61.05L114.84,66.64Z"/>
+                    </g>
+                  </svg>
+                </div>
+                </div>
+                <footer class="card-footer">
+                  <h1 class="card-title medium">Tuple</h1>
+                </footer>
+              </div>
+            </div>
+            <div class="flashcard-face flashcard-back">
+              <div class="card-back">
+                <span class="card-label">Rust</span>
+                <div class="back-panel">
+                  <h2 class="back-title medium">Tuple</h2>
+                  <section class="back-section">
+                    <h3>Meaning</h3>
+                    <p>A group of mixed-type values with a fixed size.</p>
+                  </section>
+                  <section class="back-section">
+                    <h3>When to use it</h3>
+                    <p>Returning multiple values from a function.</p>
+                  </section>
+                  <section class="back-section">
+                    <h3>Example</h3>
+                    <code>let pair = ("Alice", 25);</code>
+                  </section>
+                </div>
+              </div>
+            </div>
+          </div>
+        </button>
+      </div>
+
+      <!-- 13. Array -->
+      <div class="card-shell-wrap">
+        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="Array">
+          <div class="flashcard-inner">
+            <div class="flashcard-face">
+              <div class="card-front">
+                <span class="card-label">Rust</span>
+                <div class="card-panel">
+                  <div class="card-icon" aria-hidden="true">
+                  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;">
+                    <g transform="matrix(1.913876,0,0,1.913876,-35.980861,-35.789474)" fill="currentColor">
+                      <path d="M71.05,23.68C44.99,23.68 23.78,44.9 23.78,70.95C23.78,97 45,118.22 71.05,118.22C97.1,118.22 118.32,97 118.32,70.95C118.32,44.9 97.1,23.68 71.05,23.68ZM70.98,27.88C72.65,27.923 74.001,29.314 74,30.99C74,32.696 72.596,34.1 70.89,34.1C69.184,34.1 67.78,32.696 67.78,30.99C67.78,30.99 67.78,30.989 67.78,30.989C67.78,29.283 69.184,27.879 70.89,27.879C70.92,27.879 70.95,27.879 70.98,27.88ZM78.1,33C89.144,35.069 98.735,41.899 104.3,51.66L100.63,59.94C100,61.37 100.65,63.05 102.07,63.69L109.13,66.82C109.349,69.027 109.376,71.249 109.21,73.46L105.28,73.46C104.89,73.46 104.73,73.72 104.73,74.1L104.73,75.9C104.73,80.14 102.34,81.07 100.24,81.3C98.24,81.53 96.03,80.46 95.75,79.24C94.57,72.61 92.61,71.2 89.51,68.75C93.36,66.31 97.36,62.7 97.36,57.88C97.36,52.67 93.79,49.39 91.36,47.78C87.94,45.53 84.16,45.08 83.14,45.08L42.54,45.08C48.153,38.81 55.681,34.562 63.95,33L68.74,38.02C69.82,39.15 71.61,39.2 72.74,38.11L78.1,33ZM33.9,56.02C35.572,56.068 36.921,57.457 36.92,59.13C36.92,60.836 35.516,62.24 33.81,62.24C32.104,62.24 30.7,60.836 30.7,59.13C30.7,59.13 30.7,59.129 30.7,59.129C30.7,57.423 32.104,56.019 33.81,56.019C33.84,56.019 33.87,56.019 33.9,56.02ZM108.05,56.16C109.722,56.208 111.071,57.597 111.07,59.27C111.07,60.976 109.666,62.38 107.96,62.38C106.254,62.38 104.85,60.976 104.85,59.27C104.85,59.27 104.85,59.269 104.85,59.269C104.85,57.563 106.254,56.159 107.96,56.159C107.99,56.159 108.02,56.159 108.05,56.16ZM39.76,56.66L45.18,56.66L45.18,81.1L34.24,81.1C32.889,76.356 32.468,71.394 33,66.49L39.7,63.51C41.13,62.87 41.78,61.2 41.14,59.77L39.76,56.66ZM62.38,56.92L75.29,56.92C75.96,56.92 80,57.69 80,60.72C80,63.23 76.9,64.13 74.35,64.13L62.37,64.13L62.38,56.92ZM62.38,74.48L72.27,74.48C73.17,74.48 77.1,74.74 78.35,79.76C78.74,81.3 79.61,86.32 80.2,87.93C80.79,89.73 83.18,93.33 85.73,93.33L101.87,93.33C100.788,94.779 99.605,96.149 98.33,97.43L91.76,96.02C90.23,95.69 88.72,96.67 88.39,98.2L86.83,105.48C76.684,110.076 65.022,110.021 54.92,105.33L53.36,98.05C53.03,96.52 51.53,95.54 50,95.87L43.57,97.25C42.377,96.019 41.268,94.71 40.25,93.33L71.52,93.33C71.87,93.33 72.11,93.27 72.11,92.94L72.11,81.88C72.11,81.56 71.87,81.49 71.52,81.49L62.37,81.49L62.38,74.48ZM47.95,99.81C49.622,99.858 50.971,101.247 50.97,102.92C50.97,104.626 49.566,106.03 47.86,106.03C46.154,106.03 44.75,104.626 44.75,102.92C44.75,102.92 44.75,102.919 44.75,102.919C44.75,101.213 46.154,99.809 47.86,99.809C47.89,99.809 47.92,99.809 47.95,99.81ZM94,99.95C95.672,99.998 97.021,101.387 97.02,103.06C97.02,104.766 95.616,106.17 93.91,106.17C92.204,106.17 90.8,104.766 90.8,103.06C90.8,103.06 90.8,103.059 90.8,103.059C90.8,101.353 92.204,99.949 93.91,99.949C93.94,99.949 93.97,99.949 94,99.95Z" style="fill-rule:nonzero;"/>
+                    </g>
+                    <g transform="matrix(1.913876,0,0,1.913876,-35.980861,-35.789474)" fill="currentColor" style="stroke:currentColor;stroke-width:3px;">
+                      <path d="M115.68,70.95C115.68,95.433 95.533,115.58 71.05,115.58C46.567,115.58 26.42,95.433 26.42,70.95C26.42,46.467 46.567,26.32 71.05,26.32C95.533,26.32 115.68,46.467 115.68,70.95ZM114.84,66.64L121.8,70.95L114.84,75.26L120.82,80.85L113.16,83.72L117.94,90.37L109.85,91.69L113.25,99.15L105.06,98.86L106.94,106.84L98.96,104.96L99.25,113.15L91.79,109.75L90.47,117.84L83.82,113.06L80.95,120.72L75.36,114.74L71.05,121.7L66.74,114.74L61.15,120.72L58.28,113.06L51.63,117.84L50.31,109.75L42.85,113.15L43.14,104.96L35.16,106.84L37.04,98.86L28.85,99.15L32.25,91.69L24.16,90.37L28.94,83.72L21.28,80.85L27.26,75.26L20.3,70.95L27.26,66.64L21.28,61.05L28.94,58.18L24.16,51.53L32.25,50.21L28.85,42.75L37.04,43.04L35.16,35.06L43.14,36.94L42.85,28.75L50.31,32.15L51.63,24.06L58.28,28.84L61.15,21.18L66.74,27.16L71.05,20.2L75.36,27.16L80.95,21.18L83.82,28.84L90.47,24.06L91.79,32.15L99.25,28.75L98.96,36.94L106.94,35.06L105.06,43.04L113.25,42.75L109.85,50.21L117.94,51.53L113.16,58.18L120.82,61.05L114.84,66.64Z"/>
+                    </g>
+                  </svg>
+                </div>
+                </div>
+                <footer class="card-footer">
+                  <h1 class="card-title medium">Array</h1>
+                </footer>
+              </div>
+            </div>
+            <div class="flashcard-face flashcard-back">
+              <div class="card-back">
+                <span class="card-label">Rust</span>
+                <div class="back-panel">
+                  <h2 class="back-title medium">Array</h2>
+                  <section class="back-section">
+                    <h3>Meaning</h3>
+                    <p>A fixed list where every item is the same type — length is part of the type.</p>
+                  </section>
+                  <section class="back-section">
+                    <h3>When to use it</h3>
+                    <p>When you know the exact number of items at compile time.</p>
+                  </section>
+                  <section class="back-section">
+                    <h3>Example</h3>
+                    <code>let scores = [10, 20, 30];</code>
+                  </section>
+                </div>
+              </div>
+            </div>
+          </div>
+        </button>
+      </div>
+
+      <!-- 14. Slice -->
+      <div class="card-shell-wrap">
+        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="Slice">
+          <div class="flashcard-inner">
+            <div class="flashcard-face">
+              <div class="card-front">
+                <span class="card-label">Rust</span>
+                <div class="card-panel">
+                  <div class="card-icon" aria-hidden="true">
+                  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;">
+                    <g transform="matrix(1.913876,0,0,1.913876,-35.980861,-35.789474)" fill="currentColor">
+                      <path d="M71.05,23.68C44.99,23.68 23.78,44.9 23.78,70.95C23.78,97 45,118.22 71.05,118.22C97.1,118.22 118.32,97 118.32,70.95C118.32,44.9 97.1,23.68 71.05,23.68ZM70.98,27.88C72.65,27.923 74.001,29.314 74,30.99C74,32.696 72.596,34.1 70.89,34.1C69.184,34.1 67.78,32.696 67.78,30.99C67.78,30.99 67.78,30.989 67.78,30.989C67.78,29.283 69.184,27.879 70.89,27.879C70.92,27.879 70.95,27.879 70.98,27.88ZM78.1,33C89.144,35.069 98.735,41.899 104.3,51.66L100.63,59.94C100,61.37 100.65,63.05 102.07,63.69L109.13,66.82C109.349,69.027 109.376,71.249 109.21,73.46L105.28,73.46C104.89,73.46 104.73,73.72 104.73,74.1L104.73,75.9C104.73,80.14 102.34,81.07 100.24,81.3C98.24,81.53 96.03,80.46 95.75,79.24C94.57,72.61 92.61,71.2 89.51,68.75C93.36,66.31 97.36,62.7 97.36,57.88C97.36,52.67 93.79,49.39 91.36,47.78C87.94,45.53 84.16,45.08 83.14,45.08L42.54,45.08C48.153,38.81 55.681,34.562 63.95,33L68.74,38.02C69.82,39.15 71.61,39.2 72.74,38.11L78.1,33ZM33.9,56.02C35.572,56.068 36.921,57.457 36.92,59.13C36.92,60.836 35.516,62.24 33.81,62.24C32.104,62.24 30.7,60.836 30.7,59.13C30.7,59.13 30.7,59.129 30.7,59.129C30.7,57.423 32.104,56.019 33.81,56.019C33.84,56.019 33.87,56.019 33.9,56.02ZM108.05,56.16C109.722,56.208 111.071,57.597 111.07,59.27C111.07,60.976 109.666,62.38 107.96,62.38C106.254,62.38 104.85,60.976 104.85,59.27C104.85,59.27 104.85,59.269 104.85,59.269C104.85,57.563 106.254,56.159 107.96,56.159C107.99,56.159 108.02,56.159 108.05,56.16ZM39.76,56.66L45.18,56.66L45.18,81.1L34.24,81.1C32.889,76.356 32.468,71.394 33,66.49L39.7,63.51C41.13,62.87 41.78,61.2 41.14,59.77L39.76,56.66ZM62.38,56.92L75.29,56.92C75.96,56.92 80,57.69 80,60.72C80,63.23 76.9,64.13 74.35,64.13L62.37,64.13L62.38,56.92ZM62.38,74.48L72.27,74.48C73.17,74.48 77.1,74.74 78.35,79.76C78.74,81.3 79.61,86.32 80.2,87.93C80.79,89.73 83.18,93.33 85.73,93.33L101.87,93.33C100.788,94.779 99.605,96.149 98.33,97.43L91.76,96.02C90.23,95.69 88.72,96.67 88.39,98.2L86.83,105.48C76.684,110.076 65.022,110.021 54.92,105.33L53.36,98.05C53.03,96.52 51.53,95.54 50,95.87L43.57,97.25C42.377,96.019 41.268,94.71 40.25,93.33L71.52,93.33C71.87,93.33 72.11,93.27 72.11,92.94L72.11,81.88C72.11,81.56 71.87,81.49 71.52,81.49L62.37,81.49L62.38,74.48ZM47.95,99.81C49.622,99.858 50.971,101.247 50.97,102.92C50.97,104.626 49.566,106.03 47.86,106.03C46.154,106.03 44.75,104.626 44.75,102.92C44.75,102.92 44.75,102.919 44.75,102.919C44.75,101.213 46.154,99.809 47.86,99.809C47.89,99.809 47.92,99.809 47.95,99.81ZM94,99.95C95.672,99.998 97.021,101.387 97.02,103.06C97.02,104.766 95.616,106.17 93.91,106.17C92.204,106.17 90.8,104.766 90.8,103.06C90.8,103.06 90.8,103.059 90.8,103.059C90.8,101.353 92.204,99.949 93.91,99.949C93.94,99.949 93.97,99.949 94,99.95Z" style="fill-rule:nonzero;"/>
+                    </g>
+                    <g transform="matrix(1.913876,0,0,1.913876,-35.980861,-35.789474)" fill="currentColor" style="stroke:currentColor;stroke-width:3px;">
+                      <path d="M115.68,70.95C115.68,95.433 95.533,115.58 71.05,115.58C46.567,115.58 26.42,95.433 26.42,70.95C26.42,46.467 46.567,26.32 71.05,26.32C95.533,26.32 115.68,46.467 115.68,70.95ZM114.84,66.64L121.8,70.95L114.84,75.26L120.82,80.85L113.16,83.72L117.94,90.37L109.85,91.69L113.25,99.15L105.06,98.86L106.94,106.84L98.96,104.96L99.25,113.15L91.79,109.75L90.47,117.84L83.82,113.06L80.95,120.72L75.36,114.74L71.05,121.7L66.74,114.74L61.15,120.72L58.28,113.06L51.63,117.84L50.31,109.75L42.85,113.15L43.14,104.96L35.16,106.84L37.04,98.86L28.85,99.15L32.25,91.69L24.16,90.37L28.94,83.72L21.28,80.85L27.26,75.26L20.3,70.95L27.26,66.64L21.28,61.05L28.94,58.18L24.16,51.53L32.25,50.21L28.85,42.75L37.04,43.04L35.16,35.06L43.14,36.94L42.85,28.75L50.31,32.15L51.63,24.06L58.28,28.84L61.15,21.18L66.74,27.16L71.05,20.2L75.36,27.16L80.95,21.18L83.82,28.84L90.47,24.06L91.79,32.15L99.25,28.75L98.96,36.94L106.94,35.06L105.06,43.04L113.25,42.75L109.85,50.21L117.94,51.53L113.16,58.18L120.82,61.05L114.84,66.64Z"/>
+                    </g>
+                  </svg>
+                </div>
+                </div>
+                <footer class="card-footer">
+                  <h1 class="card-title medium">Slice</h1>
+                </footer>
+              </div>
+            </div>
+            <div class="flashcard-face flashcard-back">
+              <div class="card-back">
+                <span class="card-label">Rust</span>
+                <div class="back-panel">
+                  <h2 class="back-title medium">Slice</h2>
+                  <section class="back-section">
+                    <h3>Meaning</h3>
+                    <p>A borrowed window into part of an array — does not take ownership.</p>
+                  </section>
+                  <section class="back-section">
+                    <h3>When to use it</h3>
+                    <p>When you need part of an array without copying it.</p>
+                  </section>
+                  <section class="back-section">
+                    <h3>Example</h3>
+                    <code>&amp;scores[1..3]</code>
+                  </section>
+                </div>
+              </div>
+            </div>
+          </div>
+        </button>
+      </div>
+
+      <!-- 15. println! -->
       <div class="card-shell-wrap">
         <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="println!">
           <div class="flashcard-inner">
@@ -818,11 +941,59 @@
                   </section>
                   <section class="back-section">
                     <h3>When to use it</h3>
-                    <p>When you want to see output or check what a value is during development.</p>
+                    <p>Debugging or showing output during development.</p>
                   </section>
                   <section class="back-section">
                     <h3>Example</h3>
                     <code>println!("{}", name);</code>
+                  </section>
+                </div>
+              </div>
+            </div>
+          </div>
+        </button>
+      </div>
+
+      <!-- 16. {:?} -->
+      <div class="card-shell-wrap">
+        <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="Debug format">
+          <div class="flashcard-inner">
+            <div class="flashcard-face">
+              <div class="card-front">
+                <span class="card-label">Rust</span>
+                <div class="card-panel">
+                  <div class="card-icon" aria-hidden="true">
+                  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;">
+                    <g transform="matrix(1.913876,0,0,1.913876,-35.980861,-35.789474)" fill="currentColor">
+                      <path d="M71.05,23.68C44.99,23.68 23.78,44.9 23.78,70.95C23.78,97 45,118.22 71.05,118.22C97.1,118.22 118.32,97 118.32,70.95C118.32,44.9 97.1,23.68 71.05,23.68ZM70.98,27.88C72.65,27.923 74.001,29.314 74,30.99C74,32.696 72.596,34.1 70.89,34.1C69.184,34.1 67.78,32.696 67.78,30.99C67.78,30.99 67.78,30.989 67.78,30.989C67.78,29.283 69.184,27.879 70.89,27.879C70.92,27.879 70.95,27.879 70.98,27.88ZM78.1,33C89.144,35.069 98.735,41.899 104.3,51.66L100.63,59.94C100,61.37 100.65,63.05 102.07,63.69L109.13,66.82C109.349,69.027 109.376,71.249 109.21,73.46L105.28,73.46C104.89,73.46 104.73,73.72 104.73,74.1L104.73,75.9C104.73,80.14 102.34,81.07 100.24,81.3C98.24,81.53 96.03,80.46 95.75,79.24C94.57,72.61 92.61,71.2 89.51,68.75C93.36,66.31 97.36,62.7 97.36,57.88C97.36,52.67 93.79,49.39 91.36,47.78C87.94,45.53 84.16,45.08 83.14,45.08L42.54,45.08C48.153,38.81 55.681,34.562 63.95,33L68.74,38.02C69.82,39.15 71.61,39.2 72.74,38.11L78.1,33ZM33.9,56.02C35.572,56.068 36.921,57.457 36.92,59.13C36.92,60.836 35.516,62.24 33.81,62.24C32.104,62.24 30.7,60.836 30.7,59.13C30.7,59.13 30.7,59.129 30.7,59.129C30.7,57.423 32.104,56.019 33.81,56.019C33.84,56.019 33.87,56.019 33.9,56.02ZM108.05,56.16C109.722,56.208 111.071,57.597 111.07,59.27C111.07,60.976 109.666,62.38 107.96,62.38C106.254,62.38 104.85,60.976 104.85,59.27C104.85,59.27 104.85,59.269 104.85,59.269C104.85,57.563 106.254,56.159 107.96,56.159C107.99,56.159 108.02,56.159 108.05,56.16ZM39.76,56.66L45.18,56.66L45.18,81.1L34.24,81.1C32.889,76.356 32.468,71.394 33,66.49L39.7,63.51C41.13,62.87 41.78,61.2 41.14,59.77L39.76,56.66ZM62.38,56.92L75.29,56.92C75.96,56.92 80,57.69 80,60.72C80,63.23 76.9,64.13 74.35,64.13L62.37,64.13L62.38,56.92ZM62.38,74.48L72.27,74.48C73.17,74.48 77.1,74.74 78.35,79.76C78.74,81.3 79.61,86.32 80.2,87.93C80.79,89.73 83.18,93.33 85.73,93.33L101.87,93.33C100.788,94.779 99.605,96.149 98.33,97.43L91.76,96.02C90.23,95.69 88.72,96.67 88.39,98.2L86.83,105.48C76.684,110.076 65.022,110.021 54.92,105.33L53.36,98.05C53.03,96.52 51.53,95.54 50,95.87L43.57,97.25C42.377,96.019 41.268,94.71 40.25,93.33L71.52,93.33C71.87,93.33 72.11,93.27 72.11,92.94L72.11,81.88C72.11,81.56 71.87,81.49 71.52,81.49L62.37,81.49L62.38,74.48ZM47.95,99.81C49.622,99.858 50.971,101.247 50.97,102.92C50.97,104.626 49.566,106.03 47.86,106.03C46.154,106.03 44.75,104.626 44.75,102.92C44.75,102.92 44.75,102.919 44.75,102.919C44.75,101.213 46.154,99.809 47.86,99.809C47.89,99.809 47.92,99.809 47.95,99.81ZM94,99.95C95.672,99.998 97.021,101.387 97.02,103.06C97.02,104.766 95.616,106.17 93.91,106.17C92.204,106.17 90.8,104.766 90.8,103.06C90.8,103.06 90.8,103.059 90.8,103.059C90.8,101.353 92.204,99.949 93.91,99.949C93.94,99.949 93.97,99.949 94,99.95Z" style="fill-rule:nonzero;"/>
+                    </g>
+                    <g transform="matrix(1.913876,0,0,1.913876,-35.980861,-35.789474)" fill="currentColor" style="stroke:currentColor;stroke-width:3px;">
+                      <path d="M115.68,70.95C115.68,95.433 95.533,115.58 71.05,115.58C46.567,115.58 26.42,95.433 26.42,70.95C26.42,46.467 46.567,26.32 71.05,26.32C95.533,26.32 115.68,46.467 115.68,70.95ZM114.84,66.64L121.8,70.95L114.84,75.26L120.82,80.85L113.16,83.72L117.94,90.37L109.85,91.69L113.25,99.15L105.06,98.86L106.94,106.84L98.96,104.96L99.25,113.15L91.79,109.75L90.47,117.84L83.82,113.06L80.95,120.72L75.36,114.74L71.05,121.7L66.74,114.74L61.15,120.72L58.28,113.06L51.63,117.84L50.31,109.75L42.85,113.15L43.14,104.96L35.16,106.84L37.04,98.86L28.85,99.15L32.25,91.69L24.16,90.37L28.94,83.72L21.28,80.85L27.26,75.26L20.3,70.95L27.26,66.64L21.28,61.05L28.94,58.18L24.16,51.53L32.25,50.21L28.85,42.75L37.04,43.04L35.16,35.06L43.14,36.94L42.85,28.75L50.31,32.15L51.63,24.06L58.28,28.84L61.15,21.18L66.74,27.16L71.05,20.2L75.36,27.16L80.95,21.18L83.82,28.84L90.47,24.06L91.79,32.15L99.25,28.75L98.96,36.94L106.94,35.06L105.06,43.04L113.25,42.75L109.85,50.21L117.94,51.53L113.16,58.18L120.82,61.05L114.84,66.64Z"/>
+                    </g>
+                  </svg>
+                </div>
+                </div>
+                <footer class="card-footer">
+                  <h1 class="card-title medium">{:?}</h1>
+                </footer>
+              </div>
+            </div>
+            <div class="flashcard-face flashcard-back">
+              <div class="card-back">
+                <span class="card-label">Rust</span>
+                <div class="back-panel">
+                  <h2 class="back-title medium">{:?}</h2>
+                  <section class="back-section">
+                    <h3>Meaning</h3>
+                    <p>Debug print format — prints arrays and tuples that <code>{}</code> cannot handle.</p>
+                  </section>
+                  <section class="back-section">
+                    <h3>When to use it</h3>
+                    <p>When <code>{}</code> gives an error — swap it for <code>{:?}</code> to print complex types.</p>
+                  </section>
+                  <section class="back-section">
+                    <h3>Example</h3>
+                    <code>println!("{:?}", scores);</code>
                   </section>
                 </div>
               </div>

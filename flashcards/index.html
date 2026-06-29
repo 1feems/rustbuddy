@@ -191,6 +191,16 @@
     .deck-cyan  .card-name { color: #171714; }
     .deck-orange .card-name,
     .deck-pink   .card-name { color: #FFFFFF; }
+
+    /* ── Coming Soon ── */
+    .deck-card.soon {
+      opacity: 0.45;
+      pointer-events: none;
+      cursor: default;
+    }
+    .deck-card.soon .card-count {
+      letter-spacing: 0.06em;
+    }
   </style>
 </head>
 <body>
@@ -223,8 +233,24 @@
   <section class="cards-section">
     <div class="cards-grid">
 
-      <!-- 01 Values & Numbers — Lime · tag + circles -->
-      <a href="values-numbers.html" class="deck-card deck-lime">
+      <!-- 01 Variables — Lime · tag + squares (live) -->
+      <a href="variables.html" class="deck-card deck-lime">
+        <div class="card-top">
+          <span class="card-count">11 Terms</span>
+          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </div>
+        <div class="card-icon">
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+            <rect x="8" y="8" width="64" height="64" rx="4" class="icon-shape" fill="none" stroke-width="5"/>
+            <rect x="22" y="22" width="36" height="36" rx="3" class="icon-shape" fill="none" stroke-width="5"/>
+            <rect x="33" y="33" width="14" height="14" rx="2" class="icon-shape" stroke-width="0"/>
+          </svg>
+        </div>
+        <p class="card-name">Variables</p>
+      </a>
+
+      <!-- 02 Values & Numbers — Lime · tag + circles (coming soon) -->
+      <a href="values-numbers.html" class="deck-card deck-lime soon">
         <div class="card-top">
           <span class="card-count">16 Terms</span>
           <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -240,7 +266,7 @@
       </a>
 
       <!-- 02 Types & Output — Orange · circle + stacked bars -->
-      <a href="types-output.html" class="deck-card deck-orange">
+      <a href="types-output.html" class="deck-card deck-orange soon">
         <div class="card-top">
           <span class="card-count">15 Terms</span>
           <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -257,7 +283,7 @@
       </a>
 
       <!-- 03 Functions — Cyan · solid arrow right -->
-      <a href="functions.html" class="deck-card deck-gold">
+      <a href="functions.html" class="deck-card deck-gold soon">
         <div class="card-top">
           <span class="card-count">11 Terms</span>
           <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -271,7 +297,7 @@
       </a>
 
       <!-- 04 Ownership — Lime · solid upward triangle -->
-      <a href="ownership.html" class="deck-card deck-lime">
+      <a href="ownership.html" class="deck-card deck-lime soon">
         <div class="card-top">
           <span class="card-count">12 Terms</span>
           <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -285,7 +311,7 @@
       </a>
 
       <!-- 05 Borrowing — Orange · curved return arrow -->
-      <a href="borrowing.html" class="deck-card deck-orange">
+      <a href="borrowing.html" class="deck-card deck-orange soon">
         <div class="card-top">
           <span class="card-count">11 Terms</span>
           <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -300,7 +326,7 @@
       </a>
 
       <!-- 06 String vs &str — Cyan · horizontal stripes -->
-      <a href="string-vs-str.html" class="deck-card deck-cyan">
+      <a href="string-vs-str.html" class="deck-card deck-cyan soon">
         <div class="card-top">
           <span class="card-count">10 Terms</span>
           <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -317,7 +343,7 @@
       </a>
 
       <!-- 07 Slices — Pink · grid of dots -->
-      <a href="slices.html" class="deck-card deck-pink">
+      <a href="slices.html" class="deck-card deck-pink soon">
         <div class="card-top">
           <span class="card-count">10 Terms</span>
           <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -347,7 +373,7 @@
       </a>
 
       <!-- 08 Tuples — Gold · two circles -->
-      <a href="tuples.html" class="deck-card deck-gold">
+      <a href="tuples.html" class="deck-card deck-gold soon">
         <div class="card-top">
           <span class="card-count">10 Terms</span>
           <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -362,7 +388,7 @@
       </a>
 
       <!-- 09 Structs — Lime · 2×2 block grid -->
-      <a href="structs.html" class="deck-card deck-lime">
+      <a href="structs.html" class="deck-card deck-lime soon">
         <div class="card-top">
           <span class="card-count">12 Terms</span>
           <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -379,7 +405,7 @@
       </a>
 
       <!-- 10 Enums — Orange · quarter-circle fork -->
-      <a href="enums.html" class="deck-card deck-orange">
+      <a href="enums.html" class="deck-card deck-orange soon">
         <div class="card-top">
           <span class="card-count">11 Terms</span>
           <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -399,7 +425,7 @@
       </a>
 
       <!-- 11 Option — Cyan · filled + dashed circle -->
-      <a href="option.html" class="deck-card deck-cyan">
+      <a href="option.html" class="deck-card deck-cyan soon">
         <div class="card-top">
           <span class="card-count">10 Terms</span>
           <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -415,7 +441,7 @@
       </a>
 
       <!-- 12 Flow Control — Pink · solid diamond -->
-      <a href="flow-control.html" class="deck-card deck-pink">
+      <a href="flow-control.html" class="deck-card deck-pink soon">
         <div class="card-top">
           <span class="card-count">11 Terms</span>
           <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -429,7 +455,7 @@
       </a>
 
       <!-- 13 Anchor + Solana — Gold · plus / anchor cross -->
-      <a href="anchor-solana.html" class="deck-card deck-gold">
+      <a href="anchor-solana.html" class="deck-card deck-gold soon">
         <div class="card-top">
           <span class="card-count">12 Terms</span>
           <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
