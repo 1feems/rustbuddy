@@ -31,9 +31,14 @@
     .site-header {
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: space-between;
       padding: 16px 32px;
       border-bottom: 1px solid var(--color-border);
+    }
+    .site-header-left { display: flex; align-items: center; gap: 10px; }
+    .site-name {
+      font-size: 15px; font-weight: 700; letter-spacing: -0.02em;
+      text-decoration: none; color: var(--color-ink);
     }
     .back-link {
       font-size: 14px;
@@ -43,7 +48,14 @@
     }
     .back-link:hover { color: var(--color-ink); }
     .header-sep { color: var(--color-muted); font-size: 14px; }
-    .header-title { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+    .header-title { font-size: 14px; font-weight: 500; color: var(--color-muted); }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-link {
+      font-size: 13px; font-weight: 600; color: var(--color-muted);
+      text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase;
+    }
+    .nav-link:hover { color: var(--color-ink); }
+    .nav-link.active { color: var(--color-primary); }
 
     /* ── Main ── */
     .main {
@@ -404,9 +416,18 @@
 <body>
 
 <header class="site-header">
-  <a href="index.html" class="back-link">← Rust Bud</a>
-  <span class="header-sep">/</span>
-  <span class="header-title">Rust: Variables</span>
+  <div class="site-header-left">
+    <a href="../index.html" class="site-name">Rust Buddy</a>
+    <span class="header-sep">/</span>
+    <a href="index.html" class="back-link">Exercises</a>
+    <span class="header-sep">/</span>
+    <span class="header-title">Variables</span>
+  </div>
+  <nav class="nav-links">
+    <a href="index.html" class="nav-link active">Exercises</a>
+    <a href="../flashcards/index.html" class="nav-link">Flashcards</a>
+    <a href="../resources/index.html" class="nav-link">Resources</a>
+  </nav>
 </header>
 
 <main class="main">

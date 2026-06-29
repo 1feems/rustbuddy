@@ -55,6 +55,13 @@
       background: var(--color-secondary);
       padding: 4px 10px; border-radius: 100px;
     }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-link {
+      font-size: 13px; font-weight: 600; color: var(--color-muted);
+      text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase;
+    }
+    .nav-link:hover { color: var(--color-ink); }
+    .nav-link.active { color: var(--color-primary); }
 
     /* ── Page header ── */
     .page-header {
@@ -240,11 +247,17 @@
   <!-- Nav -->
   <header class="site-header">
     <div class="site-header-left">
+      <a href="../index.html" class="back-link" style="font-weight:700;color:var(--color-ink);font-size:15px;letter-spacing:-0.02em;">Rust Buddy</a>
+      <span class="header-sep">/</span>
       <a href="index.html" class="back-link">Flashcards</a>
       <span class="header-sep">/</span>
       <span class="header-title">Variables</span>
     </div>
-    <span class="card-count-badge">11 Terms</span>
+    <nav class="nav-links">
+      <a href="../exercises/index.html" class="nav-link">Exercises</a>
+      <a href="index.html" class="nav-link active">Flashcards</a>
+      <a href="../resources/index.html" class="nav-link">Resources</a>
+    </nav>
   </header>
 
   <!-- Page header -->
