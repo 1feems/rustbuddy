@@ -3,7 +3,7 @@
 > Read this every session before touching anything in `game/`.
 > This is the game's source of truth. Root `HANDOFF.md` points here.
 
-Last updated: 2026-06-29
+Last updated: 2026-06-29 (session 2)
 
 ---
 
@@ -13,7 +13,7 @@ A web-based Rust learning platform with four products:
 
 | Product | Subfolder | Status |
 |---|---|---|
-| Exercise Pages | `game/exercises/` | In progress — 1 built, 3 drafted |
+| Exercise Pages | `game/exercises/` | In progress — 4 built, ready to push |
 | Flashcard Decks | `game/flashcards/` | In progress — landing + Variables deck built |
 | Resources | `game/resources/` | Not yet built |
 | Game Levels | `game/levels/` | Level 1 built (old style, needs reskin) |
@@ -40,9 +40,9 @@ Deployment: Vercel — **not yet connected** ← NEXT STEP
 | `game/index.html` | Home page | ✅ Pushed — Ferris logo, hero, 3 product cards (Exercises, Flashcards, Resources) |
 | `game/exercises/index.html` | Exercise landing | ✅ Pushed — 4 topic cards (Variables, Numbers, Chars & Bools, Statements & Expressions) |
 | `game/exercises/variables.html` | Exercise page | ✅ Pushed — canonical template for all exercise pages |
-| `game/exercises/numbers.html` | Exercise page | Draft — not yet committed |
-| `game/exercises/chars-bools.html` | Exercise page | Draft — not yet committed |
-| `game/exercises/statements-expressions.html` | Exercise page | Draft — not yet committed |
+| `game/exercises/numbers.html` | Exercise page | Updated — ready to push |
+| `game/exercises/chars-bools.html` | Exercise page | Updated — ready to push |
+| `game/exercises/statements-expressions.html` | Exercise page | Updated — ready to push |
 | `game/flashcards/index.html` | Flashcard landing | ✅ Pushed — 15 deck cards, Bauhaus icons, term counts |
 | `game/flashcards/variables.html` | Flashcard deck | ✅ Pushed — 11 cards, lime gradient, CSS 3D flip |
 | `game/levels/level-01-data-types-functions.html` | Game level | ✅ Pushed — old style, reskin later |
@@ -60,15 +60,20 @@ Deployment: Vercel — **not yet connected** ← NEXT STEP
    - Click Deploy
    - Every `git push origin main` auto-redeploys after this
 
-### Phase 5 — Build Remaining Exercise Pages
+### Phase 5 — Exercise Pages ✅ Complete (2026-06-29)
 
-Build these three pages using `exercises/variables.html` as the template. Each page follows the exact same structure — only the title, exercises, and code change.
+All four exercise pages built and standardized:
+- `variables.html`, `numbers.html`, `chars-bools.html`, `statements-expressions.html`
 
-2. **`game/exercises/numbers.html`** — Numbers exercise page
-3. **`game/exercises/chars-bools.html`** — Chars & Bools exercise page
-4. **`game/exercises/statements-expressions.html`** — Statements & Expressions exercise page
+**Standards applied to all four pages:**
+- 4 tabs: Overview · Exercises · Answers · Terms to Know
+- Header: `Rust Buddy / Exercises / [Topic]` breadcrumb left, nav links right
+- Overview tab: topic label + headline + description + Quick Reference table
+- Task format: scenario context → "Right now it fails because..." → numbered steps. No "The code wants to:" language.
+- Playground hint: "Clear the Playground on the right and paste this code to begin." above every starter code block
+- No em dashes in Terms to Know or Overview content
 
-After each page: commit + push so it's live on Vercel immediately.
+**Next:** Commit + push all four files, then move to Phase 6 (flashcard decks).
 
 ### Phase 6 — Build Remaining Flashcard Decks
 

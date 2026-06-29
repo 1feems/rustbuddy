@@ -30,14 +30,13 @@ In Rust, every number has a type. The type tells Rust two things: how big the nu
 
 The default integer type in Rust is `i32`. If you don't write a type annotation, Rust picks `i32` for you.
 
-In a Solana contract, payment amounts are stored as `u64`, a large always-positive number. You can never owe a negative number of lamports.
+#### Your Task
 
-The code below wants to:
+A payment contract needs to track a negative balance adjustment and a final payment amount. Right now it fails because `amount` is typed as `i32` but is assigned a `u64` value, and `adjustment` has no type annotation.
+
 1. Store a negative balance adjustment as `i32`
 2. Store a payment amount as `u64`
 3. Print both
-
-Right now it fails because `amount` is typed as `i32` but is assigned a `u64` value, and `adjustment` has no type annotation.
 
 **Fill in the two blanks so the code compiles and prints both values:**
 
@@ -81,12 +80,13 @@ Rust infers the type of a variable from what you assign to it. If you write `let
 
 You cannot assign a variable of one type to a variable of a different type. Rust will refuse to compile. The fix is either to remove the type annotation and let Rust infer, or to cast the value using `as`.
 
-The code below wants to:
+#### Your Task
+
+Three variables should share the same type so they can be assigned to each other in a chain. Right now it fails because you cannot assign an `i32` directly to a `u32` variable.
+
 1. Set `x` to `5` (Rust infers `i32`)
 2. Assign `x` to `y`, which is typed as `u32`
 3. Store `z` by inferring its type from `y`
-
-Right now it fails because you cannot assign an `i32` directly to a `u32` variable.
 
 **Remove the type annotation from `y` so Rust infers the same type as `x`:**
 
@@ -129,12 +129,13 @@ Sometimes you need to convert a number from one type to another, for example, tu
 
 Think of `as` like a label swap: you are telling Rust "treat this value as this other type."
 
-The code below wants to:
+#### Your Task
+
+A fee starts as `i32` and needs to be converted to `u64` before printing. Right now `lamports` is missing the cast.
+
 1. Start with `fee` as an `i32`
 2. Convert it to `u64` using `as` and store it in `lamports`
 3. Print the lamport value
-
-Right now `lamports` is missing the cast.
 
 **Fill in the blank to convert `fee` to `u64`:**
 
@@ -173,14 +174,13 @@ Every integer type has a maximum value it can hold. A `u8` can only go up to 255
 
 The fix is to use a bigger type. `u16` can hold up to 65,535. `u64` can hold numbers in the quintillions, more than enough for any payment amount.
 
-In Solana, lamports are `u64` because subscription amounts, fees, and balances can grow very large. Using a type that's too small would cause your contract to panic.
+#### Your Task
 
-The code below wants to:
+A contract adds a base amount and a fee. The result is 270, but both variables are typed as `u8`, which only holds up to 255. Right now it fails because `base` is typed as `u8` and the result overflows.
+
 1. Add `base` and `fee` together
 2. Store the result in `total`
 3. Print the total
-
-Right now it fails because `base` is typed as `u8` and the result overflows.
 
 **Change one type annotation so the addition works:**
 
@@ -223,12 +223,13 @@ Rust has two floating-point types: `f32` and `f64`. A floating-point number is a
 
 The rule that matters most: **you cannot mix a float and an integer in math without converting first**. `9.99 * 3` will not compile because `f64` and `i32` are different types. You must cast the integer to a float using `as f64`.
 
-The code below wants to:
+#### Your Task
+
+A price (`f64`) needs to be multiplied by a quantity (integer). Right now it fails because `quantity` is an `i32` and Rust will not multiply it by an `f64` directly.
+
 1. Multiply a price (`f64`) by a quantity (integer)
 2. Store the result in `total`
 3. Print `Total: 29.97`
-
-Right now it fails because `quantity` is an `i32` and Rust will not multiply it by an `f64` directly.
 
 **Add one cast so the multiplication compiles:**
 
@@ -277,13 +278,14 @@ You now know the five things that matter for numbers in a Solana contract:
 
 This exercise puts them together. The contract below tracks a subscription payment: a base amount, a discount to subtract, and a final total.
 
-The code below wants to:
+#### Your Task
+
+A subscription payment contract tracks a base amount, a discount to subtract, and a final total. Right now all three variables are missing type annotations, and `total` is not computed.
+
 1. Set `base_amount` to `1_000_000` lamports (`u64`)
 2. Set `discount` to `50_000` (`u64`)
 3. Compute `total` as `base_amount - discount`
 4. Print `Payment: 950000 lamports`
-
-Right now all three variables are missing type annotations, and `total` is not computed.
 
 **Fill in the blanks so the code compiles and prints the correct total:**
 

@@ -27,12 +27,13 @@ A `char` is a single character, one letter, one digit, one symbol. In Rust, ever
 
 The important rule: a `char` is always written in **single quotes** `'a'`. Double quotes `"a"` are for strings, a completely different type. If you use double quotes for a char, Rust will refuse to compile.
 
-The code below wants to:
+#### Your Task
+
+A function prints a single character, but `letter` is assigned with double quotes instead of single quotes. Right now it fails because `letter` is using double quotes instead of single quotes.
+
 1. Store the letter `A` as a `char`
 2. Pass it to a function that expects a `char`
 3. Print `Got: A`
-
-Right now it fails because `letter` is using double quotes instead of single quotes.
 
 **Change one character pair so `letter` is a valid `char`:**
 
@@ -86,12 +87,13 @@ A `bool` holds exactly one of two values: `true` or `false`. Nothing in between.
 
 The `!` operator flips a bool. `!true` becomes `false`. `!false` becomes `true`. Think of it like flipping a switch.
 
-The code below wants to:
+#### Your Task
+
+A subscription check should only print when the account is active. Right now it fails to print because the condition uses `!is_active`, which flips the value to `false`.
+
 1. Set `is_active` to `true`
 2. Print `"Subscription is active."` only when `is_active` is true
 3. Not print anything if `is_active` is false
-
-Right now it fails to print because the condition uses `!is_active`, which flips the value to `false`.
 
 **Remove one character so the correct line prints:**
 
@@ -134,10 +136,12 @@ The `&&` operator (AND) takes two bools and produces one. It only outputs `true`
 
 Think of it like a security check: the subscriber must have an active account AND enough funds. Both conditions must pass or the payment gets blocked.
 
-The code below wants to:
+#### Your Task
+
+A payment gate requires both the account to be active and funds to be available before approving. Right now `has_funds` is set incorrectly so the check fails.
+
 1. Check that a subscription is both active and has sufficient funds
 2. Print `"Payment approved."` only when both are true
-3. Right now `has_funds` is set incorrectly so the check fails
 
 **Fill in the blank so both conditions are true and the payment is approved:**
 
@@ -184,13 +188,14 @@ Think of it as Rust's way of saying "this function did its job but has nothing t
 
 A variable assigned the result of a function that returns nothing will hold `()`. If you try to compare it to anything else, the assertion fails.
 
-The code below wants to:
+#### Your Task
+
+A function logs a payment but returns nothing. The assert checks its return value. Right now the assert fails because `result` is compared to `5` instead of `()`.
+
 1. Call `log_payment()`, which prints but returns nothing
 2. Store the return value in `result`
 3. Assert that `result` is the unit type
 4. Print `Done.`
-
-Right now the assert fails because `result` is compared to `5` instead of `()`.
 
 **Replace `5` with the unit type so the assert passes:**
 
@@ -242,10 +247,12 @@ Compare it to AND:
 - `&&` (AND): BOTH must be true, like needing a key AND a passcode
 - `||` (OR): EITHER can be true, like a door that opens with a key OR a code
 
-The code below wants to:
+#### Your Task
+
+A subscription gate should grant access when either trial OR paid status is true. Right now it uses `&&` instead of `||`, so access is denied when only one condition is true.
+
 1. Check whether a user has trial access OR a paid account
 2. Print `"Access granted."` if either condition is true
-3. Right now it uses `&&` instead of `||`, so access is denied when only one condition is true
 
 **Change one operator so the check passes when either is true:**
 
@@ -297,13 +304,14 @@ You now know the four small types that show up constantly in contracts:
 
 This exercise puts them together. The contract checks whether a subscriber can be charged before processing a payment.
 
-The code below wants to:
+#### Your Task
+
+A subscription gate checks the plan tier and account status before charging a subscriber. Right now it has two bugs: `plan` uses double quotes, and `is_active` is set to the wrong value.
+
 1. Set `plan` to the character `'P'` (for Pro tier)
 2. Set `is_active` to `true`
 3. Check both conditions with `&&`
 4. Print `"Charging Pro subscriber."` if both pass
-
-Right now it has two bugs: `plan` uses double quotes, and `is_active` is set to the wrong value.
 
 **Fix both bugs so the payment message prints:**
 

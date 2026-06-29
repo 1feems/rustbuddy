@@ -19,11 +19,17 @@
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Inter', system-ui, sans-serif; background: var(--color-bg); color: var(--color-ink); min-height: 100vh; }
-    .site-header { display: flex; align-items: center; gap: 10px; padding: 16px 32px; border-bottom: 1px solid var(--color-border); }
+    .site-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid var(--color-border); }
+    .site-header-left { display: flex; align-items: center; gap: 10px; }
+    .site-name { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; text-decoration: none; color: var(--color-ink); }
     .back-link { font-size: 14px; color: var(--color-muted); text-decoration: none; transition: color 200ms ease; }
     .back-link:hover { color: var(--color-ink); }
     .header-sep { color: var(--color-muted); font-size: 14px; }
-    .header-title { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+    .header-title { font-size: 14px; font-weight: 500; color: var(--color-muted); }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-link { font-size: 13px; font-weight: 600; color: var(--color-muted); text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase; }
+    .nav-link:hover { color: var(--color-ink); }
+    .nav-link.active { color: var(--color-primary); }
     .main { padding: 32px; max-width: 1400px; margin: 0 auto; }
     .tab-container { border: 1px solid var(--color-border); border-radius: 20px; overflow: hidden; }
     .tab-bar { display: flex; border-bottom: 1px solid var(--color-border); }
@@ -71,6 +77,13 @@
     .answer-why-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 4px; }
     .answer-why { font-size: 14px; line-height: 1.6; color: #3a3935; }
     .answer-why code { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; background: #f0efeb; padding: 1px 5px; border-radius: 4px; color: var(--color-ink); }
+    .starter-hint { font-size: 12px; color: var(--color-muted); margin-bottom: 8px; }
+    .overview-wrap { padding: 40px 48px; max-width: 720px; }
+    .overview-topic { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 10px; }
+    .overview-headline { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .overview-desc { font-size: 16px; line-height: 1.65; color: #3a3935; margin-bottom: 36px; }
+    .overview-divider { height: 1px; background: rgba(23,23,20,0.12); margin-bottom: 28px; }
+    .overview-ref-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 16px; }
     .terms-wrap { padding: 32px; }
     .terms-table { width: 100%; border-collapse: collapse; font-size: 14px; }
     .terms-table th { text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); border-bottom: 1px solid var(--color-border); }
@@ -83,17 +96,50 @@
 <body>
 
 <header class="site-header">
-  <a href="index.html" class="back-link">← Rust Bud</a>
-  <span class="header-sep">/</span>
-  <span class="header-title">Rust: Numbers & Binary</span>
+  <div class="site-header-left">
+    <a href="../index.html" class="site-name">Rust Buddy</a>
+    <span class="header-sep">/</span>
+    <a href="index.html" class="back-link">Exercises</a>
+    <span class="header-sep">/</span>
+    <span class="header-title">Numbers & Binary</span>
+  </div>
+  <nav class="nav-links">
+    <a href="index.html" class="nav-link active">Exercises</a>
+    <a href="../flashcards/index.html" class="nav-link">Flashcards</a>
+    <a href="../resources/index.html" class="nav-link">Resources</a>
+  </nav>
 </header>
 
 <main class="main">
   <div class="tab-container">
     <div class="tab-bar">
+      <button class="tab-btn" data-tab="overview">Overview</button>
       <button class="tab-btn active" data-tab="exercises">Exercises</button>
       <button class="tab-btn" data-tab="answers">Answers</button>
       <button class="tab-btn" data-tab="terms">Terms to Know</button>
+    </div>
+
+    <div class="tab-panel" id="panel-overview">
+      <div class="overview-wrap">
+        <div class="overview-topic">Topic</div>
+        <div class="overview-headline">Number Types</div>
+        <div class="overview-desc">Every number in Rust has a type. The type tells Rust two things: how big the number can get, and whether it can go negative.</div>
+        <div class="overview-divider"></div>
+        <div class="overview-ref-label">Quick Reference</div>
+        <table class="terms-table">
+          <thead>
+            <tr><th>Concept</th><th>What it means</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>i32</td><td>A whole number, can be positive or negative</td></tr>
+            <tr><td>u64</td><td>A whole number, always positive, used for lamports</td></tr>
+            <tr><td>u8</td><td>A whole number from 0 to 255</td></tr>
+            <tr><td>f64</td><td>A decimal number</td></tr>
+            <tr><td>as</td><td>Converts a value from one number type to another</td></tr>
+            <tr><td>Overflow</td><td>When a number is too big for its type, the program panics</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <div class="tab-panel active" id="panel-exercises">
@@ -115,13 +161,13 @@
             <tr><th>Term</th><th>What it means</th><th>When you use it</th></tr>
           </thead>
           <tbody>
-            <tr><td>i32</td><td>Signed 32-bit integer — can be positive or negative</td><td>Default for whole numbers when sign doesn't matter</td></tr>
-            <tr><td>u64</td><td>Unsigned 64-bit integer — always positive, very large</td><td>Lamport amounts, token balances, timestamps in Solana</td></tr>
-            <tr><td>u8</td><td>Unsigned 8-bit integer — 0 to 255 only</td><td>Small counts, byte values</td></tr>
-            <tr><td>f64</td><td>64-bit floating point — a decimal number</td><td>Default for decimals (rarely used in Solana contracts)</td></tr>
+            <tr><td>i32</td><td>Signed 32-bit integer, can be positive or negative</td><td>Default for whole numbers when sign matters</td></tr>
+            <tr><td>u64</td><td>Unsigned 64-bit integer, always positive and very large</td><td>Lamport amounts, token balances, timestamps in Solana</td></tr>
+            <tr><td>u8</td><td>Unsigned 8-bit integer, 0 to 255 only</td><td>Small counts, byte values</td></tr>
+            <tr><td>f64</td><td>64-bit floating point, a decimal number</td><td>Default for decimals (rarely used in Solana contracts)</td></tr>
             <tr><td>as</td><td>Casts a value from one number type to another</td><td>When two variables have mismatched number types</td></tr>
-            <tr><td>Type inference</td><td>Rust guesses the type from the value you assign</td><td>When you skip the type annotation — Rust picks i32 or f64</td></tr>
-            <tr><td>Overflow</td><td>A number too big for its type — causes a panic</td><td>When you hit it, switch to a larger type</td></tr>
+            <tr><td>Type inference</td><td>Rust guesses the type from the value you assign</td><td>When you skip the type annotation, Rust picks i32 or f64</td></tr>
+            <tr><td>Overflow</td><td>A number too big for its type, causes a panic</td><td>When you hit it, switch to a larger type</td></tr>
           </tbody>
         </table>
       </div>
@@ -137,7 +183,7 @@
       num: 1,
       title: 'Signed vs Unsigned',
       explainer: '<p>In Rust, every number has a type. The type tells Rust two things: how big the number can be, and whether it can be negative.</p><p><strong>Signed integers</strong> (<code>i8</code>, <code>i16</code>, <code>i32</code>, <code>i64</code>) can be positive or negative. The <code>i</code> stands for the minus sign that could be in front of it.</p><p><strong>Unsigned integers</strong> (<code>u8</code>, <code>u16</code>, <code>u32</code>, <code>u64</code>) are always positive. No minus sign — hence unsigned.</p><p>The default integer type in Rust is <code>i32</code>. In a Solana contract, payment amounts are <code>u64</code> — always positive, large enough for any lamport value.</p>',
-      task: '<p>The code below wants to store a negative adjustment and a payment amount, then print both. Right now it fails because the type annotations are missing.</p><ol><li>Store a negative balance adjustment as <code>i32</code></li><li>Store a payment amount as <code>u64</code></li><li>Print both</li></ol>',
+      task: '<p>A payment contract needs to track a negative balance adjustment and a final payment amount.</p><p>Right now it fails because the type annotations are missing.</p><ol><li>Store a negative balance adjustment as <code>i32</code></li><li>Store a payment amount as <code>u64</code></li><li>Print both</li></ol>',
       starterCode: 'fn main() {\n    let adjustment: ___ = -500;\n    let amount: ___ = 1_000_000u64;\n    println!("Adjustment: {}", adjustment);\n    println!("Amount: {}", amount);\n}',
       instruction: 'Fill in the two blanks so the code compiles and prints both values',
       expectedOutput: 'Adjustment: -500\nAmount: 1000000',
@@ -148,7 +194,7 @@
       num: 2,
       title: 'Type Inference and Mismatch',
       explainer: '<p>Rust infers the type of a variable from what you assign to it. Write <code>let x = 5</code> and Rust picks <code>i32</code> — the default integer type. If you want a different type, you must say so explicitly.</p><p>You cannot assign a variable of one type directly to a variable of a different type. Rust will refuse to compile. The simplest fix: remove the type annotation and let Rust infer the same type.</p>',
-      task: '<p>The code below wants to set <code>x</code> to <code>5</code>, assign it to <code>y</code>, and then to <code>z</code>. Right now it fails because <code>y</code> is typed as <code>u32</code> but <code>x</code> is <code>i32</code> — a type mismatch.</p><ol><li>Set <code>x</code> to <code>5</code> (Rust infers <code>i32</code>)</li><li>Assign <code>x</code> to <code>y</code></li><li>Assign <code>y</code> to <code>z</code></li><li>Print all three</li></ol>',
+      task: '<p>Three variables should share the same type so they can be assigned to each other in a chain.</p><p>Right now it fails because <code>y</code> is typed as <code>u32</code> but <code>x</code> is <code>i32</code>, a type mismatch.</p><ol><li>Set <code>x</code> to <code>5</code> (Rust infers <code>i32</code>)</li><li>Assign <code>x</code> to <code>y</code></li><li>Assign <code>y</code> to <code>z</code></li><li>Print all three</li></ol>',
       starterCode: 'fn main() {\n    let x = 5;\n    let y: u32 = x;\n    let z = y;\n    println!("x={} y={} z={}", x, y, z);\n}',
       instruction: 'Remove the type annotation from <code>y</code> so Rust infers the same type as <code>x</code>',
       expectedOutput: 'x=5 y=5 z=5',
@@ -159,7 +205,7 @@
       num: 3,
       title: 'Casting with as',
       explainer: '<p>Sometimes you need to convert a number from one type to another — for example, turning an <code>i32</code> into a <code>u64</code>. Rust does not do this automatically. You must use the <code>as</code> keyword to cast it explicitly.</p><p>Think of <code>as</code> like a label swap: you are telling Rust "treat this value as this other type."</p>',
-      task: '<p>The code below wants to start with <code>fee</code> as an <code>i32</code>, convert it to <code>u64</code>, and print the result. Right now <code>lamports</code> is missing the cast.</p><ol><li>Start with <code>fee: i32 = 5000</code></li><li>Convert it to <code>u64</code> using <code>as</code></li><li>Print <code>Lamports: 5000</code></li></ol>',
+      task: '<p>A contract starts with a fee as <code>i32</code> and needs to convert it to <code>u64</code> before printing.</p><p>Right now it fails because <code>lamports</code> is missing the cast.</p><ol><li>Start with <code>fee: i32 = 5000</code></li><li>Convert it to <code>u64</code> using <code>as</code></li><li>Print <code>Lamports: 5000</code></li></ol>',
       starterCode: 'fn main() {\n    let fee: i32 = 5000;\n    let lamports: u64 = ___;\n    println!("Lamports: {}", lamports);\n}',
       instruction: 'Fill in the blank to convert <code>fee</code> to <code>u64</code>',
       expectedOutput: 'Lamports: 5000',
@@ -170,7 +216,7 @@
       num: 4,
       title: 'Overflow: Picking the Right Type',
       explainer: '<p>Every integer type has a maximum value it can hold. A <code>u8</code> can only go up to 255. If you try to store 270 in a <code>u8</code>, the number overflows and the program panics.</p><p>The fix is to use a bigger type. <code>u16</code> holds up to 65,535. <code>u64</code> holds numbers in the quintillions — more than enough for any Solana payment amount.</p>',
-      task: '<p>The code below wants to add <code>base</code> and <code>fee</code> together and print the total. Right now it fails because both variables are typed as <code>u8</code> and the result overflows.</p><ol><li><code>base = 250</code></li><li><code>fee = 20</code></li><li>Print <code>Total: 270</code></li></ol>',
+      task: '<p>A contract adds a base amount and a fee. The result is 270, but both variables are typed as <code>u8</code>, which only holds up to 255.</p><p>Right now it fails because the result overflows <code>u8</code>'s maximum value.</p><ol><li><code>base = 250</code></li><li><code>fee = 20</code></li><li>Print <code>Total: 270</code></li></ol>',
       starterCode: 'fn main() {\n    let base: u8 = 250;\n    let fee: u8 = 20;\n    let total = base + fee;\n    println!("Total: {}", total);\n}',
       instruction: 'Change the type annotation so the addition does not overflow',
       expectedOutput: 'Total: 270',
@@ -181,7 +227,7 @@
       num: 5,
       title: 'Build: Annotate a Payment',
       explainer: '<p>You now know the four things that matter for numbers in a Solana contract:</p><p>1. Use <code>u64</code> for lamport amounts — always positive, large enough for any payment.<br>2. Use a signed type like <code>i32</code> when a value could be negative.<br>3. Annotate the type explicitly when the default <code>i32</code> is wrong.<br>4. Use <code>as</code> to convert between types when needed.</p><p>This exercise puts them together into a real payment calculation.</p>',
-      task: '<p>The contract below tracks a subscription payment: a base amount, a discount to subtract, and a final total. All three variables are missing type annotations and <code>total</code> is not computed.</p><ol><li>Set <code>base_amount</code> to <code>1_000_000</code> lamports as <code>u64</code></li><li>Set <code>discount</code> to <code>50_000</code> as <code>u64</code></li><li>Compute <code>total</code> as <code>base_amount - discount</code></li><li>Print <code>Payment: 950000 lamports</code></li></ol>',
+      task: '<p>A subscription payment contract tracks a base amount, a discount to subtract, and a final total.</p><p>Right now it fails because all three variables are missing type annotations and <code>total</code> is not computed.</p><ol><li>Set <code>base_amount</code> to <code>1_000_000</code> lamports as <code>u64</code></li><li>Set <code>discount</code> to <code>50_000</code> as <code>u64</code></li><li>Compute <code>total</code> as <code>base_amount - discount</code></li><li>Print <code>Payment: 950000 lamports</code></li></ol>',
       starterCode: 'fn main() {\n    let base_amount: ___ = 1_000_000;\n    let discount: ___ = 50_000;\n    let total: ___ = ___;\n    println!("Payment: {} lamports", total);\n}',
       instruction: 'Fill in the blanks so the code compiles and prints the correct total',
       expectedOutput: 'Payment: 950000 lamports',
@@ -213,6 +259,11 @@
       '<div class="task-rule"></div>' +
       '<div class="task-label">Your Task</div>' +
       '<div class="task-body">' + ex.task + '</div>';
+    const hint = document.createElement('p');
+    hint.className = 'starter-hint';
+    hint.textContent = 'Clear the Playground on the right and paste this code to begin.';
+    left.appendChild(hint);
+
     const starterWrap = document.createElement('div');
     starterWrap.className = 'starter-block';
     const starterPre = document.createElement('pre');

@@ -380,6 +380,7 @@
     }
 
     /* ── Terms Panel ── */
+    .starter-hint { font-size: 12px; color: var(--color-muted); margin-bottom: 8px; }
     .terms-wrap { padding: 32px; }
     .terms-table {
       width: 100%;
@@ -576,7 +577,7 @@
       num: 1,
       title: 'Binding',
       explainer: '<p>In Rust, declaring a variable and giving it a value are two separate steps. The <code>:</code> labels the type - what kind of value it holds. The <code>=</code> assigns the actual value. Both must happen before you can use the variable.</p><p>In smart contracts, every value must be initialized before it can be used in a check or calculation.</p>',
-      task: '<p><strong>Binding</strong> means giving a variable its value, by tying a name to a piece of data. Until you bind it, the variable is just a label with nothing attached.</p><p>Right now it fails because <code>x</code> was declared but never given a value.</p><p>The code wants to:</p><ol><li>Set <code>x</code> to <code>5</code></li><li>Check that it equals <code>5</code></li><li>Print <code>Success!</code></li></ol><p class="task-note"><strong>Note:</strong> <code>:</code> — "is of type." It labels what kind of value the variable will hold.</p>',
+      task: '<p><strong>Binding</strong> means giving a variable its value, by tying a name to a piece of data. Until you bind it, the variable is just a label with nothing attached.</p><p>Right now it fails because <code>x</code> was declared but never given a value.</p><ol><li>Set <code>x</code> to <code>5</code></li><li>Check that it equals <code>5</code></li><li>Print <code>Success!</code></li></ol><p class="task-note"><strong>Note:</strong> <code>:</code> means "is of type." It labels what kind of value the variable will hold.</p>',
       starterCode: 'fn main() {\n    let x: i32;\n    assert_eq!(x, 5);\n    println!("Success!");\n}',
       instruction: 'Fix this so it compiles and prints <code>Success!</code>',
       expectedOutput: 'Success!',
@@ -587,7 +588,7 @@
       num: 2,
       title: 'Mutability',
       explainer: '<p>In Rust, every variable is locked by default. Once you give it a value, that value can\'t change.</p><p>If you need to change it later, add <code>mut</code> (short for <strong>mutable</strong>) when you declare it. This unlocks the variable so its value can be updated.</p><p>In smart contracts, values often need to change, such as applying a discount, adding a fee, or updating a balance.</p>',
-      task: '<p>The code below wants to:</p><ol><li>Start <code>x</code> at <code>1</code></li><li>Add <code>2</code> to <code>x</code></li><li>Print <code>x = 3</code></li></ol><p>Right now it fails because <code>x</code> is locked and cannot be changed.</p>',
+      task: '<p>A variable starts at 1 and needs to be updated to 3.</p><p>Right now it fails because <code>x</code> is locked and cannot be changed.</p><ol><li>Start <code>x</code> at <code>1</code></li><li>Add <code>2</code> to <code>x</code></li><li>Print <code>x = 3</code></li></ol>',
       starterCode: 'fn main() {\n    let ___ x: i32 = 1;\n    x += 2;\n    println!("x = {}", x);\n}',
       instruction: 'Fill in <code>___</code> so the code compiles and prints <code>x = 3</code>',
       expectedOutput: 'x = 3',
@@ -598,7 +599,7 @@
       num: 3,
       title: 'Scope',
       explainer: '<p>Every <code>{ }</code> block in Rust creates a scope. A variable declared inside a scope only exists inside that scope. Once the closing <code>}</code> is reached, the variable is gone.</p><p>Think of it like rooms - a variable only exists in the room where it was declared.</p><p>In smart contracts, a wallet address declared inside a helper block won\'t be visible to the main payment logic.</p>',
-      task: '<p>The code below wants to:</p><ol><li>Declare <code>x = 10</code> and <code>y = 5</code></li><li>Print both inside an inner block</li><li>Print both outside the inner block</li></ol><p>Right now it fails because <code>y</code> is declared inside the block and isn\'t visible outside it.</p>',
+      task: '<p>Two variables need to be visible to both a print inside a block and a print outside it.</p><p>Right now it fails because <code>y</code> is declared inside the block and is not visible outside it.</p><ol><li>Declare <code>x = 10</code> and <code>y = 5</code></li><li>Print both inside an inner block</li><li>Print both outside the inner block</li></ol>',
       starterCode: 'fn main() {\n    let x: i32 = 10;\n\n    {\n        let y: i32 = 5;\n        println!("x = {}, y = {}", x, y);\n    }\n\n    println!("x = {}, y = {}", x, y);\n}',
       instruction: 'Fix this with the least amount of changes so both print statements can see <code>y</code>',
       expectedOutput: 'x = 10, y = 5\nx = 10, y = 5',
@@ -609,7 +610,7 @@
       num: 4,
       title: 'Shadowing',
       explainer: '<p>Shadowing means declaring a new variable with the same name. The new one hides the old one inside its scope. When you leave that scope, the old variable is visible again.</p><p>This is different from mutation - shadowing creates a brand new variable. The old one still exists, just hidden.</p><p>In smart contracts, shadowing is useful when a subscriber upgrades and the old plan value gets replaced by the new one.</p>',
-      task: '<p>The code below wants to:</p><ol><li>Set outer <code>x</code> to <code>5</code></li><li>Shadow <code>x</code> inside a block with <code>12</code></li><li>Check that the inner <code>x</code> equals <code>12</code></li><li>Check that the outer <code>x</code> goes back to <code>5</code> after the block exits</li><li>Print <code>Success!</code></li></ol>',
+      task: '<p>A block shadows <code>x</code> with a different value. The asserts check both what is inside the block and what is outside after it exits.</p><p>Right now the two blanks need the correct values filled in.</p><ol><li>Set outer <code>x</code> to <code>5</code></li><li>Shadow <code>x</code> inside a block with <code>12</code></li><li>Check that the inner <code>x</code> equals <code>12</code></li><li>Check that the outer <code>x</code> goes back to <code>5</code> after the block exits</li><li>Print <code>Success!</code></li></ol>',
       starterCode: 'fn main() {\n    let x: i32 = 5;\n\n    {\n        let x = 12;\n        assert_eq!(x, ___);\n    }\n\n    assert_eq!(x, ___);\n    println!("Success!");\n}',
       instruction: 'Fill in the two blanks so both asserts pass',
       expectedOutput: 'Success!',
@@ -653,6 +654,12 @@
       '<div class="task-rule"></div>' +
       '<div class="task-label">Your Task</div>' +
       '<div class="task-body">' + ex.task + '</div>';
+
+    // Playground hint
+    const hint = document.createElement('p');
+    hint.className = 'starter-hint';
+    hint.textContent = 'Clear the Playground on the right and paste this code to begin.';
+    left.appendChild(hint);
 
     // Starter code block
     const starterWrap = document.createElement('div');

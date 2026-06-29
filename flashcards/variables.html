@@ -189,15 +189,32 @@
     }
 
     /* Back top */
-    .back-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
+    .back-top { margin-bottom: 8px; }
+    .back-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #171714;
+      margin-bottom: 10px;
+    }
+    .back-title code {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 18px;
+      background: rgba(0,0,0,0.07);
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+    .back-rule {
+      border: none;
+      border-top: 1px solid rgba(0,0,0,0.1);
+      margin: 0;
     }
     .back-label {
-      font-size: 11px; font-weight: 700;
+      font-size: 10px; font-weight: 700;
       letter-spacing: 0.08em; text-transform: uppercase;
       color: rgba(0,0,0,0.35);
+      display: block;
+      margin-bottom: 3px;
     }
 
     /* Back center */
@@ -206,8 +223,8 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      gap: 8px;
-      padding: 10px 0;
+      gap: 10px;
+      padding: 8px 0;
     }
     .back-definition {
       font-size: 13px;
@@ -215,39 +232,26 @@
       line-height: 1.5;
       color: #171714;
     }
-    .back-when-wrap { margin-top: 2px; }
+    .back-when-wrap {}
     .back-when {
       font-size: 13px;
       font-weight: 400;
       line-height: 1.5;
       color: rgba(0,0,0,0.6);
-      margin-top: 3px;
     }
     .back-example {
       font-size: 12px;
       font-weight: 400;
       line-height: 1.5;
       color: rgba(0,0,0,0.45);
-      font-style: italic;
-      margin-top: 2px;
     }
     .back-example code {
       font-family: "SF Mono", "Fira Code", monospace;
-      font-style: normal;
       font-size: 11px;
       background: rgba(0,0,0,0.07);
       padding: 2px 6px;
       border-radius: 4px;
       color: #171714;
-    }
-
-    /* Back bottom */
-    .back-bottom {}
-    .back-term {
-      font-size: 13px;
-      font-weight: 700;
-      color: rgba(0,0,0,0.4);
-      letter-spacing: -0.01em;
     }
   </style>
 </head>
@@ -288,7 +292,7 @@
             <div class="card-bottom"><p class="card-category">Variables</p></div>
           </div>
           <div class="flip-card-back">
-            <div class="back-top"><span class="back-label">What it is</span></div>
+            <div class="back-top"><span class="back-label">Meaning</span></div>
             <div class="back-center">
               <p class="back-definition">A named place to store a value in your program.</p>
               <div class="back-when-wrap">
@@ -311,7 +315,7 @@
             <div class="card-bottom"><p class="card-category">Variables</p></div>
           </div>
           <div class="flip-card-back">
-            <div class="back-top"><span class="back-label">What it is</span></div>
+            <div class="back-top"><span class="back-label">Meaning</span></div>
             <div class="back-center">
               <p class="back-definition">The keyword that creates a new variable.</p>
               <div class="back-when-wrap">
@@ -334,7 +338,7 @@
             <div class="card-bottom"><p class="card-category">Variables</p></div>
           </div>
           <div class="flip-card-back">
-            <div class="back-top"><span class="back-label">What it is</span></div>
+            <div class="back-top"><span class="back-label">Meaning</span></div>
             <div class="back-center">
               <p class="back-definition">Allows a variable to change after it is set.</p>
               <div class="back-when-wrap">
@@ -357,7 +361,7 @@
             <div class="card-bottom"><p class="card-category">Variables</p></div>
           </div>
           <div class="flip-card-back">
-            <div class="back-top"><span class="back-label">What it is</span></div>
+            <div class="back-top"><span class="back-label">Meaning</span></div>
             <div class="back-center">
               <p class="back-definition">Cannot be changed after it is set. The default for every variable in Rust.</p>
               <div class="back-when-wrap">
@@ -380,7 +384,7 @@
             <div class="card-bottom"><p class="card-category">Variables</p></div>
           </div>
           <div class="flip-card-back">
-            <div class="back-top"><span class="back-label">What it is</span></div>
+            <div class="back-top"><span class="back-label">Meaning</span></div>
             <div class="back-center">
               <p class="back-definition">Reusing a variable name with a new <code>let</code>. The old value is replaced.</p>
               <div class="back-when-wrap">
@@ -403,7 +407,7 @@
             <div class="card-bottom"><p class="card-category">Variables</p></div>
           </div>
           <div class="flip-card-back">
-            <div class="back-top"><span class="back-label">What it is</span></div>
+            <div class="back-top"><span class="back-label">Meaning</span></div>
             <div class="back-center">
               <p class="back-definition">A value that never changes. Must have an explicit type.</p>
               <div class="back-when-wrap">
@@ -426,7 +430,7 @@
             <div class="card-bottom"><p class="card-category">Variables</p></div>
           </div>
           <div class="flip-card-back">
-            <div class="back-top"><span class="back-label">What it is</span></div>
+            <div class="back-top"><span class="back-label">Meaning</span></div>
             <div class="back-center">
               <p class="back-definition">Tells the compiler you know a variable is unused so it does not warn you.</p>
               <div class="back-when-wrap">
@@ -449,7 +453,7 @@
             <div class="card-bottom"><p class="card-category">Variables</p></div>
           </div>
           <div class="flip-card-back">
-            <div class="back-top"><span class="back-label">What it is</span></div>
+            <div class="back-top"><span class="back-label">Meaning</span></div>
             <div class="back-center">
               <p class="back-definition">Unpacking a tuple or struct into separate named variables in one line.</p>
               <div class="back-when-wrap">
@@ -472,7 +476,7 @@
             <div class="card-bottom"><p class="card-category">Variables</p></div>
           </div>
           <div class="flip-card-back">
-            <div class="back-top"><span class="back-label">What it is</span></div>
+            <div class="back-top"><span class="back-label">Meaning</span></div>
             <div class="back-center">
               <p class="back-definition">Rust's empty value. Means "nothing."</p>
               <div class="back-when-wrap">
@@ -495,7 +499,7 @@
             <div class="card-bottom"><p class="card-category">Variables</p></div>
           </div>
           <div class="flip-card-back">
-            <div class="back-top"><span class="back-label">What it is</span></div>
+            <div class="back-top"><span class="back-label">Meaning</span></div>
             <div class="back-center">
               <p class="back-definition">Converts a value from one type to another.</p>
               <div class="back-when-wrap">
@@ -518,7 +522,7 @@
             <div class="card-bottom"><p class="card-category">Variables</p></div>
           </div>
           <div class="flip-card-back">
-            <div class="back-top"><span class="back-label">What it is</span></div>
+            <div class="back-top"><span class="back-label">Meaning</span></div>
             <div class="back-center">
               <p class="back-definition">A macro that prints a line to the terminal.</p>
               <div class="back-when-wrap">

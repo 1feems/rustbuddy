@@ -26,12 +26,13 @@ A **statement** performs an action but hands nothing back. In Rust, most lines e
 
 An **expression** evaluates to a value. `3 + 4` is an expression, it produces `7`. A block of code in `{ }` is an expression if its last line has no semicolon, the block hands back whatever that last line evaluates to.
 
-The code below wants to:
+#### Your Task
+
+A block computes `x * 2` and should hand that value to `y`. Right now `y` holds the unit type `()` because the last line of the block has a semicolon.
+
 1. Run a block that computes `x * 2`
 2. Assign the result to `y`
 3. Assert `y == 6` and print `Success!`
-
-Right now `y` holds the unit type `()` because the last line of the block has a semicolon.
 
 **Remove one character so the block hands back its value:**
 
@@ -80,12 +81,13 @@ The semicolon is the switch between expression and statement. Add a semicolon to
 
 This is not a bug in Rust. It is intentional: Rust lets you decide exactly what a block hands back just by whether or not you put a semicolon on the last line.
 
-The code below wants to:
+#### Your Task
+
+A block computes `x + y` and should hand that sum to `result`. Right now the block ends with `x + y;`, the semicolon throws away the sum and `result` gets `()`.
+
 1. Use a block to compute `x + y`
 2. Assign the result to `result`
 3. Print `Result: 5`
-
-Right now the block ends with `x + y;`, the semicolon throws away the sum and `result` gets `()`.
 
 **Make it work in two separate ways. Try each one:**
 
@@ -151,12 +153,13 @@ A variable assignment, `let x = 5;`, is a statement. It stores a value but the a
 
 You can fix this in two ways: either return the variable itself on the next line (no semicolon), or wrap the assignment in its own block and return the variable separately.
 
-The code below wants to:
+#### Your Task
+
+A block sets `x` to `1`, increments it by `2`, and should hand the final value to `v`. Right now the block ends with the assignment `x += 2;` which is a statement, it returns `()`, not the value of `x`.
+
 1. Set `x` to `1` and increment it by `2` inside a block
 2. Assign the final value of `x` to `v`
 3. Assert `v == 3` and print `Success!`
-
-Right now the block ends with the assignment `x += 2;` which is a statement, it returns `()`, not the value of `x`.
 
 **Fix this so `v` holds `3`. Don't remove any lines:**
 
@@ -204,11 +207,12 @@ The same rule applies inside functions. The last expression in a function body b
 
 The instructor put it this way: "if we omit the semicolon, the result of this operation will get returned, which means the return type would be i32."
 
-The code below wants to:
+#### Your Task
+
+A function adds two numbers and should return the sum to the caller. Right now `add` ends with `x + y;`, the semicolon means it returns `()`, not the sum.
+
 1. Call `add(1, 2)` and store the result in `s`
 2. Assert `s == 3` and print `Success!`
-
-Right now `add` ends with `x + y;`, the semicolon means it returns `()`, not the sum.
 
 **Remove one character so `add` returns the correct value:**
 
@@ -257,12 +261,13 @@ In Rust, `if` is an expression, it evaluates to a value. That means you can assi
 
 For this to work, every branch must return the same type, and no branch can have a semicolon on its last line, a semicolon would turn the value into `()` and the types would no longer match.
 
-The code below wants to:
+#### Your Task
+
+An `if` expression should assign a grade to a variable based on a score. Right now the `else` branch ends with `"B";`, the semicolon throws away the value and the types no longer match.
+
 1. Check whether `score` is 90 or above
 2. Assign `"A"` or `"B"` to `grade` based on the result
 3. Print `Grade: B`
-
-Right now the `else` branch ends with `"B";`, the semicolon throws away the value and the types no longer match.
 
 **Remove one character so the `if` expression returns a value from both branches:**
 
@@ -317,12 +322,13 @@ You now understand the full picture:
 
 In a payment contract, fee calculations must return the actual fee amount. If a semicolon sneaks onto the last line, the caller gets `()` instead of the number, and the payment math breaks.
 
-The code below wants to:
+#### Your Task
+
+A payment contract calculates a 5% fee and should return the amount to the caller. Right now `calculate_fee` has a semicolon on its last line, it returns `()` instead of the fee.
+
 1. Calculate a fee as 5% of the base amount
 2. Return the fee from `calculate_fee`
 3. Print `Fee: 50000 lamports`
-
-Right now `calculate_fee` has a semicolon on its last line, it returns `()` instead of the fee.
 
 **Remove one character so the correct fee is returned and printed:**
 

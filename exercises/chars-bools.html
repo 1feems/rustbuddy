@@ -11,11 +11,17 @@
     :root { --color-bg: #FFFFFF; --color-surface: #1E1E1A; --color-primary: #FF7657; --color-secondary: #DFFF65; --color-ink: #171714; --color-muted: #77766F; --color-border: #171714; }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Inter', system-ui, sans-serif; background: var(--color-bg); color: var(--color-ink); min-height: 100vh; }
-    .site-header { display: flex; align-items: center; gap: 10px; padding: 16px 32px; border-bottom: 1px solid var(--color-border); }
+    .site-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid var(--color-border); }
+    .site-header-left { display: flex; align-items: center; gap: 10px; }
+    .site-name { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; text-decoration: none; color: var(--color-ink); }
     .back-link { font-size: 14px; color: var(--color-muted); text-decoration: none; transition: color 200ms ease; }
     .back-link:hover { color: var(--color-ink); }
     .header-sep { color: var(--color-muted); font-size: 14px; }
-    .header-title { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+    .header-title { font-size: 14px; font-weight: 500; color: var(--color-muted); }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-link { font-size: 13px; font-weight: 600; color: var(--color-muted); text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase; }
+    .nav-link:hover { color: var(--color-ink); }
+    .nav-link.active { color: var(--color-primary); }
     .main { padding: 32px; max-width: 1400px; margin: 0 auto; }
     .tab-container { border: 1px solid var(--color-border); border-radius: 20px; overflow: hidden; }
     .tab-bar { display: flex; border-bottom: 1px solid var(--color-border); }
@@ -63,6 +69,13 @@
     .answer-why-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 4px; }
     .answer-why { font-size: 14px; line-height: 1.6; color: #3a3935; }
     .answer-why code { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; background: #f0efeb; padding: 1px 5px; border-radius: 4px; color: var(--color-ink); }
+    .starter-hint { font-size: 12px; color: var(--color-muted); margin-bottom: 8px; }
+    .overview-wrap { padding: 40px 48px; max-width: 720px; }
+    .overview-topic { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 10px; }
+    .overview-headline { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .overview-desc { font-size: 16px; line-height: 1.65; color: #3a3935; margin-bottom: 36px; }
+    .overview-divider { height: 1px; background: rgba(23,23,20,0.12); margin-bottom: 28px; }
+    .overview-ref-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 16px; }
     .terms-wrap { padding: 32px; }
     .terms-table { width: 100%; border-collapse: collapse; font-size: 14px; }
     .terms-table th { text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); border-bottom: 1px solid var(--color-border); }
@@ -75,17 +88,50 @@
 <body>
 
 <header class="site-header">
-  <a href="index.html" class="back-link">← Rust Bud</a>
-  <span class="header-sep">/</span>
-  <span class="header-title">Rust: Chars, Bools & Unit Types</span>
+  <div class="site-header-left">
+    <a href="../index.html" class="site-name">Rust Buddy</a>
+    <span class="header-sep">/</span>
+    <a href="index.html" class="back-link">Exercises</a>
+    <span class="header-sep">/</span>
+    <span class="header-title">Chars, Bools & Unit Types</span>
+  </div>
+  <nav class="nav-links">
+    <a href="index.html" class="nav-link active">Exercises</a>
+    <a href="../flashcards/index.html" class="nav-link">Flashcards</a>
+    <a href="../resources/index.html" class="nav-link">Resources</a>
+  </nav>
 </header>
 
 <main class="main">
   <div class="tab-container">
     <div class="tab-bar">
+      <button class="tab-btn" data-tab="overview">Overview</button>
       <button class="tab-btn active" data-tab="exercises">Exercises</button>
       <button class="tab-btn" data-tab="answers">Answers</button>
       <button class="tab-btn" data-tab="terms">Terms to Know</button>
+    </div>
+
+    <div class="tab-panel" id="panel-overview">
+      <div class="overview-wrap">
+        <div class="overview-topic">Topic</div>
+        <div class="overview-headline">Chars, Bools & Unit Types</div>
+        <div class="overview-desc">Three small types that show up everywhere in Rust. <code style="font-family:'SF Mono','Fira Code',monospace;font-size:14px;background:#f0efeb;padding:1px 5px;border-radius:4px;">char</code> holds a single character, <code style="font-family:'SF Mono','Fira Code',monospace;font-size:14px;background:#f0efeb;padding:1px 5px;border-radius:4px;">bool</code> holds true or false, and <code style="font-family:'SF Mono','Fira Code',monospace;font-size:14px;background:#f0efeb;padding:1px 5px;border-radius:4px;">()</code> means a function returned nothing.</div>
+        <div class="overview-divider"></div>
+        <div class="overview-ref-label">Quick Reference</div>
+        <table class="terms-table">
+          <thead>
+            <tr><th>Concept</th><th>What it means</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>char</td><td>A single character, always in single quotes like 'A'</td></tr>
+            <tr><td>bool</td><td>Either true or false, nothing in between</td></tr>
+            <tr><td>!</td><td>Flips a bool to its opposite</td></tr>
+            <tr><td>&amp;&amp;</td><td>True only when both sides are true</td></tr>
+            <tr><td>||</td><td>True when either side is true</td></tr>
+            <tr><td>()</td><td>The unit type, returned by functions that return nothing</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <div class="tab-panel active" id="panel-exercises">
@@ -107,12 +153,12 @@
             <tr><th>Term</th><th>What it means</th><th>When you use it</th></tr>
           </thead>
           <tbody>
-            <tr><td>char</td><td>A single character — always in single quotes, 4 bytes</td><td>Single letters, symbols, emoji</td></tr>
-            <tr><td>bool</td><td>Either true or false — 1 byte</td><td>Status flags: is_active, is_paid, is_valid</td></tr>
-            <tr><td>!</td><td>NOT operator — flips a bool</td><td>When you need the opposite of a condition</td></tr>
-            <tr><td>&amp;&amp;</td><td>AND operator — true only when both sides are true</td><td>Requiring multiple conditions to pass together</td></tr>
-            <tr><td>||</td><td>OR operator — true when either side is true</td><td>Accepting any one of several conditions</td></tr>
-            <tr><td>()</td><td>The unit type — holds nothing, size 0 bytes</td><td>Return type of functions that do something but return nothing</td></tr>
+            <tr><td>char</td><td>A single character, always in single quotes, 4 bytes</td><td>Single letters, symbols, emoji</td></tr>
+            <tr><td>bool</td><td>Either true or false, 1 byte</td><td>Status flags: is_active, is_paid, is_valid</td></tr>
+            <tr><td>!</td><td>NOT operator, flips a bool to its opposite</td><td>When you need the opposite of a condition</td></tr>
+            <tr><td>&amp;&amp;</td><td>AND operator, true only when both sides are true</td><td>Requiring multiple conditions to pass together</td></tr>
+            <tr><td>||</td><td>OR operator, true when either side is true</td><td>Accepting any one of several conditions</td></tr>
+            <tr><td>()</td><td>The unit type, holds nothing, size 0 bytes</td><td>Return type of functions that do something but return nothing</td></tr>
           </tbody>
         </table>
       </div>
@@ -128,7 +174,7 @@
       num: 1,
       title: 'char Uses Single Quotes',
       explainer: '<p>A <code>char</code> is a single character — one letter, one digit, one symbol. In Rust, every character in the world is supported. A <code>char</code> always takes 4 bytes in memory, regardless of which character it holds.</p><p>The critical rule: a <code>char</code> is always written in <strong>single quotes</strong> like <code>\'A\'</code>. Double quotes like <code>"A"</code> are for strings — a completely different type. If you use double quotes for a char, Rust will refuse to compile.</p>',
-      task: '<p>The code below wants to store the letter <code>A</code> as a <code>char</code>, pass it to a function, and print <code>Got: A</code>. Right now it fails because <code>letter</code> is using double quotes instead of single quotes.</p><ol><li>Store <code>A</code> as a <code>char</code></li><li>Pass it to <code>print_char</code></li><li>Print <code>Got: A</code></li></ol>',
+      task: '<p>A function prints a single character. It expects a <code>char</code>, but <code>letter</code> is assigned with double quotes.</p><p>Right now it fails because double quotes create a string, not a char.</p><ol><li>Store <code>A</code> as a <code>char</code> using single quotes</li><li>Pass it to <code>print_char</code></li><li>Print <code>Got: A</code></li></ol>',
       starterCode: 'fn print_char(c: char) {\n    println!("Got: {}", c);\n}\n\nfn main() {\n    let letter: char = "A";\n    print_char(letter);\n}',
       instruction: 'Change one character pair so <code>letter</code> is a valid <code>char</code>',
       expectedOutput: 'Got: A',
@@ -139,7 +185,7 @@
       num: 2,
       title: 'bool and the NOT Operator',
       explainer: '<p>A <code>bool</code> holds exactly one of two values: <code>true</code> or <code>false</code>. Nothing in between. Rust uses bools to make decisions — if something is <code>true</code>, run this block; if <code>false</code>, skip it.</p><p>The <code>!</code> operator flips a bool. <code>!true</code> becomes <code>false</code>. <code>!false</code> becomes <code>true</code>. Think of it like flipping a switch.</p>',
-      task: '<p>The code below wants to print <code>Subscription is active.</code> only when <code>is_active</code> is <code>true</code>. Right now it fails to print because the condition uses <code>!is_active</code>, which flips the value to <code>false</code>.</p><ol><li>Set <code>is_active</code> to <code>true</code></li><li>Print the message only when active</li></ol>',
+      task: '<p>A subscription check should only print when the account is active.</p><p>Right now it fails because the condition uses <code>!is_active</code>, which flips the value to <code>false</code>.</p><ol><li>Set <code>is_active</code> to <code>true</code></li><li>Print the message only when active</li></ol>',
       starterCode: 'fn main() {\n    let is_active: bool = true;\n    if !is_active {\n        println!("Subscription is active.");\n    }\n}',
       instruction: 'Remove one character so the correct line prints',
       expectedOutput: 'Subscription is active.',
@@ -150,7 +196,7 @@
       num: 3,
       title: 'bool and the AND Operator',
       explainer: '<p>The <code>&amp;&amp;</code> operator (AND) takes two bools and produces one. It only outputs <code>true</code> when <strong>both</strong> inputs are <code>true</code>. If either input is <code>false</code>, the result is <code>false</code>.</p><p>Think of it like a security check: the subscriber must have an active account AND enough funds. Both conditions must pass or the payment is blocked.</p>',
-      task: '<p>The code below wants to print <code>Payment approved.</code> only when both <code>is_active</code> and <code>has_funds</code> are <code>true</code>. Right now <code>has_funds</code> is missing its value.</p><ol><li>Set <code>is_active</code> to <code>true</code></li><li>Set <code>has_funds</code> so both conditions pass</li><li>Print <code>Payment approved.</code></li></ol>',
+      task: '<p>A payment gate requires both the account to be active and funds to be available before approving.</p><p>Right now it fails because <code>has_funds</code> is missing its value.</p><ol><li>Set <code>is_active</code> to <code>true</code></li><li>Set <code>has_funds</code> so both conditions pass</li><li>Print <code>Payment approved.</code></li></ol>',
       starterCode: 'fn main() {\n    let is_active: bool = true;\n    let has_funds: bool = ___;\n\n    if is_active && has_funds {\n        println!("Payment approved.");\n    }\n}',
       instruction: 'Fill in the blank so both conditions are true and the payment is approved',
       expectedOutput: 'Payment approved.',
@@ -161,7 +207,7 @@
       num: 4,
       title: 'The Unit Type',
       explainer: '<p>When a function in Rust does not return a value, it implicitly returns the <strong>unit type</strong>, written as <code>()</code>. The unit type holds nothing — its size is zero bytes. You rarely write it yourself; Rust adds it automatically.</p><p>Think of it as Rust\'s way of saying "this function did its job but has nothing to hand back." A variable assigned the result of such a function will hold <code>()</code>.</p>',
-      task: '<p>The code below wants to call <code>log_payment()</code>, store its return value, assert it is the unit type, and print <code>Done.</code>. Right now the assert fails because it compares to <code>5</code> instead of <code>()</code>.</p><ol><li>Call <code>log_payment()</code></li><li>Assert the return value is the unit type</li><li>Print <code>Done.</code></li></ol>',
+      task: '<p>A function logs a payment but returns nothing. The assert checks its return value.</p><p>Right now it fails because the assert compares to <code>5</code> instead of <code>()</code>.</p><ol><li>Call <code>log_payment()</code></li><li>Assert the return value is the unit type</li><li>Print <code>Done.</code></li></ol>',
       starterCode: 'fn log_payment() {\n    println!("Payment logged.");\n}\n\nfn main() {\n    let result = log_payment();\n    assert_eq!(result, 5);\n    println!("Done.");\n}',
       instruction: 'Replace <code>5</code> with the unit type so the assert passes',
       expectedOutput: 'Payment logged.\nDone.',
@@ -172,7 +218,7 @@
       num: 5,
       title: 'Build: Subscription Gate',
       explainer: '<p>You now know the three small types that show up constantly in contracts:</p><p><code>char</code> for single-character codes like a plan tier label.<br><code>bool</code> for yes/no flags like active, approved, or valid.<br><code>()</code> for functions that act but return nothing.</p><p>This exercise puts them together into a real subscription check.</p>',
-      task: '<p>The contract checks whether a subscriber can be charged before processing a payment. Right now it has two bugs: <code>plan</code> uses double quotes, and <code>is_active</code> is set to the wrong value.</p><ol><li>Set <code>plan</code> to the character <code>\'P\'</code> for Pro tier</li><li>Set <code>is_active</code> to <code>true</code></li><li>Check both with <code>&amp;&amp;</code></li><li>Print <code>Charging Pro subscriber.</code></li></ol>',
+      task: '<p>A subscription gate checks the plan tier and account status before charging a subscriber.</p><p>Right now it has two bugs: <code>plan</code> uses double quotes, and <code>is_active</code> is set to the wrong value.</p><ol><li>Set <code>plan</code> to the character <code>\'P\'</code> for Pro tier</li><li>Set <code>is_active</code> to <code>true</code></li><li>Check both with <code>&amp;&amp;</code></li><li>Print <code>Charging Pro subscriber.</code></li></ol>',
       starterCode: 'fn main() {\n    let plan: char = "P";\n    let is_active: bool = false;\n\n    if plan == \'P\' && is_active {\n        println!("Charging Pro subscriber.");\n    }\n}',
       instruction: 'Fix both bugs so the payment message prints',
       expectedOutput: 'Charging Pro subscriber.',
@@ -204,6 +250,11 @@
       '<div class="task-rule"></div>' +
       '<div class="task-label">Your Task</div>' +
       '<div class="task-body">' + ex.task + '</div>';
+    const hint = document.createElement('p');
+    hint.className = 'starter-hint';
+    hint.textContent = 'Clear the Playground on the right and paste this code to begin.';
+    left.appendChild(hint);
+
     const starterWrap = document.createElement('div');
     starterWrap.className = 'starter-block';
     const starterPre = document.createElement('pre');

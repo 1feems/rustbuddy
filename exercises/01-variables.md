@@ -29,19 +29,19 @@ Check your answer only after you've tried.
 
 ### Exercise 1 - Binding
 
-In Rust, declaring a variable and giving it a value are two separate steps. The `:` labels the type - what kind of value it holds. The `=` assigns the actual value. Both must happen before you can use the variable.
+**Binding** means giving a variable its value, by tying a name to a piece of data. Until you bind it, the variable is just a label with nothing attached.
 
-In smart contracts, every value must be initialized before it can be used in a check or calculation.
+In Rust, declaring a variable and giving it a value are two separate steps. The `:` labels the type, meaning what kind of value it holds. The `=` assigns the actual value. Both must happen before you can use the variable.
 
 #### Your Task
 
-The code below wants to:
+A variable `x` is declared but never given a value. Right now it fails because `x` has no value and cannot be used.
 
 1. Set `x` to `5`
-2. Assert it equals `5`
+2. Check that it equals `5`
 3. Print `Success!`
 
-Right now it fails because `x` was declared but never given a value.
+> **Note:** `:` means "is of type." It labels what kind of value the variable will hold.
 
 **Fix this so it compiles and prints `Success!`:**
 
@@ -80,17 +80,13 @@ In Rust, every variable is locked by default. Once you give it a value, that val
 
 If you need to change it later, add `mut` (short for **mutable**) when you declare it. This unlocks the variable so its value can be updated.
 
-In smart contracts, values often need to change, such as applying a discount, adding a fee, or updating a balance.
-
 #### Your Task
 
-The code below wants to:
+A variable starts at `1` and needs to be updated to `3`. Right now it fails because `x` is locked and cannot be changed.
 
 1. Start `x` at `1`
 2. Add `2` to `x`
 3. Print `x = 3`
-
-Right now it fails because `x` is locked and cannot be changed.
 
 **Fill in `___` so the code compiles and prints `x = 3`:**
 
@@ -129,17 +125,13 @@ Every `{ }` block in Rust creates a scope. A variable declared inside a scope on
 
 Think of it like rooms - a variable only exists in the room where it was declared.
 
-In smart contracts, a wallet address declared inside a helper block won't be visible to the main payment logic.
-
 #### Your Task
 
-The code below wants to:
+Two variables need to be visible both inside and outside an inner block. Right now it fails because `y` is declared inside the block and isn't visible outside it.
 
 1. Declare `x = 10` and `y = 5`
 2. Print both inside an inner block
 3. Print both outside the inner block
-
-Right now it fails because `y` is declared inside the block and isn't visible outside it.
 
 **Fix this with the least amount of changes so both print statements can see `y`:**
 
@@ -189,16 +181,12 @@ fn main() {
 
 Functions are their own scope. A variable declared inside a function only exists inside that function. A function that is never called never runs - every Rust program starts in `main`.
 
-In smart contracts, a helper like `get_plan_price()` must be called from `main` before its logic runs.
-
 #### Your Task
 
-The code below wants to:
+A function `define_x()` exists but is never called. Right now nothing happens because `define_x()` is never called from `main`.
 
-1. Call `define_x()`
+1. Call `define_x()` from `main`
 2. Print `"hello, world!"`
-
-Right now nothing happens because `define_x()` exists but is never called from `main`.
 
 **Fix this so `define_x()` runs and prints `"hello, world!"`:**
 
@@ -262,13 +250,7 @@ In smart contracts, shadowing is useful when a subscriber upgrades and the old p
 
 #### Your Task
 
-The code below wants to:
-
-1. Set outer `x` to `5`
-2. Shadow `x` inside a block with `12`
-3. Assert the inner `x` equals the shadowed value
-4. Assert the outer `x` is restored after the block exits
-5. Print `Success!`
+A block shadows `x` with a different value. The asserts check what is inside the block and what the outer `x` equals after the block exits.
 
 **Fill in the two blanks so both asserts pass:**
 
@@ -415,14 +397,12 @@ In smart contracts, a payment might arrive as a tuple `(treasury_share, creator_
 
 #### Your Task
 
-The code below wants to:
+A tuple `(1, 2)` is unpacked and `x` needs to be updated after unpacking. Right now it fails because `x` was not declared mutable.
 
 1. Unpack `(1, 2)` into `x` and `y`
 2. Add `2` to `x`
 3. Assert `x == 3` and `y == 2`
 4. Print `Success!`
-
-Right now it fails because `x` was not declared mutable.
 
 **Fix so the code compiles and prints `Success!`:**
 
@@ -467,12 +447,7 @@ In smart contracts, this is useful for updating both treasury and creator shares
 
 #### Your Task
 
-The code below wants to:
-
-1. Start with `x = 1` and `y = 2`
-2. Reassign both to new values in one line
-3. Assert `x` and `y` hold the new values
-4. Print `Success!`
+Two variables start with initial values and get reassigned in one line.
 
 **Fill in the two blanks so the asserts pass:**
 
@@ -610,13 +585,11 @@ In Solana, payment amounts measured in lamports use `u64` - a whole number that'
 
 #### Your Task
 
-The code below wants to:
+A payment amount is declared but never given a value. Right now it fails because `amount` has no value and cannot be used.
 
-1. Set a payment amount to `1_000_000` lamports
+1. Set `amount` to `1_000_000` lamports
 2. Assert it equals `1_000_000`
 3. Print `Amount set.`
-
-Right now it fails because `amount` was declared but never given a value.
 
 **Fix so it compiles and prints `Amount set.`:**
 
@@ -659,14 +632,12 @@ In smart contracts, payment amounts often change - applying a discount, adding a
 
 #### Your Task
 
-The code below wants to:
+A payment amount starts at `500_000` lamports and needs to increase. Right now it fails because `amount` is locked and cannot be changed.
 
 1. Start `amount` at `500_000` lamports
 2. Add another `500_000`
 3. Assert the total is `1_000_000`
 4. Print `Amount: 1000000`
-
-Right now it fails because `amount` is locked and cannot be changed.
 
 **Fill in `___` so the code compiles:**
 
@@ -709,12 +680,10 @@ In smart contracts, a wallet address declared inside a helper block won't be vis
 
 #### Your Task
 
-The code below wants to:
+A wallet address is declared inside a block but needs to be printed outside it. Right now it fails because `wallet` is declared inside the block and isn't visible outside it.
 
-1. Declare a `wallet` address
+1. Declare `wallet` outside the inner block
 2. Print it from outside the inner block
-
-Right now it fails because `wallet` is declared inside the block and isn't visible outside it.
 
 **Fix it so the wallet address is visible outside the block:**
 
@@ -761,12 +730,10 @@ In smart contracts, a helper like `get_plan_price()` must be called from `main` 
 
 #### Your Task
 
-The code below wants to:
+A function `get_plan_price()` exists but is never called. Right now nothing happens because `get_plan_price()` is never called from `main`.
 
-1. Call `get_plan_price()`
+1. Call `get_plan_price()` from `main`
 2. Print `Plan price: 1000000`
-
-Right now nothing happens because `get_plan_price()` is never called from `main`.
 
 **Fix this so `get_plan_price()` runs and prints the price:**
 
@@ -811,12 +778,7 @@ Shadowing means declaring a new variable with the same name. The new one hides t
 
 #### Your Task
 
-The code below wants to:
-
-1. Start with `plan = "basic"`
-2. Shadow it with `"pro"`
-3. Assert `plan` equals `"pro"`
-4. Print `Plan: pro`
+A plan variable starts as `"basic"` and gets shadowed with a new value.
 
 **Fill in `___` so the assert passes:**
 
@@ -859,14 +821,12 @@ In smart contracts, if you shadow a mutable balance with a calculated total, tha
 
 #### Your Task
 
-The code below wants to:
+A mutable base gets shadowed as `total`, but the code then tries to increment it. Right now it fails because the shadowed `total` is immutable and cannot be changed.
 
 1. Start `base` at `500_000` lamports
 2. Add `200_000` to it
 3. Shadow it as `total`
 4. Print `Total: 700000`
-
-Right now it fails because the shadowed `total` is immutable but the code tries to increment it.
 
 **Remove one line so this compiles:**
 
@@ -997,12 +957,7 @@ In smart contracts, this is useful for updating both treasury and creator shares
 
 #### Your Task
 
-The code below wants to:
-
-1. Start with `treasury = 600_000` and `creator = 400_000`
-2. Update both to new values in one line
-3. Assert the new values
-4. Print `Split updated.`
+A payment split starts with two values and gets reassigned in one line.
 
 **Fill in the two blanks so the asserts pass:**
 
