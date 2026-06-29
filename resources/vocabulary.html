@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vocabulary — Rust Buddy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg:        #FFFFFF;
+      --color-surface:   #1E1E1A;
+      --color-primary:   #FF7657;
+      --color-secondary: #DFFF65;
+      --color-ink:       #171714;
+      --color-muted:     #77766F;
+      --color-border:    #171714;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-ink);
+      min-height: 100vh;
+    }
+
+    /* ── Nav ── */
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 40px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .site-header-left { display: flex; align-items: center; gap: 10px; }
+    .site-name {
+      font-size: 16px; font-weight: 700; letter-spacing: -0.02em;
+      text-decoration: none; color: var(--color-ink);
+    }
+    .header-sep { color: var(--color-muted); font-size: 14px; }
+    .header-section {
+      font-size: 14px; font-weight: 500; color: var(--color-muted);
+      text-decoration: none;
+    }
+    .header-section:hover { color: var(--color-ink); }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-link {
+      font-size: 13px; font-weight: 600; color: var(--color-muted);
+      text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase;
+    }
+    .nav-link:hover { color: var(--color-ink); }
+    .nav-link.active { color: var(--color-primary); }
+
+    /* ── Hero ── */
+    .article-hero {
+      padding: 56px 40px 48px;
+      border-bottom: 1px solid var(--color-border);
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .article-tag {
+      display: inline-flex;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--color-ink);
+      background: var(--color-secondary);
+      padding: 5px 12px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+    }
+    .article-title {
+      font-size: clamp(36px, 5vw, 60px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      color: var(--color-ink);
+      margin-bottom: 16px;
+    }
+    .article-meta {
+      font-size: 13px;
+      color: var(--color-muted);
+    }
+
+    /* ── Deck nav ── */
+    .deck-nav {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 40px;
+      border-bottom: 1px solid rgba(23,23,20,0.1);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .deck-nav a {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--color-ink);
+      text-decoration: none;
+      background: #F4F3EF;
+      padding: 5px 12px;
+      border-radius: 100px;
+      transition: background 150ms ease;
+    }
+    .deck-nav a:hover {
+      background: var(--color-secondary);
+    }
+
+    /* ── Content ── */
+    .vocab-body {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 40px 100px;
+    }
+
+    .deck-section {
+      margin-bottom: 64px;
+    }
+
+    .deck-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .deck-number {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+    }
+    .deck-title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--color-ink);
+    }
+
+    /* ── Table ── */
+    .vocab-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid rgba(23,23,20,0.1);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .vocab-table thead {
+      background: #F4F3EF;
+    }
+    .vocab-table th {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      padding: 10px 16px;
+      text-align: left;
+      border-bottom: 1px solid rgba(23,23,20,0.1);
+    }
+    .vocab-table td {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #2E2E2A;
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(23,23,20,0.06);
+      vertical-align: top;
+    }
+    .vocab-table tr:last-child td {
+      border-bottom: none;
+    }
+    .vocab-table tr:hover td {
+      background: #FAFAF8;
+    }
+    .vocab-table td:first-child {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-ink);
+      white-space: nowrap;
+      width: 200px;
+    }
+    .vocab-table td:nth-child(2) {
+      width: 45%;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header-left">
+      <a href="../index.html" class="site-name">Rust Buddy</a>
+      <span class="header-sep">/</span>
+      <a href="index.html" class="header-section">Resources</a>
+      <span class="header-sep">/</span>
+      <span class="header-section" style="color: var(--color-ink);">Vocabulary</span>
+    </div>
+    <nav class="nav-links">
+      <a href="../exercises/index.html" class="nav-link">Exercises</a>
+      <a href="../flashcards/index.html" class="nav-link">Flashcards</a>
+      <a href="index.html" class="nav-link active">Resources</a>
+    </nav>
+  </header>
+
+  <div class="article-hero">
+    <div class="article-tag">Reference</div>
+    <h1 class="article-title">Vocabulary</h1>
+    <p class="article-meta">Every key Rust term organized by topic. Use this alongside the flashcard decks.</p>
+  </div>
+
+  <nav class="deck-nav">
+    <a href="#deck-1">The Basics</a>
+    <a href="#deck-2">Functions</a>
+    <a href="#deck-3">Ownership</a>
+    <a href="#deck-4">Borrowing</a>
+    <a href="#deck-5">Modules</a>
+    <a href="#deck-6">Structs + Enums</a>
+    <a href="#deck-7">Error + Traits + Generics</a>
+    <a href="#deck-8">Anchor + Solana</a>
+  </nav>
+
+  <div class="vocab-body">
+
+    <!-- Deck 1 -->
+    <section class="deck-section" id="deck-1">
+      <div class="deck-header">
+        <span class="deck-number">Deck 01</span>
+        <h2 class="deck-title">The Basics</h2>
+      </div>
+      <table class="vocab-table">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>What it is</th>
+            <th>When it's used</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>let</td><td>Creates a new variable</td><td>Every time you store a value</td></tr>
+          <tr><td>mut</td><td>Allows a variable to change after it is set</td><td>When your program needs to update state</td></tr>
+          <tr><td>Immutable</td><td>Cannot change after being set</td><td>Default Rust variable behavior</td></tr>
+          <tr><td>Variable</td><td>A named value</td><td><code>let age = 25;</code></td></tr>
+          <tr><td>Unit type ()</td><td>Rust's empty value — means "nothing"</td><td>When a function returns nothing meaningful</td></tr>
+          <tr><td>Integer</td><td>A whole number</td><td>Counts, balances, indexes</td></tr>
+          <tr><td>Signed integer i</td><td>Integer that can be negative (i8, i32, i64)</td><td>Temperatures, gains/losses</td></tr>
+          <tr><td>Unsigned integer u</td><td>Integer that cannot be negative (u8, u32, u64)</td><td>Balances, counts, addresses</td></tr>
+          <tr><td>u64</td><td>Unsigned 64-bit integer — whole number, no negatives</td><td>Payment amounts, token balances, timestamps</td></tr>
+          <tr><td>u8</td><td>Unsigned 8-bit integer — 0 to 255</td><td>Bytes, wallet address components</td></tr>
+          <tr><td>Floating point f</td><td>A decimal number (f32, f64)</td><td>Measurements — rarely used in Solana</td></tr>
+          <tr><td>f64</td><td>A 64-bit decimal number</td><td>Avoid in Solana — use integer lamports instead</td></tr>
+          <tr><td>bool</td><td>true or false — nothing else</td><td>Status flags: is_paid, is_verified</td></tr>
+          <tr><td>char</td><td>One character — single quotes</td><td>'A', '🔥' — single symbols, not strings</td></tr>
+          <tr><td>&amp;str</td><td>A piece of text — borrowed string slice</td><td>Labels, names, error messages</td></tr>
+          <tr><td>String</td><td>Owned, growable text</td><td>Text you build or change at runtime</td></tr>
+          <tr><td>Tuple</td><td>A group of mixed-type values — fixed size</td><td>("Alice", 25, true)</td></tr>
+          <tr><td>Array</td><td>A fixed list where every item is the same type</td><td>[1, 2, 3]</td></tr>
+          <tr><td>Slice</td><td>A borrowed window into part of an array</td><td>&amp;scores[1..4] — start included, end excluded</td></tr>
+          <tr><td>as</td><td>Converts one type to another</td><td>When you need two different types to work together</td></tr>
+          <tr><td>println!</td><td>Prints a line to the terminal</td><td>Debugging or showing output</td></tr>
+          <tr><td>{:?}</td><td>Debug print formatting</td><td>Printing arrays and tuples that {} cannot print</td></tr>
+          <tr><td>[u8; 32]</td><td>An array of exactly 32 unsigned bytes</td><td>Wallet addresses on Solana</td></tr>
+          <tr><td>Shadowing</td><td>Reusing a variable name with a new let binding — the old value is replaced</td><td>Transforming a value while keeping the same name</td></tr>
+          <tr><td>_</td><td>Prefix for variables the compiler should not warn about as unused; also ignores a value in patterns</td><td>let _unused = 5; or skipping a tuple element</td></tr>
+          <tr><td>Destructuring</td><td>Unpacking a tuple or struct into individual named variables in one line</td><td>let (plan, fee) = (1_000_000u64, 50_000u64);</td></tr>
+          <tr><td>const</td><td>A value that never changes — must have an explicit type; cannot be computed at runtime</td><td>const MAX_FEE: u64 = 50_000; — storing fixed limits</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Deck 2 -->
+    <section class="deck-section" id="deck-2">
+      <div class="deck-header">
+        <span class="deck-number">Deck 02</span>
+        <h2 class="deck-title">Functions</h2>
+      </div>
+      <table class="vocab-table">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>What it is</th>
+            <th>When it's used</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>fn</td><td>The keyword that starts a function definition</td><td>Every function you write</td></tr>
+          <tr><td>Function</td><td>A named block of code with typed inputs and optional output</td><td>Any time you want reusable logic</td></tr>
+          <tr><td>Parameter</td><td>A typed input slot in the function signature: name: &amp;str</td><td>When declaring what a function accepts</td></tr>
+          <tr><td>Argument</td><td>The actual value passed when calling</td><td>When you call a function</td></tr>
+          <tr><td>-&gt;</td><td>Arrow separating parameters from the return type</td><td>When a function gives a value back</td></tr>
+          <tr><td>Return type</td><td>The type of value a function sends back</td><td>Declared after -&gt; — if you declare it, you must return it</td></tr>
+          <tr><td>return</td><td>Sends a value back to the caller and exits the function</td><td>At the end of a function that gives something back</td></tr>
+          <tr><td>format!</td><td>Macro that builds a new String from a template</td><td>When you need text as a value, not printed</td></tr>
+          <tr><td>#[allow(dead_code)]</td><td>Suppresses the "function never used" compiler warning</td><td>During development before all functions are wired up</td></tr>
+          <tr><td>Attribute</td><td>A tag above an item that changes how the compiler processes it</td><td>#[allow(dead_code)], #[derive(...)]</td></tr>
+          <tr><td>Implicit return</td><td>The last expression in a function body without a semicolon is automatically returned</td><td>fn add(x: i32, y: i32) -&gt; i32 { x + y }</td></tr>
+          <tr><td>Scope</td><td>The block of code where a variable is valid — from its declaration to the closing }</td><td>A variable declared inside { } cannot be used outside that block</td></tr>
+          <tr><td>Diverging function</td><td>A function that never returns to the caller — its return type is !</td><td>When a function always panics, loops forever, or exits</td></tr>
+          <tr><td>! (never type)</td><td>The return type of a function that never returns</td><td>fn never_return() -&gt; ! { panic!() }</td></tr>
+          <tr><td>unimplemented!</td><td>A macro that panics with "not yet implemented" — used as a placeholder</td><td>When writing function structure before filling in the logic</td></tr>
+          <tr><td>todo!</td><td>A macro that panics with "not yet implemented"</td><td>Placeholder for code you plan to write later</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Deck 3 -->
+    <section class="deck-section" id="deck-3">
+      <div class="deck-header">
+        <span class="deck-number">Deck 03</span>
+        <h2 class="deck-title">Ownership</h2>
+      </div>
+      <table class="vocab-table">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>What it is</th>
+            <th>When it's used</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Owner</td><td>The variable responsible for a value — when it goes out of scope, the value is freed</td><td>Always — every value has exactly one</td></tr>
+          <tr><td>Move</td><td>Transferring ownership to a new variable — the original can no longer be used</td><td>When passing a String or Vec to a function</td></tr>
+          <tr><td>Copy</td><td>Duplicating a value so both the original and the new variable stay valid</td><td>Integers, booleans, floats — they copy automatically</td></tr>
+          <tr><td>Clone</td><td>An explicit full copy of a heap-allocated value</td><td>s1.clone() — use when you need two separate values</td></tr>
+          <tr><td>Drop</td><td>When a value goes out of scope and its memory is freed</td><td>Happens automatically at the } that closes the scope</td></tr>
+          <tr><td>Stack</td><td>Fast memory for values with a known, fixed size</td><td>i32, bool, char — automatically freed when a function ends</td></tr>
+          <tr><td>Heap</td><td>Flexible memory for values that grow or have unknown size</td><td>String, Vec — requires ownership tracking to know when to free</td></tr>
+          <tr><td>Ownership rules</td><td>Rust's three rules: one owner, one owner at a time, dropped when owner goes out of scope</td><td>The foundation of how Rust manages memory without a garbage collector</td></tr>
+          <tr><td>Ownership into function</td><td>Passing a String to a function moves ownership — the caller's variable is no longer valid</td><td>When a helper takes a value and the caller still needs it afterward</td></tr>
+          <tr><td>Return ownership</td><td>A function can give ownership back by returning the value</td><td>The only way to use a value in main after passing it to a function that takes ownership</td></tr>
+          <tr><td>as_bytes()</td><td>Borrows a String as a byte slice — the original string stays valid</td><td>When you need to inspect bytes without consuming the string</td></tr>
+          <tr><td>into_bytes()</td><td>Consumes a String and converts it to a Vec&lt;u8&gt; — the original is gone afterward</td><td>When you need the raw bytes and will no longer use the string</td></tr>
+          <tr><td>Box&lt;T&gt;</td><td>Allocates a value on the heap and gives you a pointer to it</td><td>When you need to heap-allocate a type that would normally go on the stack</td></tr>
+          <tr><td>Mutability on transfer</td><td>When ownership moves, the new variable sets its own mutability</td><td>let mut s1 = s; — s1 can be mutated even if s was immutable</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Deck 4 -->
+    <section class="deck-section" id="deck-4">
+      <div class="deck-header">
+        <span class="deck-number">Deck 04</span>
+        <h2 class="deck-title">Borrowing</h2>
+      </div>
+      <table class="vocab-table">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>What it is</th>
+            <th>When it's used</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Borrow &amp;T</td><td>A read-only reference — use a value without taking ownership</td><td>When a function only needs to read a value</td></tr>
+          <tr><td>Mutable borrow &amp;mut T</td><td>A read-write reference — use and change a value</td><td>When a function needs to modify a value</td></tr>
+          <tr><td>Scope</td><td>The block a variable lives in — between { and }</td><td>Determines when a value is dropped</td></tr>
+          <tr><td>Lifetime</td><td>How long a reference stays valid — compiler tracks this automatically</td><td>You read lifetimes in Anchor ('info); rarely write them yourself</td></tr>
+          <tr><td>Borrowing rules</td><td>Either one mutable reference OR any number of immutable ones — never both at the same time; references must always be valid</td><td>How Rust prevents data races and dangling pointers at compile time</td></tr>
+          <tr><td>Dangling reference</td><td>A reference to data that has already been freed</td><td>Rust refuses to compile this — it catches it before your code runs</td></tr>
+          <tr><td>&amp;'static str</td><td>A string slice that lives for the entire program lifetime</td><td>let s: &amp;'static str = "hello"; — the value is baked into the binary</td></tr>
+          <tr><td>String slice [start..end]</td><td>A borrowed view into part of a String — returns &amp;str; end index is excluded</td><td>&amp;s[0..5] — the first 5 characters without taking ownership</td></tr>
+          <tr><td>push_str()</td><td>Appends a &amp;str to a mutable String</td><td>s.push_str("_pro"); — adding multiple characters</td></tr>
+          <tr><td>push()</td><td>Appends a single char to a mutable String</td><td>s.push('!'); — adding one character</td></tr>
+          <tr><td>as_str()</td><td>Converts a String to a &amp;str — borrows without moving</td><td>When a function expects &amp;str but you have a String</td></tr>
+          <tr><td>.to_string()</td><td>Converts a &amp;str to an owned String</td><td>"basic".to_string() — when you need to own a copy of a string literal</td></tr>
+          <tr><td>chars()</td><td>Returns an iterator over the individual characters of a string</td><td>for c in s.chars() { ... } — the safe way to loop over characters</td></tr>
+          <tr><td>Slice &amp;[T]</td><td>A borrowed view into part of a collection — does not take ownership</td><td>&amp;arr[1..3] — borrows elements 1 and 2 from an array</td></tr>
+          <tr><td>Array [T; N]</td><td>A fixed-size collection where every element is the same type — length is part of the type</td><td>[i32; 5] — an array of 5 integers; length must be known at compile time</td></tr>
+          <tr><td>.get(i)</td><td>Returns Option&lt;&amp;T&gt; for an index — safe access that returns None instead of panicking</td><td>arr.get(10) — use when the index might be out of bounds</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Deck 5 -->
+    <section class="deck-section" id="deck-5">
+      <div class="deck-header">
+        <span class="deck-number">Deck 05</span>
+        <h2 class="deck-title">Modules</h2>
+      </div>
+      <table class="vocab-table">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>What it is</th>
+            <th>When it's used</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>mod</td><td>Declares a module</td><td>Every time you create or reference a module</td></tr>
+          <tr><td>pub mod helpers;</td><td>Tell Rust to include helpers.rs as a module</td><td>In main.rs or lib.rs when code is split into files</td></tr>
+          <tr><td>pub fn</td><td>A public function — callable from outside its module</td><td>Any function another file needs to use</td></tr>
+          <tr><td>Private by default</td><td>Everything inside a module is hidden unless pub is written</td><td>Default Rust behavior — you choose what is visible</td></tr>
+          <tr><td>::</td><td>Module path separator</td><td>When navigating into a module: helpers::function_name</td></tr>
+          <tr><td>Path</td><td>The full address of a function: helpers::get_full_name</td><td>When calling a function from another module</td></tr>
+          <tr><td>Child module</td><td>A module declared inside another module</td><td>When you want to group within a module further</td></tr>
+          <tr><td>Inline module</td><td>pub mod name { ... } — body is right here, not a file</td><td>Small sub-groups that do not need their own file</td></tr>
+          <tr><td>File-backed module</td><td>pub mod name; — body is in name.rs</td><td>Most common for larger code — keeps files separate</td></tr>
+          <tr><td>Package</td><td>The whole project — what cargo new creates</td><td>The container for all your crates</td></tr>
+          <tr><td>Crate</td><td>A compilation unit — either binary or library</td><td>The unit Rust actually compiles</td></tr>
+          <tr><td>Binary crate</td><td>Built from main.rs — produces an executable you can run</td><td>Regular programs with fn main</td></tr>
+          <tr><td>Library crate</td><td>Built from lib.rs — no fn main</td><td>Reusable code and every Anchor program</td></tr>
+          <tr><td>Crate root</td><td>The starting file for compilation (main.rs or lib.rs)</td><td>Where absolute paths begin</td></tr>
+          <tr><td>crate::</td><td>Start an absolute path at the crate root</td><td>When calling across modules — always correct even if code moves</td></tr>
+          <tr><td>super::</td><td>Go up one module level</td><td>Calling a function in the parent module</td></tr>
+          <tr><td>use</td><td>Bring a path into scope as a shortcut</td><td>When you want to stop typing the full path every call</td></tr>
+          <tr><td>pub use</td><td>Bring into scope AND re-export it to callers</td><td>Making internal paths publicly accessible — Anchor uses this</td></tr>
+          <tr><td>as</td><td>Rename an import</td><td>When two imports share the same name</td></tr>
+          <tr><td>Nested path</td><td>use x::{a, b, c} — import multiple things from one parent</td><td>Keeps the import section tidy</td></tr>
+          <tr><td>Glob *</td><td>Import everything public from a path</td><td>use anchor_lang::prelude::* — one line for everything</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Deck 6 -->
+    <section class="deck-section" id="deck-6">
+      <div class="deck-header">
+        <span class="deck-number">Deck 06</span>
+        <h2 class="deck-title">Structs + Enums</h2>
+      </div>
+      <table class="vocab-table">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>What it is</th>
+            <th>When it's used</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Struct</td><td>A custom type that groups named fields together</td><td>Defining account data, payment plans, subscribers</td></tr>
+          <tr><td>Field</td><td>One named value inside a struct</td><td>username: String, balance: u64</td></tr>
+          <tr><td>Instance</td><td>A specific struct with actual values filled in</td><td>let user = User { username: "Alice", ... }</td></tr>
+          <tr><td>impl</td><td>Where you attach methods to a struct</td><td>Adding functions that belong to the struct</td></tr>
+          <tr><td>self</td><td>The current instance inside an impl block — &amp;self reads, &amp;mut self modifies</td><td>Inside any method on a struct</td></tr>
+          <tr><td>#[account]</td><td>Anchor macro that turns a struct into a serializable on-chain account</td><td>Every account that stores data on Solana</td></tr>
+          <tr><td>Enum</td><td>A type that can be exactly one of several named options</td><td>Subscription status, payment state, instruction results</td></tr>
+          <tr><td>Variant</td><td>One of the options inside an enum: Active, Expired</td><td>Matching or creating an enum value</td></tr>
+          <tr><td>match</td><td>Handles every variant of an enum — compiler enforces completeness</td><td>Branching on a Result, Option, or custom enum</td></tr>
+          <tr><td>Option&lt;T&gt;</td><td>Either Some(value) or None — Rust's way of saying "might not exist"</td><td>Any value that could be absent — replaces null</td></tr>
+          <tr><td>Result&lt;T, E&gt;</td><td>Either Ok(value) or Err(error) — success or failure</td><td>Any operation that can fail</td></tr>
+          <tr><td>#[error_code]</td><td>Anchor macro for defining custom program errors as an enum</td><td>When your program needs specific error messages</td></tr>
+          <tr><td>require!</td><td>Anchor macro for validation — returns your error if a condition fails</td><td>Checking conditions before processing a payment</td></tr>
+          <tr><td>Method</td><td>A function in an impl block that takes self, &amp;self, or &amp;mut self as its first parameter</td><td>wallet.deposit(amount) — the function belongs to the struct</td></tr>
+          <tr><td>&amp;self</td><td>Gives read-only access to a struct instance inside a method</td><td>fn balance(&amp;self) -&gt; u64 — when the method only needs to read fields</td></tr>
+          <tr><td>&amp;mut self</td><td>Gives mutable access to a struct instance inside a method</td><td>fn deposit(&amp;mut self, amount: u64) — when the method needs to modify the struct</td></tr>
+          <tr><td>Associated function</td><td>A function in impl with no self parameter — called with :: not .</td><td>Wallet::new() — the idiomatic Rust constructor pattern</td></tr>
+          <tr><td>#[derive(Debug)]</td><td>An attribute that gives a struct or enum the ability to be printed with {:?}</td><td>Add above any struct you want to inspect during development</td></tr>
+          <tr><td>Field init shorthand</td><td>When a variable name matches a field name, you can write it once</td><td>User { email, username } instead of User { email: email, username: username }</td></tr>
+          <tr><td>Struct update syntax</td><td>..other copies all remaining fields from an existing instance</td><td>let user2 = User { email: new_email, ..user1 };</td></tr>
+          <tr><td>Vec&lt;T&gt;</td><td>A growable list where all elements are the same type</td><td>let mut v: Vec&lt;u64&gt; = Vec::new(); v.push(1_000_000);</td></tr>
+          <tr><td>Some(value)</td><td>The Option variant that contains a value</td><td>Some(42) — when the result is present</td></tr>
+          <tr><td>None</td><td>The Option variant that means no value — Rust's replacement for null</td><td>None — when there is nothing to return; must be handled explicitly</td></tr>
+          <tr><td>Ok(value)</td><td>The Result variant for success — holds the return value</td><td>Ok(new_balance) — the operation worked</td></tr>
+          <tr><td>Err(reason)</td><td>The Result variant for failure — holds the error reason</td><td>Err("Insufficient funds") — the operation failed; caller must handle it</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Deck 7 -->
+    <section class="deck-section" id="deck-7">
+      <div class="deck-header">
+        <span class="deck-number">Deck 07</span>
+        <h2 class="deck-title">Error Handling + Traits + Generics</h2>
+      </div>
+      <table class="vocab-table">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>What it is</th>
+            <th>When it's used</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Result&lt;T, E&gt;</td><td>Either Ok(value) or Err(error) — never both</td><td>Any function that can succeed or fail</td></tr>
+          <tr><td>Option&lt;T&gt;</td><td>Either Some(value) or None — Rust's version of "might not exist"</td><td>Any value that could be absent</td></tr>
+          <tr><td>? operator</td><td>Propagates an error up — if Err, return it; if Ok, unwrap and continue</td><td>Inside functions that return Result — keeps code clean</td></tr>
+          <tr><td>require!</td><td>Anchor macro — check a condition, return a custom error if false</td><td>Validating payment amounts, account states, permissions</td></tr>
+          <tr><td>#[error_code]</td><td>Anchor attribute — marks an enum as a set of program error types</td><td>Defining all the ways your program can fail</td></tr>
+          <tr><td>Trait</td><td>Defines shared behavior — like an interface</td><td>When different types need to do the same thing</td></tr>
+          <tr><td>Display</td><td>Trait for how a type prints with {}</td><td>Implementing human-readable output</td></tr>
+          <tr><td>Debug</td><td>Trait for how a type prints with {:?}</td><td>Printing structs during development</td></tr>
+          <tr><td>Clone</td><td>Trait that makes an explicit copy of a value</td><td>When you need a duplicate of a struct</td></tr>
+          <tr><td>Copy</td><td>Trait for implicit copies — integers and booleans are Copy</td><td>Simple types that should copy automatically</td></tr>
+          <tr><td>PartialEq</td><td>Trait that allows == comparisons between two values</td><td>Testing whether two values are equal</td></tr>
+          <tr><td>AnchorSerialize</td><td>Converts a struct to bytes to store on-chain</td><td>Required on every Anchor account struct</td></tr>
+          <tr><td>AnchorDeserialize</td><td>Reads bytes from an account and rebuilds the struct</td><td>Required on every Anchor account struct</td></tr>
+          <tr><td>Default</td><td>Provides a zero or empty starting value for each field</td><td>Initializing account data with safe defaults</td></tr>
+          <tr><td>Generic &lt;T&gt;</td><td>A placeholder type — filled in when the code is actually used</td><td>Writing functions or structs that work with any type</td></tr>
+          <tr><td>Lifetime 'a</td><td>A label for how long a reference stays valid</td><td>Telling the compiler when a reference must still be alive</td></tr>
+          <tr><td>'info</td><td>The standard lifetime name in Anchor context structs</td><td>Every Context&lt;'info, T&gt; in an Anchor instruction</td></tr>
+          <tr><td>Monomorphization</td><td>Rust compiles a separate version of generic code for each type used — no runtime cost</td><td>Happens automatically — explains why generics are fast</td></tr>
+          <tr><td>Recoverable error</td><td>An expected failure the program can handle and keep running</td><td>User overdraft, missing account, invalid input — use Result</td></tr>
+          <tr><td>Unrecoverable error</td><td>A programming mistake so severe the program cannot safely continue</td><td>Use panic! — the only safe response is to stop immediately</td></tr>
+          <tr><td>Error propagation</td><td>Passing an error up to the calling function with ? instead of handling it locally</td><td>When a function is not the right place to decide what to do with an error</td></tr>
+          <tr><td>Static dispatch</td><td>The compiler resolves the exact type at compile time — faster; no runtime overhead</td><td>impl Trait in function parameters</td></tr>
+          <tr><td>Dynamic dispatch</td><td>The type is resolved at runtime using a V-table — slightly slower but flexible</td><td>Box&lt;dyn Trait&gt; — needed when you do not know the type until runtime</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Deck 8 -->
+    <section class="deck-section" id="deck-8">
+      <div class="deck-header">
+        <span class="deck-number">Deck 08</span>
+        <h2 class="deck-title">Anchor + Solana</h2>
+      </div>
+      <table class="vocab-table">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>What it is</th>
+            <th>When it's used</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Anchor</td><td>A framework for writing Solana programs — handles boilerplate and security checks automatically</td><td>Every Anchor program you write</td></tr>
+          <tr><td>#[program]</td><td>Marks the module that contains your instruction handlers</td><td>The main module in every Anchor program</td></tr>
+          <tr><td>#[account]</td><td>Turns a struct into an on-chain account with automatic serialization</td><td>Every struct that stores data on Solana</td></tr>
+          <tr><td>#[derive(Accounts)]</td><td>Generates account validation code for an instruction's input struct</td><td>Every instruction accounts struct</td></tr>
+          <tr><td>Context&lt;T&gt;</td><td>The first parameter of every instruction — holds all accounts and program data</td><td>Every instruction handler</td></tr>
+          <tr><td>ctx.accounts</td><td>Access the accounts passed into an instruction</td><td>Inside any instruction handler</td></tr>
+          <tr><td>Account&lt;'info, T&gt;</td><td>A validated, deserialized account of type T</td><td>When you want Anchor to check and load an account</td></tr>
+          <tr><td>Signer&lt;'info&gt;</td><td>An account that must have signed the transaction</td><td>Validating who is allowed to call an instruction</td></tr>
+          <tr><td>SystemProgram&lt;'info&gt;</td><td>The Solana system program — handles account creation</td><td>When creating new accounts</td></tr>
+          <tr><td>PDA</td><td>Program Derived Address — an account address controlled by your program, not a private key</td><td>Storing per-user state like subscriptions</td></tr>
+          <tr><td>seeds</td><td>The values used to derive a PDA address</td><td>#[account(seeds = [b"subscription", user.key().as_ref()])]</td></tr>
+          <tr><td>bump</td><td>A nonce added to make the PDA address valid — stored in the account</td><td>Part of every PDA derivation</td></tr>
+          <tr><td>init</td><td>Anchor constraint that creates a new account</td><td>When an instruction needs to set up a new on-chain account</td></tr>
+          <tr><td>mut constraint</td><td>Marks an account as writable — required to change its data</td><td>#[account(mut)] on any account you modify</td></tr>
+          <tr><td>has_one</td><td>Validates that one account's field matches another account's key</td><td>Checking that a subscription belongs to the right plan</td></tr>
+          <tr><td>close</td><td>Anchor constraint that closes an account and returns its rent to a wallet</td><td>When a subscription is cancelled</td></tr>
+          <tr><td>IDL</td><td>Interface Definition Language — the JSON file Anchor generates describing your program</td><td>Used by clients (TypeScript) to interact with the program</td></tr>
+          <tr><td>Lamport</td><td>The smallest unit of SOL — 1 SOL = 1,000,000,000 lamports</td><td>All payment amounts in Solana programs</td></tr>
+          <tr><td>Pubkey</td><td>A 32-byte public key — identifies a wallet or account on Solana</td><td>Storing addresses in account structs</td></tr>
+          <tr><td>transfer</td><td>Moves lamports from one account to another</td><td>Processing payments in a subscription program</td></tr>
+          <tr><td>Discriminator</td><td>8 bytes Anchor adds to every account to identify its type</td><td>Automatic — prevents account confusion attacks</td></tr>
+          <tr><td>Space</td><td>The number of bytes to allocate when creating an account</td><td>space = 8 + 32 + 32 + 1 + 8 + 1 — must be exact</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+  </div>
+
+  <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

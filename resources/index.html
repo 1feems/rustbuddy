@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resources — Rust Buddy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg:        #FFFFFF;
+      --color-surface:   #1E1E1A;
+      --color-primary:   #FF7657;
+      --color-secondary: #DFFF65;
+      --color-ink:       #171714;
+      --color-muted:     #77766F;
+      --color-border:    #171714;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-ink);
+      min-height: 100vh;
+    }
+
+    /* ── Nav ── */
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 40px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .site-header-left { display: flex; align-items: center; gap: 10px; }
+    .site-name {
+      font-size: 16px; font-weight: 700; letter-spacing: -0.02em;
+      text-decoration: none; color: var(--color-ink);
+    }
+    .header-sep { color: var(--color-muted); font-size: 14px; }
+    .header-section { font-size: 14px; font-weight: 500; color: var(--color-muted); }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-link {
+      font-size: 13px; font-weight: 600; color: var(--color-muted);
+      text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase;
+    }
+    .nav-link:hover { color: var(--color-ink); }
+    .nav-link.active { color: var(--color-primary); }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 72px 40px 64px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: end;
+      border-bottom: 1px solid var(--color-border);
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .hero-page-label {
+      display: inline-flex;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #FFFFFF;
+      background: var(--color-primary);
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 24px;
+    }
+    .hero-title {
+      font-size: clamp(48px, 6vw, 80px);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      color: var(--color-ink);
+    }
+    .hero-desc {
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.7;
+      color: var(--color-muted);
+      max-width: 360px;
+      padding-bottom: 8px;
+    }
+    .hero-desc strong { color: var(--color-ink); font-weight: 600; }
+
+    /* ── Cards ── */
+    .cards-section {
+      padding: 48px 40px 80px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .post-card {
+      border-radius: 20px;
+      padding: 22px 22px 24px;
+      min-height: 310px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-decoration: none;
+      transition: transform 200ms ease, box-shadow 200ms ease;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .post-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 24px 52px -8px rgba(0,0,0,0.22);
+    }
+
+    .deck-orange { background: linear-gradient(135deg, #FF7657 0%, #F97316 50%, #E85D04 100%); }
+    .deck-lime   { background: linear-gradient(135deg, #A8D92F 0%, #C5E94E 40%, #EFF8A7 100%); }
+
+    .card-top { display: flex; align-items: flex-start; justify-content: space-between; }
+    .card-tag {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase; padding-top: 2px;
+    }
+    .deck-orange .card-tag { color: rgba(255,255,255,0.6); }
+    .deck-lime   .card-tag { color: rgba(0,0,0,0.45); }
+
+    .card-arrow {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .deck-orange .card-arrow { background: rgba(255,255,255,0.18); }
+    .deck-lime   .card-arrow { background: rgba(0,0,0,0.12); }
+
+    .deck-orange .card-arrow path { stroke: rgba(255,255,255,0.85); }
+    .deck-lime   .card-arrow path { stroke: rgba(0,0,0,0.6); }
+
+    .card-icon {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center;
+      padding: 12px 0;
+    }
+
+    .card-title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+    }
+    .card-desc {
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.55;
+      margin-top: 7px;
+    }
+    .deck-orange .card-title { color: #FFFFFF; }
+    .deck-lime   .card-title { color: #171714; }
+    .deck-orange .card-desc { color: rgba(255,255,255,0.7); }
+    .deck-lime   .card-desc { color: rgba(0,0,0,0.55); }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header-left">
+      <a href="../index.html" class="site-name">Rust Buddy</a>
+      <span class="header-sep">/</span>
+      <span class="header-section">Resources</span>
+    </div>
+    <nav class="nav-links">
+      <a href="../exercises/index.html" class="nav-link">Exercises</a>
+      <a href="../flashcards/index.html" class="nav-link">Flashcards</a>
+      <a href="index.html" class="nav-link active">Resources</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-page-label">Resources</div>
+      <h1 class="hero-title">Study.<br>Reference.<br>Grow.</h1>
+    </div>
+    <div class="hero-right">
+      <p class="hero-desc">
+        Lesson write-ups and vocabulary guides for every Rust topic. Use these alongside the <strong>exercises</strong> and <strong>flashcards</strong>.
+      </p>
+    </div>
+  </section>
+
+  <section class="cards-section">
+    <div class="cards-grid">
+
+      <!-- Rust 101 -->
+      <a href="rust-101.html" class="post-card deck-orange">
+        <div class="card-top">
+          <span class="card-tag">Lesson</span>
+          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </div>
+        <div class="card-icon">
+          <svg width="90" height="90" fill="none" viewBox="0 0 100 100">
+            <rect x="22" y="14" width="56" height="72" rx="6" stroke="rgba(255,255,255,0.5)" stroke-width="3.5"/>
+            <line x1="34" y1="32" x2="66" y2="32" stroke="rgba(255,255,255,0.8)" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="34" y1="44" x2="66" y2="44" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="34" y1="56" x2="56" y2="56" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="34" y1="68" x2="50" y2="68" stroke="rgba(255,255,255,0.3)" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="card-bottom">
+          <p class="card-title">Rust 101</p>
+          <p class="card-desc">Every concept from the Rust 101 lesson in plain English. Variables, types, control flow, ownership, and more.</p>
+        </div>
+      </a>
+
+      <!-- Vocabulary -->
+      <a href="vocabulary.html" class="post-card deck-lime">
+        <div class="card-top">
+          <span class="card-tag">Reference</span>
+          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </div>
+        <div class="card-icon">
+          <svg width="90" height="90" fill="none" viewBox="0 0 100 100">
+            <rect x="14" y="18" width="72" height="64" rx="6" stroke="rgba(0,0,0,0.3)" stroke-width="3.5"/>
+            <line x1="14" y1="40" x2="86" y2="40" stroke="rgba(0,0,0,0.2)" stroke-width="2.5"/>
+            <line x1="14" y1="60" x2="86" y2="60" stroke="rgba(0,0,0,0.2)" stroke-width="2.5"/>
+            <line x1="38" y1="18" x2="38" y2="82" stroke="rgba(0,0,0,0.2)" stroke-width="2.5"/>
+            <circle cx="26" cy="29" r="4" fill="rgba(0,0,0,0.4)"/>
+            <circle cx="26" cy="50" r="4" fill="rgba(0,0,0,0.4)"/>
+            <circle cx="26" cy="70" r="4" fill="rgba(0,0,0,0.25)"/>
+          </svg>
+        </div>
+        <div class="card-bottom">
+          <p class="card-title">Vocabulary</p>
+          <p class="card-desc">Every key Rust term organized by topic. A quick reference for all concepts covered in the flashcard decks.</p>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

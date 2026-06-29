@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rust 101 — Rust Buddy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg:        #FFFFFF;
+      --color-surface:   #1E1E1A;
+      --color-primary:   #FF7657;
+      --color-secondary: #DFFF65;
+      --color-ink:       #171714;
+      --color-muted:     #77766F;
+      --color-border:    #171714;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-ink);
+      min-height: 100vh;
+    }
+
+    /* ── Nav ── */
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 40px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .site-header-left { display: flex; align-items: center; gap: 10px; }
+    .site-name {
+      font-size: 16px; font-weight: 700; letter-spacing: -0.02em;
+      text-decoration: none; color: var(--color-ink);
+    }
+    .header-sep { color: var(--color-muted); font-size: 14px; }
+    .header-section {
+      font-size: 14px; font-weight: 500; color: var(--color-muted);
+      text-decoration: none;
+    }
+    .header-section:hover { color: var(--color-ink); }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-link {
+      font-size: 13px; font-weight: 600; color: var(--color-muted);
+      text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase;
+    }
+    .nav-link:hover { color: var(--color-ink); }
+    .nav-link.active { color: var(--color-primary); }
+
+    /* ── Article hero ── */
+    .article-hero {
+      padding: 56px 40px 48px;
+      border-bottom: 1px solid var(--color-border);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .article-tag {
+      display: inline-flex;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #FFFFFF;
+      background: var(--color-primary);
+      padding: 5px 12px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+    }
+    .article-title {
+      font-size: clamp(36px, 5vw, 60px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      color: var(--color-ink);
+      margin-bottom: 16px;
+    }
+    .article-meta {
+      font-size: 13px;
+      color: var(--color-muted);
+    }
+
+    /* ── Table of contents ── */
+    .toc-wrapper {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 32px 40px;
+      border-bottom: 1px solid rgba(23,23,20,0.1);
+    }
+    .toc-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 12px;
+    }
+    .toc-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      list-style: none;
+    }
+    .toc-list a {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-ink);
+      text-decoration: none;
+      background: #F4F3EF;
+      padding: 5px 12px;
+      border-radius: 100px;
+      transition: background 150ms ease;
+    }
+    .toc-list a:hover {
+      background: var(--color-secondary);
+    }
+
+    /* ── Article body ── */
+    .article-body {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 48px 40px 100px;
+    }
+
+    .article-section {
+      margin-bottom: 56px;
+    }
+
+    .article-section h2 {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--color-ink);
+      margin-bottom: 16px;
+      padding-top: 8px;
+    }
+    .article-section p {
+      font-size: 16px;
+      line-height: 1.75;
+      color: #2E2E2A;
+      margin-bottom: 16px;
+    }
+    .article-section p:last-child {
+      margin-bottom: 0;
+    }
+    .article-section ul,
+    .article-section ol {
+      margin: 0 0 16px 20px;
+    }
+    .article-section li {
+      font-size: 16px;
+      line-height: 1.75;
+      color: #2E2E2A;
+      margin-bottom: 6px;
+    }
+    .article-section strong {
+      color: var(--color-ink);
+      font-weight: 700;
+    }
+
+    /* inline code */
+    .article-section code {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 14px;
+      background: #F0EFE9;
+      color: var(--color-ink);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    /* code blocks */
+    .code-block {
+      background: var(--color-surface);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+    .code-block pre {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 13.5px;
+      line-height: 1.65;
+      color: #E8E6DF;
+      white-space: pre;
+    }
+    .code-block .comment { color: #6B6B5E; }
+    .code-block .keyword { color: #FF7657; }
+    .code-block .string  { color: #DFFF65; }
+    .code-block .number  { color: #A8D92F; }
+    .code-block .type    { color: #35BFDA; }
+
+    /* sub-headings inside sections */
+    .article-section h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--color-ink);
+      margin: 24px 0 8px;
+    }
+
+    /* section divider */
+    .section-rule {
+      border: none;
+      border-top: 1px solid rgba(23,23,20,0.08);
+      margin-bottom: 56px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header-left">
+      <a href="../index.html" class="site-name">Rust Buddy</a>
+      <span class="header-sep">/</span>
+      <a href="index.html" class="header-section">Resources</a>
+      <span class="header-sep">/</span>
+      <span class="header-section" style="color: var(--color-ink);">Rust 101</span>
+    </div>
+    <nav class="nav-links">
+      <a href="../exercises/index.html" class="nav-link">Exercises</a>
+      <a href="../flashcards/index.html" class="nav-link">Flashcards</a>
+      <a href="index.html" class="nav-link active">Resources</a>
+    </nav>
+  </header>
+
+  <div class="article-hero">
+    <div class="article-tag">Lesson</div>
+    <h1 class="article-title">Rust 101:<br>Full Lesson</h1>
+    <p class="article-meta">Every concept from the Rust 101 lesson explained in plain English with examples.</p>
+  </div>
+
+  <div class="toc-wrapper">
+    <p class="toc-label">In this lesson</p>
+    <ul class="toc-list">
+      <li><a href="#playground">Rust Playground</a></li>
+      <li><a href="#variables">Variables</a></li>
+      <li><a href="#types">Data Types</a></li>
+      <li><a href="#strings">Strings</a></li>
+      <li><a href="#control-flow">Control Flow</a></li>
+      <li><a href="#functions">Functions</a></li>
+      <li><a href="#structs">Structs</a></li>
+      <li><a href="#enums">Enums</a></li>
+      <li><a href="#ownership">Ownership</a></li>
+      <li><a href="#borrowing">Borrowing</a></li>
+      <li><a href="#traits">Traits</a></li>
+      <li><a href="#lifetimes">Lifetimes</a></li>
+      <li><a href="#errors">Error Handling</a></li>
+      <li><a href="#project">Project Structure</a></li>
+    </ul>
+  </div>
+
+  <div class="article-body">
+
+    <!-- Playground -->
+    <section class="article-section" id="playground">
+      <h2>Getting Started: The Rust Playground</h2>
+      <p>Before writing local code, use the <strong>Rust Playground</strong> at <code>play.rust-lang.org</code>. Paste any example from this lesson and run it in your browser. No install needed.</p>
+    </section>
+    <hr class="section-rule">
+
+    <!-- Variables -->
+    <section class="article-section" id="variables">
+      <h2>Variables and Mutability</h2>
+      <p>In most languages, variables can be changed after you set them. In Rust, they cannot unless you say so explicitly.</p>
+      <div class="code-block"><pre>let x = 5;          <span class="comment">// x is 5 and stays 5 forever</span>
+let mut y = 5;      <span class="comment">// y starts at 5</span>
+y = 15;             <span class="comment">// y is now 15 — allowed because of mut</span></pre></div>
+      <p>If you try to change an immutable variable, the compiler stops you before your code even runs.</p>
+      <p><strong>Constants</strong> are a stronger form of immutable. They require an explicit type and cannot be set to a value computed at runtime:</p>
+      <div class="code-block"><pre>const MAX_POINTS: u32 = 100_000;</pre></div>
+    </section>
+    <hr class="section-rule">
+
+    <!-- Data Types -->
+    <section class="article-section" id="types">
+      <h2>Data Types</h2>
+      <p>Rust needs to know the type of every value at compile time. Usually it figures this out on its own, but you can always be explicit.</p>
+
+      <h3>Integers</h3>
+      <ul>
+        <li><code>u8</code>, <code>u16</code>, <code>u32</code>, <code>u64</code> — unsigned (positive numbers only, from 0 up)</li>
+        <li><code>i8</code>, <code>i16</code>, <code>i32</code>, <code>i64</code> — signed (positive and negative)</li>
+        <li>The number is the bit size. <code>u64</code> holds up to ~18 quintillion. <code>u8</code> holds 0 to 255.</li>
+      </ul>
+      <div class="code-block"><pre>let amount: u64 = 1_000_000;   <span class="comment">// SOL amount in lamports</span>
+let delta: i64 = -500;          <span class="comment">// a change that could go negative</span></pre></div>
+
+      <h3>Floats</h3>
+      <ul>
+        <li><code>f32</code>, <code>f64</code> — numbers with decimal points. Default is <code>f64</code>.</li>
+      </ul>
+
+      <h3>Booleans</h3>
+      <div class="code-block"><pre>let is_active: bool = true;</pre></div>
+
+      <h3>Characters</h3>
+      <div class="code-block"><pre>let letter: char = 'A';    <span class="comment">// single quotes for char, double for strings</span></pre></div>
+
+      <h3>Arrays — fixed size, all same type</h3>
+      <div class="code-block"><pre>let arr: [i32; 3] = [1, 2, 3];  <span class="comment">// exactly 3 signed 32-bit integers</span></pre></div>
+
+      <h3>Tuples — fixed size, can mix types</h3>
+      <div class="code-block"><pre>let t: (i32, f64, bool) = (42, 3.14, true);
+let first = t.0;    <span class="comment">// access by index</span></pre></div>
+    </section>
+    <hr class="section-rule">
+
+    <!-- Strings -->
+    <section class="article-section" id="strings">
+      <h2>Strings</h2>
+      <p>Two kinds of strings in Rust. They behave differently and are used for different things.</p>
+
+      <h3><code>String</code>: owned, growable, stored on the heap</h3>
+      <div class="code-block"><pre>let mut s = String::from("hello");
+s.push_str(", world");    <span class="comment">// s is now "hello, world"</span></pre></div>
+
+      <h3><code>&amp;str</code>: a borrowed string slice — a read-only window into existing string data</h3>
+      <div class="code-block"><pre>let s = String::from("hello world");
+let hello: &str = &s[0..5];    <span class="comment">// "hello" — a view, not a copy</span></pre></div>
+
+      <p>When to use which:</p>
+      <ul>
+        <li>Building or modifying a string → use <code>String</code></li>
+        <li>Just reading a string → use <code>&amp;str</code></li>
+        <li>Function parameters that only need to read → use <code>&amp;str</code> (more flexible)</li>
+      </ul>
+    </section>
+    <hr class="section-rule">
+
+    <!-- Control Flow -->
+    <section class="article-section" id="control-flow">
+      <h2>Control Flow</h2>
+
+      <h3>If / else</h3>
+      <div class="code-block"><pre>let x = 10;
+if x > 5 {
+    println!("big");
+} else {
+    println!("small");
+}
+
+<span class="comment">// You can assign from an if expression</span>
+let result = if x > 5 { "big" } else { "small" };</pre></div>
+
+      <h3>Loops</h3>
+      <div class="code-block"><pre><span class="comment">// loop — runs forever until break</span>
+loop {
+    if done { break; }
+}
+
+<span class="comment">// while</span>
+let mut n = 3;
+while n > 0 {
+    println!("{}", n);
+    n -= 1;
+}
+
+<span class="comment">// for — iterating a range or collection</span>
+for i in 0..5 {
+    println!("{}", i);    <span class="comment">// prints 0, 1, 2, 3, 4</span>
+}</pre></div>
+
+      <h3>Match — like a switch but must cover every case</h3>
+      <div class="code-block"><pre>let number = 3;
+match number {
+    1 => println!("one"),
+    2 => println!("two"),
+    3 => println!("three"),
+    _ => println!("something else"),    <span class="comment">// _ is the wildcard</span>
+}</pre></div>
+      <p>Match is used constantly in Rust for working with <code>Result</code>, <code>Option</code>, enums, and error codes.</p>
+    </section>
+    <hr class="section-rule">
+
+    <!-- Functions -->
+    <section class="article-section" id="functions">
+      <h2>Functions</h2>
+      <div class="code-block"><pre>fn add(a: i32, b: i32) -> i32 {
+    return a + b;        <span class="comment">// explicit return</span>
+}
+
+fn square(x: i32) -> i32 {
+    x * x               <span class="comment">// implicit return — no semicolon = return this value</span>
+}
+
+let result1 = add(5, 3);      <span class="comment">// 8</span>
+let result2 = square(5);      <span class="comment">// 25</span></pre></div>
+      <p>Rules:</p>
+      <ul>
+        <li>Parameter types are always required</li>
+        <li>Return type goes after <code>-&gt;</code> — omit if nothing is returned</li>
+        <li>Last expression without a semicolon is returned automatically</li>
+      </ul>
+    </section>
+    <hr class="section-rule">
+
+    <!-- Structs -->
+    <section class="article-section" id="structs">
+      <h2>Structs</h2>
+      <p>Structs group related fields into one named type.</p>
+      <div class="code-block"><pre>struct User {
+    username: String,
+    email: String,
+    active: bool,
+}
+
+<span class="comment">// Create an instance</span>
+let user1 = User {
+    username: String::from("alice"),
+    email: String::from("alice@example.com"),
+    active: true,
+};
+
+println!("{}", user1.username);    <span class="comment">// "alice"</span></pre></div>
+      <p>Structs can contain other structs and enums. In Anchor, your on-chain account data is always a struct.</p>
+    </section>
+    <hr class="section-rule">
+
+    <!-- Enums -->
+    <section class="article-section" id="enums">
+      <h2>Enums</h2>
+      <p>Enums define a type that can be exactly one of several named variants. Each variant can carry different data.</p>
+      <div class="code-block"><pre>enum IpAddr {
+    V4(u8, u8, u8, u8),
+    V6(String),
+    Unknown,
+}
+
+let home = IpAddr::V4(127, 0, 0, 1);
+let loopback = IpAddr::V6(String::from("::1"));
+let nowhere = IpAddr::Unknown;</pre></div>
+      <p>The power of enums is that <code>match</code> forces you to handle every variant:</p>
+      <div class="code-block"><pre>match home {
+    IpAddr::V4(a, b, c, d) => println!("{}.{}.{}.{}", a, b, c, d),
+    IpAddr::V6(s) => println!("{}", s),
+    IpAddr::Unknown => println!("no address"),
+}</pre></div>
+    </section>
+    <hr class="section-rule">
+
+    <!-- Ownership -->
+    <section class="article-section" id="ownership">
+      <h2>Ownership</h2>
+      <p>This is what makes Rust different. Three rules:</p>
+      <ol>
+        <li>Every value has one owner</li>
+        <li>There can only be one owner at a time</li>
+        <li>When the owner goes out of scope, the value is dropped</li>
+      </ol>
+      <div class="code-block"><pre>let s3 = String::from("block");
+{
+    let s4 = s3;             <span class="comment">// s3 is moved to s4 — s3 no longer valid</span>
+    println!("{}", s4);      <span class="comment">// fine</span>
+}                            <span class="comment">// s4 goes out of scope — string is dropped</span>
+println!("{}", s3);          <span class="comment">// COMPILER ERROR — s3 was moved</span></pre></div>
+      <p>The compiler tracks ownership. When a value is dropped, Rust frees the memory with no garbage collector needed.</p>
+      <p>Copy types (integers, booleans, floats) are copied automatically, not moved. The move only happens with heap-allocated types like <code>String</code> and <code>Vec</code>.</p>
+    </section>
+    <hr class="section-rule">
+
+    <!-- Borrowing -->
+    <section class="article-section" id="borrowing">
+      <h2>References and Borrowing</h2>
+      <p>References let you use a value without taking ownership. You borrow it, use it, give it back.</p>
+
+      <h3>Immutable reference — read-only</h3>
+      <div class="code-block"><pre>fn calculate_length(s: &String) -> usize {
+    s.len()    <span class="comment">// can read s, but not change it</span>
+}
+
+let s1 = String::from("hello");
+let len = calculate_length(&s1);    <span class="comment">// pass a reference with &</span>
+<span class="comment">// s1 is still valid here</span></pre></div>
+
+      <h3>Mutable reference — read and write</h3>
+      <div class="code-block"><pre>fn change(s: &mut String) {
+    s.push_str(", world");
+}
+
+let mut s = String::from("hello");
+change(&mut s);</pre></div>
+
+      <p>The borrowing rules:</p>
+      <ul>
+        <li>You can have many immutable references at the same time</li>
+        <li>You can have only one mutable reference at a time</li>
+        <li>You cannot have a mutable reference and an immutable reference at the same time</li>
+      </ul>
+      <p>These rules are enforced at compile time. They prevent data races before your code runs.</p>
+    </section>
+    <hr class="section-rule">
+
+    <!-- Traits -->
+    <section class="article-section" id="traits">
+      <h2>Traits</h2>
+      <p>Traits define behavior that types can share. Like an interface in other languages.</p>
+      <div class="code-block"><pre>trait Summary {
+    fn summarize(&self) -> String;
+}
+
+struct Article {
+    headline: String,
+    content: String,
+}
+
+impl Summary for Article {
+    fn summarize(&self) -> String {
+        format!("{}", &self.content[..50])
+    }
+}</pre></div>
+      <p><code>&amp;self</code> means the function gets a reference to the struct. It can read the fields but the struct keeps ownership.</p>
+      <p>Traits can have default implementations. If you do not override a function, the default runs.</p>
+    </section>
+    <hr class="section-rule">
+
+    <!-- Lifetimes -->
+    <section class="article-section" id="lifetimes">
+      <h2>Lifetimes</h2>
+      <p>Lifetimes tell the compiler how long a reference must stay valid. They prevent you from using a reference after the data it points to has been dropped.</p>
+      <div class="code-block"><pre>fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
+    if x.len() > y.len() { x } else { y }
+}</pre></div>
+      <p><code>'a</code> is a lifetime annotation. It says the returned reference lives as long as the shorter of <code>x</code> and <code>y</code>.</p>
+      <p>You will see lifetimes constantly in Anchor: <code>Account&lt;'info, T&gt;</code>, <code>Context&lt;'_, '_, '_, 'info, T&gt;</code>. You rarely write them yourself, but you must be able to read them.</p>
+    </section>
+    <hr class="section-rule">
+
+    <!-- Error Handling -->
+    <section class="article-section" id="errors">
+      <h2>Error Handling</h2>
+
+      <h3><code>Result&lt;T, E&gt;</code>: a value that is either success or failure</h3>
+      <div class="code-block"><pre>fn divide(a: f64, b: f64) -> Result<f64, String> {
+    if b == 0.0 {
+        Err(String::from("division by zero"))
+    } else {
+        Ok(a / b)
+    }
+}
+
+match divide(10.0, 2.0) {
+    Ok(result) => println!("Result: {}", result),
+    Err(e) => println!("Error: {}", e),
+}</pre></div>
+
+      <h3><code>Option&lt;T&gt;</code>: a value that may or may not exist</h3>
+      <div class="code-block"><pre>fn find_char(c: char, s: &str) -> Option<usize> {
+    for (i, ch) in s.chars().enumerate() {
+        if ch == c { return Some(i); }
+    }
+    None
+}</pre></div>
+      <p>Use <code>Result</code> when something can fail with an error. Use <code>Option</code> when something can be absent without that being an error.</p>
+    </section>
+    <hr class="section-rule">
+
+    <!-- Project Structure -->
+    <section class="article-section" id="project">
+      <h2>Project Structure</h2>
+      <div class="code-block"><pre>my-project/
+  Cargo.toml          <span class="comment">← package manifest: name, version, dependencies</span>
+  src/
+    main.rs           <span class="comment">← binary crate entry point</span>
+    lib.rs            <span class="comment">← library crate entry point (used by Anchor)</span>
+    my_module.rs      <span class="comment">← a module</span></pre></div>
+      <div class="code-block"><pre>cargo new my-project          <span class="comment"># create a new binary crate</span>
+cargo new my-library --lib    <span class="comment"># create a library crate</span>
+cargo run                     <span class="comment"># compile and run</span></pre></div>
+      <p>Modules are declared with <code>mod</code> and can be public or private:</p>
+      <div class="code-block"><pre>pub mod instructions;    <span class="comment">// public module in its own file</span>
+mod helpers;             <span class="comment">// private module</span></pre></div>
+      <p>Every Anchor program is a library crate. <code>lib.rs</code> is the entry point.</p>
+    </section>
+
+  </div>
+
+  <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

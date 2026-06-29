@@ -143,8 +143,7 @@
 
     .card-exercises  { background: linear-gradient(135deg, #A8D92F 0%, #C5E94E 40%, #EFF8A7 100%); }
     .card-flashcards { background: linear-gradient(135deg, #FF7657 0%, #F97316 50%, #E85D04 100%); }
-    .card-resources  { background: var(--color-surface); border-color: rgba(255,255,255,0.08); cursor: default; opacity: 0.6; }
-    .card-resources:hover { transform: none; box-shadow: none; }
+    .card-resources  { background: var(--color-surface); border-color: rgba(255,255,255,0.08); }
 
     .product-top {
       display: flex;
@@ -212,7 +211,7 @@
     <nav class="nav-links">
       <a href="exercises/index.html" class="nav-link">Exercises</a>
       <a href="flashcards/index.html" class="nav-link">Flashcards</a>
-      <span class="nav-link" style="opacity:0.35;cursor:default;">Resources</span>
+      <a href="resources/index.html" class="nav-link">Resources</a>
     </nav>
   </header>
 
@@ -282,9 +281,12 @@
       </a>
 
       <!-- Resources -->
-      <div class="product-card card-resources">
+      <a href="resources/index.html" class="product-card card-resources">
         <div class="product-top">
-          <span class="product-label">Coming Soon</span>
+          <span class="product-label">Resources</span>
+          <span class="product-arrow">
+            <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
         </div>
         <div class="product-icon">
           <svg width="88" height="88" fill="none" viewBox="0 0 100 100">
@@ -299,7 +301,7 @@
           <p class="product-title">Resources</p>
           <p class="product-desc">Study guides, term glossaries, and reference material organized by topic.</p>
         </div>
-      </div>
+      </a>
 
     </div>
 
