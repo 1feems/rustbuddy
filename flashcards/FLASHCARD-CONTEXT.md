@@ -57,6 +57,19 @@ One deck per exercise topic. Colors cycle Lime, Orange, Cyan, Pink, Gold and rep
 
 ---
 
+## Card Back Format
+
+Every card back uses three sections in this order:
+
+**What it is** — plain English definition of the term.
+**When to use it** — the situation where you would reach for this term.
+**Example:** `code here` — one short inline example.
+
+Do not use "Definition" as the label. Use "What it is" and "When to use it."
+Both fields come from VOCABULARY.md columns: "What it means" and "When it's used."
+
+---
+
 ## Content Source
 
 Terms come from `lessons/solana/rust-for-solana/VOCABULARY.md`. 10 to 12 terms per deck.

@@ -206,21 +206,30 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      gap: 12px;
-      padding: 12px 0;
+      gap: 8px;
+      padding: 10px 0;
     }
     .back-definition {
-      font-size: 15px;
+      font-size: 13px;
       font-weight: 500;
-      line-height: 1.55;
+      line-height: 1.5;
       color: #171714;
+    }
+    .back-when-wrap { margin-top: 2px; }
+    .back-when {
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: rgba(0,0,0,0.6);
+      margin-top: 3px;
     }
     .back-example {
       font-size: 12px;
       font-weight: 400;
       line-height: 1.5;
-      color: rgba(0,0,0,0.5);
+      color: rgba(0,0,0,0.45);
       font-style: italic;
+      margin-top: 2px;
     }
     .back-example code {
       font-family: "SF Mono", "Fira Code", monospace;
@@ -279,9 +288,13 @@
             <div class="card-bottom"><p class="card-category">Variables</p></div>
           </div>
           <div class="flip-card-back">
-            <div class="back-top"><span class="back-label">Definition</span></div>
+            <div class="back-top"><span class="back-label">What it is</span></div>
             <div class="back-center">
               <p class="back-definition">A named place to store a value in your program.</p>
+              <div class="back-when-wrap">
+                <span class="back-label">When to use it</span>
+                <p class="back-when">Every time you need to remember a piece of data in your code.</p>
+              </div>
               <p class="back-example">Example: <code>let age = 25;</code></p>
             </div>
             <div class="back-bottom"><p class="back-term">Variable</p></div>
@@ -298,9 +311,13 @@
             <div class="card-bottom"><p class="card-category">Variables</p></div>
           </div>
           <div class="flip-card-back">
-            <div class="back-top"><span class="back-label">Definition</span></div>
+            <div class="back-top"><span class="back-label">What it is</span></div>
             <div class="back-center">
               <p class="back-definition">The keyword that creates a new variable.</p>
+              <div class="back-when-wrap">
+                <span class="back-label">When to use it</span>
+                <p class="back-when">Every time you store a value.</p>
+              </div>
               <p class="back-example">Example: <code>let name = "Rust";</code></p>
             </div>
             <div class="back-bottom"><p class="back-term">let</p></div>
@@ -317,9 +334,13 @@
             <div class="card-bottom"><p class="card-category">Variables</p></div>
           </div>
           <div class="flip-card-back">
-            <div class="back-top"><span class="back-label">Definition</span></div>
+            <div class="back-top"><span class="back-label">What it is</span></div>
             <div class="back-center">
-              <p class="back-definition">Marks a variable as changeable after it is first set.</p>
+              <p class="back-definition">Allows a variable to change after it is set.</p>
+              <div class="back-when-wrap">
+                <span class="back-label">When to use it</span>
+                <p class="back-when">When your program needs to update state.</p>
+              </div>
               <p class="back-example">Example: <code>let mut count = 0;</code></p>
             </div>
             <div class="back-bottom"><p class="back-term">mut</p></div>
@@ -336,10 +357,14 @@
             <div class="card-bottom"><p class="card-category">Variables</p></div>
           </div>
           <div class="flip-card-back">
-            <div class="back-top"><span class="back-label">Definition</span></div>
+            <div class="back-top"><span class="back-label">What it is</span></div>
             <div class="back-center">
               <p class="back-definition">Cannot be changed after it is set. The default for every variable in Rust.</p>
-              <p class="back-example">No <code>mut</code> means the value is locked.</p>
+              <div class="back-when-wrap">
+                <span class="back-label">When to use it</span>
+                <p class="back-when">Most of the time. Variables are locked by default unless you add <code>mut</code>.</p>
+              </div>
+              <p class="back-example">Example: <code>let x = 5;</code></p>
             </div>
             <div class="back-bottom"><p class="back-term">Immutable</p></div>
           </div>
@@ -355,10 +380,14 @@
             <div class="card-bottom"><p class="card-category">Variables</p></div>
           </div>
           <div class="flip-card-back">
-            <div class="back-top"><span class="back-label">Definition</span></div>
+            <div class="back-top"><span class="back-label">What it is</span></div>
             <div class="back-center">
               <p class="back-definition">Reusing a variable name with a new <code>let</code>. The old value is replaced.</p>
-              <p class="back-example"><code>let x = 5; let x = x + 1;</code></p>
+              <div class="back-when-wrap">
+                <span class="back-label">When to use it</span>
+                <p class="back-when">When you want to transform a value while keeping the same name.</p>
+              </div>
+              <p class="back-example">Example: <code>let x = 5; let x = x + 1;</code></p>
             </div>
             <div class="back-bottom"><p class="back-term">Shadowing</p></div>
           </div>
@@ -374,10 +403,14 @@
             <div class="card-bottom"><p class="card-category">Variables</p></div>
           </div>
           <div class="flip-card-back">
-            <div class="back-top"><span class="back-label">Definition</span></div>
+            <div class="back-top"><span class="back-label">What it is</span></div>
             <div class="back-center">
-              <p class="back-definition">A value that never changes. Must have an explicit type and cannot be computed at runtime.</p>
-              <p class="back-example"><code>const MAX_FEE: u64 = 50_000;</code></p>
+              <p class="back-definition">A value that never changes. Must have an explicit type.</p>
+              <div class="back-when-wrap">
+                <span class="back-label">When to use it</span>
+                <p class="back-when">For fixed limits or rates that never change, like a max fee.</p>
+              </div>
+              <p class="back-example">Example: <code>const MAX_FEE: u64 = 50_000;</code></p>
             </div>
             <div class="back-bottom"><p class="back-term">const</p></div>
           </div>
@@ -393,10 +426,14 @@
             <div class="card-bottom"><p class="card-category">Variables</p></div>
           </div>
           <div class="flip-card-back">
-            <div class="back-top"><span class="back-label">Definition</span></div>
+            <div class="back-top"><span class="back-label">What it is</span></div>
             <div class="back-center">
               <p class="back-definition">Tells the compiler you know a variable is unused so it does not warn you.</p>
-              <p class="back-example"><code>let _unused = 5;</code></p>
+              <div class="back-when-wrap">
+                <span class="back-label">When to use it</span>
+                <p class="back-when">When you declare a variable you are not using yet, or need to skip a value in a pattern.</p>
+              </div>
+              <p class="back-example">Example: <code>let _unused = 5;</code></p>
             </div>
             <div class="back-bottom"><p class="back-term">_</p></div>
           </div>
@@ -412,10 +449,14 @@
             <div class="card-bottom"><p class="card-category">Variables</p></div>
           </div>
           <div class="flip-card-back">
-            <div class="back-top"><span class="back-label">Definition</span></div>
+            <div class="back-top"><span class="back-label">What it is</span></div>
             <div class="back-center">
               <p class="back-definition">Unpacking a tuple or struct into separate named variables in one line.</p>
-              <p class="back-example"><code>let (plan, fee) = (1_000u64, 50u64);</code></p>
+              <div class="back-when-wrap">
+                <span class="back-label">When to use it</span>
+                <p class="back-when">When a function returns multiple values you want to name individually.</p>
+              </div>
+              <p class="back-example">Example: <code>let (plan, fee) = (1_000u64, 50u64);</code></p>
             </div>
             <div class="back-bottom"><p class="back-term">Destructuring</p></div>
           </div>
@@ -431,10 +472,14 @@
             <div class="card-bottom"><p class="card-category">Variables</p></div>
           </div>
           <div class="flip-card-back">
-            <div class="back-top"><span class="back-label">Definition</span></div>
+            <div class="back-top"><span class="back-label">What it is</span></div>
             <div class="back-center">
-              <p class="back-definition">Rust's empty value. Means "nothing." Returned by functions that do not give anything back.</p>
-              <p class="back-example">Called the unit type.</p>
+              <p class="back-definition">Rust's empty value. Means "nothing."</p>
+              <div class="back-when-wrap">
+                <span class="back-label">When to use it</span>
+                <p class="back-when">When a function returns nothing meaningful, it returns <code>()</code> automatically.</p>
+              </div>
+              <p class="back-example">Example: <code>fn greet() { println!("Hi"); }</code></p>
             </div>
             <div class="back-bottom"><p class="back-term">Unit type ()</p></div>
           </div>
@@ -450,10 +495,14 @@
             <div class="card-bottom"><p class="card-category">Variables</p></div>
           </div>
           <div class="flip-card-back">
-            <div class="back-top"><span class="back-label">Definition</span></div>
+            <div class="back-top"><span class="back-label">What it is</span></div>
             <div class="back-center">
               <p class="back-definition">Converts a value from one type to another.</p>
-              <p class="back-example"><code>let x: i32 = 5; let y = x as f64;</code></p>
+              <div class="back-when-wrap">
+                <span class="back-label">When to use it</span>
+                <p class="back-when">When you need two different types to work together in a calculation.</p>
+              </div>
+              <p class="back-example">Example: <code>let y = x as f64;</code></p>
             </div>
             <div class="back-bottom"><p class="back-term">as</p></div>
           </div>
@@ -469,10 +518,14 @@
             <div class="card-bottom"><p class="card-category">Variables</p></div>
           </div>
           <div class="flip-card-back">
-            <div class="back-top"><span class="back-label">Definition</span></div>
+            <div class="back-top"><span class="back-label">What it is</span></div>
             <div class="back-center">
-              <p class="back-definition">A macro that prints a line to the terminal. Used to see the value of your variables.</p>
-              <p class="back-example"><code>println!("{}", name);</code></p>
+              <p class="back-definition">A macro that prints a line to the terminal.</p>
+              <div class="back-when-wrap">
+                <span class="back-label">When to use it</span>
+                <p class="back-when">Debugging or showing output during development.</p>
+              </div>
+              <p class="back-example">Example: <code>println!("{}", name);</code></p>
             </div>
             <div class="back-bottom"><p class="back-term">println!</p></div>
           </div>
