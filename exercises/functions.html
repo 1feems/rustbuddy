@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rust: Functions - Rust Bud</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg:        #FFFFFF;
+      --color-surface:   #1E1E1A;
+      --color-primary:   #FF7657;
+      --color-secondary: #DFFF65;
+      --color-ink:       #171714;
+      --color-muted:     #77766F;
+      --color-border:    #171714;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--color-bg); color: var(--color-ink); min-height: 100vh; }
+    .site-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid var(--color-border); }
+    .site-header-left { display: flex; align-items: center; gap: 10px; }
+    .site-name { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; text-decoration: none; color: var(--color-ink); }
+    .back-link { font-size: 14px; color: var(--color-muted); text-decoration: none; transition: color 200ms ease; }
+    .back-link:hover { color: var(--color-ink); }
+    .header-sep { color: var(--color-muted); font-size: 14px; }
+    .header-title { font-size: 14px; font-weight: 500; color: var(--color-muted); }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-link { font-size: 13px; font-weight: 600; color: var(--color-muted); text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase; }
+    .nav-link:hover { color: var(--color-ink); }
+    .nav-link.active { color: var(--color-primary); }
+    .main { padding: 32px; max-width: 1400px; margin: 0 auto; }
+    .tab-container { border: 1px solid var(--color-border); border-radius: 20px; overflow: hidden; }
+    .tab-bar { display: flex; border-bottom: 1px solid var(--color-border); }
+    .tab-btn { padding: 14px 28px; font-family: inherit; font-size: 14px; font-weight: 600; border: none; border-right: 1px solid var(--color-border); background: transparent; color: var(--color-muted); cursor: pointer; transition: background 200ms ease, color 200ms ease; }
+    .tab-btn:last-child { border-right: none; }
+    .tab-btn.active { background: var(--color-primary); color: #fff; }
+    .tab-btn:not(.active):hover { background: #f7f6f3; color: var(--color-ink); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .exercise-subnav { display: flex; gap: 8px; flex-wrap: wrap; padding: 16px 24px; border-bottom: 1px solid var(--color-border); }
+    .ex-btn { padding: 7px 16px; font-family: inherit; font-size: 13px; font-weight: 500; border: none; border-radius: 9999px; cursor: pointer; background: var(--color-surface); color: var(--color-muted); transition: background 200ms ease, color 200ms ease; }
+    .ex-btn.active { background: var(--color-primary); color: #fff; }
+    .ex-btn:not(.active):hover { background: #2a2a26; color: #c0bfbb; }
+    .exercise-split { display: grid; grid-template-columns: 1fr 1fr; height: 100vh; max-height: 900px; }
+    .exercise-left { padding: 32px; border-right: 1px solid var(--color-border); overflow-y: auto; }
+    .ex-kicker { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 8px; }
+    .ex-title { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 16px; }
+    .ex-explainer { font-size: 14px; line-height: 1.65; color: #3a3935; margin-bottom: 24px; }
+    .ex-explainer p { margin-bottom: 10px; }
+    .ex-explainer p:last-child { margin-bottom: 0; }
+    .task-rule { height: 1px; background: rgba(23,23,20,0.12); margin-bottom: 20px; }
+    .task-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 12px; }
+    .task-body { font-size: 14px; line-height: 1.65; color: #3a3935; margin-bottom: 20px; }
+    .task-body p { margin-bottom: 10px; }
+    .task-body ol { padding-left: 20px; margin: 8px 0 10px; }
+    .task-body li { margin-bottom: 4px; }
+    .ex-explainer code, .task-body code, .task-instruction code { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; background: #f0efeb; padding: 1px 5px; border-radius: 4px; color: var(--color-ink); }
+    .starter-block { background: var(--color-surface); border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; overflow-x: auto; }
+    .starter-block pre { font-family: "SF Mono", "Fira Code", "Menlo", monospace; font-size: 13px; line-height: 1.7; color: #c9d1e3; white-space: pre; margin: 0; }
+    .task-instruction { font-size: 14px; font-weight: 600; color: var(--color-ink); margin-bottom: 20px; }
+    .expected-output-wrap { border-top: 1px solid rgba(23,23,20,0.12); padding-top: 16px; }
+    .expected-output-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 8px; }
+    .expected-output-text { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; line-height: 1.6; color: var(--color-ink); background: #f0efeb; border-radius: 8px; padding: 12px 16px; white-space: pre; }
+    .exercise-right { display: flex; flex-direction: column; overflow: hidden; }
+    .playground-bar { background: var(--color-surface); padding: 10px 20px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .playground-bar-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-primary); }
+    .playground-bar-label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.6); letter-spacing: 0.04em; }
+    .exercise-right iframe { flex: 1; width: 100%; border: none; display: block; }
+    .answers-list { padding: 32px; display: flex; flex-direction: column; gap: 20px; }
+    .answer-card { border: 1px solid var(--color-border); border-radius: 20px; overflow: hidden; }
+    .answer-card-head { padding: 14px 24px; border-bottom: 1px solid var(--color-border); font-size: 15px; font-weight: 600; }
+    .answer-card-body { padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+    .answer-code { background: var(--color-surface); border-radius: 12px; padding: 20px; overflow-x: auto; }
+    .answer-code pre { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; line-height: 1.7; color: #c9d1e3; margin: 0; }
+    .answer-why-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 4px; }
+    .answer-why { font-size: 14px; line-height: 1.6; color: #3a3935; }
+    .answer-why code { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; background: #f0efeb; padding: 1px 5px; border-radius: 4px; color: var(--color-ink); }
+    .starter-hint { font-size: 12px; color: var(--color-muted); margin-bottom: 8px; }
+    .overview-wrap { padding: 40px 48px; max-width: 720px; }
+    .overview-topic { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 10px; }
+    .overview-headline { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .overview-desc { font-size: 16px; line-height: 1.65; color: #3a3935; margin-bottom: 36px; }
+    .overview-divider { height: 1px; background: rgba(23,23,20,0.12); margin-bottom: 28px; }
+    .overview-ref-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 16px; }
+    .terms-wrap { padding: 32px; }
+    .terms-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .terms-table th { text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); border-bottom: 1px solid var(--color-border); }
+    .terms-table td { padding: 14px 16px; border-bottom: 1px solid rgba(23,23,20,0.12); vertical-align: top; line-height: 1.55; }
+    .terms-table tr:last-child td { border-bottom: none; }
+    .terms-table td:first-child { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; font-weight: 600; white-space: nowrap; width: 200px; }
+    .terms-table td:last-child { color: var(--color-muted); }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header-left">
+    <a href="../index.html" class="site-name">Rust Buddy</a>
+    <span class="header-sep">/</span>
+    <a href="index.html" class="back-link">Exercises</a>
+    <span class="header-sep">/</span>
+    <span class="header-title">Functions</span>
+  </div>
+  <nav class="nav-links">
+    <a href="index.html" class="nav-link active">Exercises</a>
+    <a href="../flashcards/index.html" class="nav-link">Flashcards</a>
+    <a href="../resources/index.html" class="nav-link">Resources</a>
+  </nav>
+</header>
+
+<main class="main">
+  <div class="tab-container">
+    <div class="tab-bar">
+      <button class="tab-btn" data-tab="overview">Overview</button>
+      <button class="tab-btn active" data-tab="exercises">Exercises</button>
+      <button class="tab-btn" data-tab="answers">Answers</button>
+      <button class="tab-btn" data-tab="terms">Terms to Know</button>
+    </div>
+
+    <div class="tab-panel" id="panel-overview">
+      <div class="overview-wrap">
+        <div class="overview-topic">Topic</div>
+        <div class="overview-headline">Functions</div>
+        <div class="overview-desc">A function is a named block of code that takes inputs, does something with them, and can hand a value back. In Rust, every function that returns a value must declare its return type, and the last line of the function body is what gets returned.</div>
+        <div class="overview-divider"></div>
+        <div class="overview-ref-label">Quick Reference</div>
+        <table class="terms-table">
+          <thead>
+            <tr><th>Concept</th><th>What it means</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>fn name(x: i32) -> i32</td><td>Declare a function with typed arguments and a return type</td></tr>
+            <tr><td>-> i32</td><td>The return type annotation — what the function hands back</td></tr>
+            <tr><td>-> !</td><td>Diverging function — never returns to the caller</td></tr>
+            <tr><td>panic!()</td><td>Force the program to stop immediately</td></tr>
+            <tr><td>todo!()</td><td>Placeholder for code you have not written yet</td></tr>
+            <tr><td>unimplemented!()</td><td>Placeholder for code you will write later</td></tr>
+            <tr><td>match</td><td>Choose what to do based on a value, like a switch</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-panel active" id="panel-exercises">
+      <div class="exercise-subnav" id="subnav"></div>
+      <div class="exercise-split">
+        <div class="exercise-left" id="ex-left"></div>
+        <div class="exercise-right" id="ex-right"></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-answers">
+      <div class="answers-list" id="answers-list"></div>
+    </div>
+
+    <div class="tab-panel" id="panel-terms">
+      <div class="terms-wrap">
+        <table class="terms-table">
+          <thead>
+            <tr><th>Term</th><th>What it means</th><th>When you use it</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>fn name(...) -> T</td><td>Function signature with typed inputs and return type</td><td>Every function that takes arguments or hands a value back</td></tr>
+            <tr><td>-> i32</td><td>Return type annotation, what the function promises to give back</td><td>Any function that returns a value to the caller</td></tr>
+            <tr><td>-> !</td><td>Diverging return type, the function never returns</td><td>Functions that panic, loop forever, or quit the program</td></tr>
+            <tr><td>panic!()</td><td>Stops the program immediately with an error message</td><td>When something goes wrong and there is no safe value to return</td></tr>
+            <tr><td>todo!()</td><td>Marks unwritten code, diverges if reached at runtime</td><td>Placeholder for functions or arms you plan to implement</td></tr>
+            <tr><td>unimplemented!()</td><td>Marks unsupported code paths, diverges if reached</td><td>Match arms or features not yet built out</td></tr>
+            <tr><td>match</td><td>Checks a value against patterns and runs the first match</td><td>When a value could be one of several things and each needs different handling</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const EMBED = 'https://play.rust-lang.org/?version=stable&edition=2021&code=';
+
+  const exercises = [
+    {
+      num: 1,
+      title: "Return Type Annotation",
+      explainer: "<p>A function is a named block of reusable code. It can take inputs, do something with them, and hand a value back to whoever called it. In Rust, if your function hands back a value, you must declare what type it returns, written as <code>-&gt; type</code> after the parentheses.</p><p>The last line of the function body becomes the return value, but only if there is no semicolon. Add a semicolon and the value disappears.</p>",
+      task: "<p>A function adds two numbers and should return the sum. Right now it fails because the function has no return type annotation and the last line has a semicolon.</p><ol><li>Add the return type annotation <code>-&gt; i32</code> to <code>add</code></li><li>Remove the semicolon so <code>x + y</code> becomes an expression</li><li>Print <code>Result: 7</code></li></ol>",
+      starterCode: "fn add(x: i32, y: i32) {\n    x + y;\n}\n\nfn main() {\n    let result = add(3, 4);\n    println!(\"Result: {}\", result);\n}",
+      instruction: "Fix both issues so the function compiles and returns the correct value",
+      expectedOutput: "Result: 7",
+      answerCode: "fn add(x: i32, y: i32) -> i32 {\n    x + y\n}\n\nfn main() {\n    let result = add(3, 4);\n    println!(\"Result: {}\", result);\n}",
+      why: ""
+    },
+    {
+      num: 2,
+      title: "Expression vs Statement",
+      explainer: "<p>You practiced this in the Statements &amp; Expressions exercises. Now it shows up inside a function.</p><p>The last line of a function body is what the function hands back to the caller, but only if there is no semicolon. The semicolon throws the value away. The function then returns <code>()</code> (nothing) even though you declared a return type of <code>i32</code>. Rust will refuse to compile because you promised a number but handed back nothing.</p><p>The instructor explained it this way: \"if we omit the semicolon, the result of this operation will get returned.\"</p>",
+      task: "<p>A function should return the sum of two numbers. Right now it returns <code>()</code> because the last line has a semicolon.</p><ol><li>Remove the semicolon from <code>x + y</code> inside <code>add</code></li><li>Confirm the function returns the sum to the caller</li></ol>",
+      starterCode: "fn add(x: i32, y: i32) -> i32 {\n    x + y;\n}\n\nfn main() {\n    println!(\"Result: {}\", add(3, 4));\n}",
+      instruction: "Remove one character so this compiles and prints <code>7</code>",
+      expectedOutput: "Result: 7",
+      answerCode: "fn add(x: i32, y: i32) -> i32 {\n    x + y\n}\n\nfn main() {\n    println!(\"Result: {}\", add(3, 4));\n}",
+      why: "<p>Remove the semicolon after <code>x + y</code>:</p>"
+    },
+    {
+      num: 3,
+      title: "Diverging Function",
+      explainer: "<p>A <strong>diverging function</strong> is a function that never returns to the caller. Instead of handing back a value, it stops the program entirely. The return type <code>-&gt; !</code>, an exclamation mark, is how you tell Rust this function will never hand control back.</p><p>The instructor described the causes: \"panicking, looping forever, or quitting the program.\" The most common tool is <code>panic!()</code>, which stops the program immediately with an error.</p>",
+      task: "<p>A function is declared with return type <code>-&gt; !</code> but currently prints and exits normally. Right now the <code>println!</code> in <code>main</code> runs because the function never diverges.</p><ol><li>Call <code>never_return()</code></li><li>Ensure the <code>println!</code> in <code>main</code> never runs</li></ol>",
+      starterCode: "fn never_return() -> ! {\n    println!(\"I return!\");\n}\n\nfn main() {\n    never_return();\n    println!(\"This should never print.\");\n}",
+      instruction: "Solve this in two ways so the <code>println!</code> in <code>main</code> never runs",
+      expectedOutput: "(panics - the println! in main never runs)",
+      answerCode: "fn never_return() -> ! {\n    panic!(\"Aborted\");\n}\n\nfn main() {\n    never_return();\n    println!(\"This should never print.\");\n}\n\n// Answer - Way 2 (todo!):\n// fn never_return() -> ! {\n//     todo!(\"Not implemented yet\");\n// }\n// \n// fn main() {\n//     never_return();\n//     println!(\"This should never print.\");\n// }",
+      why: ""
+    },
+    {
+      num: 4,
+      title: "unimplemented! Macro",
+      explainer: "<p>The instructor named three macros that all create diverging functions:</p><ul><li><code>panic!()</code>, stops the program because something went wrong</li><li><code>todo!()</code>, stops the program because you haven't written this yet</li><li><code>unimplemented!()</code>, stops the program because this case is not supported yet</li></ul><p><code>unimplemented!()</code> is especially useful inside a <code>match</code> statement when you are building out a function tier by tier. It lets the code compile while signaling \"I haven't written this arm yet.\" If the program hits that arm at runtime, it stops.</p>",
+      task: "<p>A match statement returns prices for plan tiers, but the <code>\"premium\"</code> arm is empty. Right now the code won't compile because the match arm has no value.</p><ol><li>Match on a <code>tier</code> string</li><li>Return <code>500_000</code> for <code>\"basic\"</code></li><li>Mark <code>\"premium\"</code> as not yet implemented</li><li>Print <code>Price: 500000</code></li></ol>",
+      starterCode: "fn get_price(tier: &str) -> u64 {\n    match tier {\n        \"basic\" => 500_000,\n        \"premium\" => \n    }\n}\n\nfn main() {\n    println!(\"Price: {}\", get_price(\"basic\"));\n}",
+      instruction: "Fill in the blank so the compiler knows the premium tier is not implemented yet",
+      expectedOutput: "Price: 500000",
+      answerCode: "fn get_price(tier: &str) -> u64 {\n    match tier {\n        \"basic\" => 500_000,\n        \"premium\" => unimplemented!(\"premium tier not yet supported\"),\n    }\n}\n\nfn main() {\n    println!(\"Price: {}\", get_price(\"basic\"));\n}",
+      why: ""
+    },
+    {
+      num: 5,
+      title: "Match Fill-in-the-Blank",
+      explainer: "<p><code>match</code> checks a value against a list of patterns and runs the first one that matches, like a multi-way switch. Every arm of a <code>match</code> must produce the same type. That is why <code>panic!()</code> is allowed inside a <code>match</code> that returns <code>i32</code>: <code>panic!()</code> has return type <code>!</code>, which Rust allows to stand in for any type because it never actually returns anything.</p><p>The instructor showed this exact pattern: a bool matched against <code>true</code> (returns a value) and <code>false</code> (prints something and panics). The <code>false</code> arm never produces an <code>i32</code>, but <code>panic!()</code> satisfies Rust's type checker anyway.</p><p>In a payment contract, a subscription check might return a fee if the subscription is active, and abort entirely if it is not.</p>",
+      task: "<p>The code below wants to:</p><ol><li>Set <code>b</code> to <code>false</code></li><li>Print <code>\"Success!\"</code> from the false arm</li><li>Panic (this is the expected behavior for this exercise)</li></ol>",
+      starterCode: "fn main() {\n    let b = ___;\n    let v = match b {\n        true => 1,\n        false => {\n            println!(\"Success!\");\n            panic!(\"we have no value for false, but we can panic\");\n        }\n    };\n    println!(\"v = {}\", v);\n}",
+      instruction: "Fill in <code>___</code> so the program prints <code>\"Success!\"</code> and panics",
+      expectedOutput: "Success!\n(then panics)",
+      answerCode: "fn main() {\n    let b = false;\n    let v = match b {\n        true => 1,\n        false => {\n            println!(\"Success!\");\n            panic!(\"we have no value for false, but we can panic\");\n        }\n    };\n    println!(\"v = {}\", v);\n}",
+      why: ""
+    },
+    {
+      num: 6,
+      title: "Write Cold",
+      explainer: "<p>You have now practiced every part of a function:</p><ul><li><code>fn name(arg: type) -&gt; return_type</code>, the signature: name, inputs with types, output type</li><li>The body in <code>{ }</code>, where the work happens</li><li>The last expression without a semicolon, what gets returned to the caller</li><li><code>-&gt; !</code>, for functions that never return</li><li><code>panic!()</code>, <code>todo!()</code>, <code>unimplemented!()</code>, for diverging functions and placeholders</li><li><code>match</code>, for choosing what to do based on a value</li></ul><p>Write a function from scratch using all of these rules.</p>",
+      task: "<p>Write a complete <code>main</code> with a <code>square</code> function that:</p><ul><li>Takes one <code>i32</code> argument</li><li>Returns an <code>i32</code></li><li>Computes the square (<code>x * x</code>)</li><li>Is called from <code>main</code> with <code>5</code></li><li>Prints the result</li></ul><p>``<code>text Square: 25 </code>``</p>",
+      starterCode: "",
+      instruction: "",
+      expectedOutput: "Square: 25",
+      answerCode: "fn square(x: i32) -> i32 {\n    x * x\n}\n\nfn main() {\n    let result = square(5);\n    println!(\"Square: {}\", result);\n}",
+      why: ""
+    }
+  ];
+
+  let currentEx = 0;
+
+  function buildSubnav() {
+    const subnav = document.getElementById('subnav');
+    subnav.innerHTML = '';
+    exercises.forEach((ex, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'ex-btn' + (i === currentEx ? ' active' : '');
+      btn.textContent = 'Exercise ' + ex.num;
+      btn.addEventListener('click', () => selectExercise(i));
+      subnav.appendChild(btn);
+    });
+  }
+
+  function renderLeft(ex) {
+    const left = document.getElementById('ex-left');
+    left.innerHTML =
+      '<div class="ex-kicker">Exercise ' + ex.num + ' of ' + exercises.length + '</div>' +
+      '<div class="ex-title">' + ex.title + '</div>' +
+      '<div class="ex-explainer">' + ex.explainer + '</div>' +
+      '<div class="task-rule"></div>' +
+      '<div class="task-label">Your Task</div>' +
+      '<div class="task-body">' + ex.task + '</div>';
+    const hint = document.createElement('p');
+    hint.className = 'starter-hint';
+    hint.textContent = 'Clear the Playground on the right and paste this code to begin.';
+    left.appendChild(hint);
+
+    const starterWrap = document.createElement('div');
+    starterWrap.className = 'starter-block';
+    const starterPre = document.createElement('pre');
+    starterPre.textContent = ex.starterCode;
+    starterWrap.appendChild(starterPre);
+    left.appendChild(starterWrap);
+    const instr = document.createElement('p');
+    instr.className = 'task-instruction';
+    instr.innerHTML = ex.instruction;
+    left.appendChild(instr);
+    const outputWrap = document.createElement('div');
+    outputWrap.className = 'expected-output-wrap';
+    const outputLabel = document.createElement('div');
+    outputLabel.className = 'expected-output-label';
+    outputLabel.textContent = 'Expected Output';
+    const outputText = document.createElement('div');
+    outputText.className = 'expected-output-text';
+    outputText.textContent = ex.expectedOutput;
+    outputWrap.appendChild(outputLabel);
+    outputWrap.appendChild(outputText);
+    left.appendChild(outputWrap);
+  }
+
+  let iframeEl = null;
+
+  function renderRight(ex) {
+    const right = document.getElementById('ex-right');
+    if (!iframeEl) {
+      right.innerHTML =
+        '<div class="playground-bar">' +
+          '<div class="playground-bar-dot"></div>' +
+          '<span class="playground-bar-label">Rust Playground</span>' +
+        '</div>';
+      iframeEl = document.createElement('iframe');
+      right.appendChild(iframeEl);
+    }
+    iframeEl.src = EMBED + encodeURIComponent(ex.starterCode);
+  }
+
+  function selectExercise(i) {
+    currentEx = i;
+    buildSubnav();
+    renderLeft(exercises[i]);
+    renderRight(exercises[i]);
+  }
+
+  function buildAnswers() {
+    const list = document.getElementById('answers-list');
+    if (list.children.length > 0) return;
+    exercises.forEach(ex => {
+      const card = document.createElement('div');
+      card.className = 'answer-card';
+      const head = document.createElement('div');
+      head.className = 'answer-card-head';
+      head.textContent = 'Exercise ' + ex.num + ' — ' + ex.title;
+      const body = document.createElement('div');
+      body.className = 'answer-card-body';
+      const codeWrap = document.createElement('div');
+      codeWrap.className = 'answer-code';
+      const pre = document.createElement('pre');
+      pre.textContent = ex.answerCode;
+      codeWrap.appendChild(pre);
+      const whyLabel = document.createElement('div');
+      whyLabel.className = 'answer-why-label';
+      whyLabel.textContent = 'Why';
+      const whyText = document.createElement('div');
+      whyText.className = 'answer-why';
+      whyText.innerHTML = ex.why;
+      body.appendChild(codeWrap);
+      body.appendChild(whyLabel);
+      body.appendChild(whyText);
+      card.appendChild(head);
+      card.appendChild(body);
+      list.appendChild(card);
+    });
+  }
+
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === tabId);
+    });
+    document.querySelectorAll('.tab-panel').forEach(panel => {
+      panel.classList.toggle('active', panel.id === 'panel-' + tabId);
+    });
+    if (tabId === 'answers') buildAnswers();
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
+
+  buildSubnav();
+  renderLeft(exercises[0]);
+  renderRight(exercises[0]);
+</script>
+</body>
+</html>

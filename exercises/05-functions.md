@@ -31,21 +31,17 @@ Check your answer only after you've tried.
 
 A function is a named block of reusable code. It can take inputs, do something with them, and hand a value back to whoever called it. In Rust, if your function hands back a value, you must declare what type it returns, written as `-> type` after the parentheses.
 
-The instructor said it directly: "functions always have to annotate types for their arguments." The return type is the same idea, you are telling Rust what is coming back.
+The last line of the function body becomes the return value, but only if there is no semicolon. Add a semicolon and the value disappears.
 
-In a payment contract, a helper like `add` must declare its return type so the caller knows what value it will receive.
+#### Your Task
 
-The code below wants to:
+A function adds two numbers and should return the sum. Right now it fails because the function has no return type annotation and the last line has a semicolon.
 
-1. Add two numbers using `add(3, 4)`
-2. Store the result in `result`
+1. Add the return type annotation `-> i32` to `add`
+2. Remove the semicolon so `x + y` becomes an expression
 3. Print `Result: 7`
 
-Right now it fails because the function has no return type and the last line has a semicolon, which means no value gets returned.
-
-**Fix this in two ways:**
-1. Add the return type annotation `-> i32`
-2. Remove the semicolon so `x + y` is an expression (not a statement)
+**Fix both issues so the function compiles and returns the correct value:**
 
 ```rust
 fn add(x: i32, y: i32) {
@@ -90,16 +86,12 @@ The last line of a function body is what the function hands back to the caller, 
 
 The instructor explained it this way: "if we omit the semicolon, the result of this operation will get returned."
 
-In a payment contract, a fee calculation must end with an expression. A semicolon on the last line means the caller gets `()` instead of the fee.
-
 #### Your Task
 
-The code below wants to:
+A function should return the sum of two numbers. Right now it returns `()` because the last line has a semicolon.
 
-1. Return `7` from `add(3, 4)`
-2. Print `Result: 7`
-
-Right now it returns `()` because the last line has a semicolon.
+1. Remove the semicolon from `x + y` inside `add`
+2. Confirm the function returns the sum to the caller
 
 **Remove one character so this compiles and prints `7`:**
 
@@ -144,16 +136,12 @@ A **diverging function** is a function that never returns to the caller. Instead
 
 The instructor described the causes: "panicking, looping forever, or quitting the program." The most common tool is `panic!()`, which stops the program immediately with an error.
 
-In a payment contract, a validation function that detects an invalid plan should abort immediately. There is no safe value to return, the right move is to stop.
-
 #### Your Task
 
-The code below wants to:
+A function is declared with return type `-> !` but currently prints and exits normally. Right now the `println!` in `main` runs because the function never diverges.
 
 1. Call `never_return()`
-2. Never reach the `println!` in `main`
-
-Right now the function prints and exits normally, it does not diverge, so execution continues into `main`.
+2. Ensure the `println!` in `main` never runs
 
 **Solve this in two ways so the `println!` in `main` never runs:**
 
@@ -217,18 +205,14 @@ The instructor named three macros that all create diverging functions:
 
 `unimplemented!()` is especially useful inside a `match` statement when you are building out a function tier by tier. It lets the code compile while signaling "I haven't written this arm yet." If the program hits that arm at runtime, it stops.
 
-In a payment contract, a `match` on plan tiers might have `"basic"` ready and `"premium"` still pending. `unimplemented!()` holds the place.
-
 #### Your Task
 
-The code below wants to:
+A match statement returns prices for plan tiers, but the `"premium"` arm is empty. Right now the code won't compile because the match arm has no value.
 
 1. Match on a `tier` string
 2. Return `500_000` for `"basic"`
 3. Mark `"premium"` as not yet implemented
 4. Print `Price: 500000`
-
-Right now the `"premium"` arm is empty and the code won't compile.
 
 **Fill in the blank so the compiler knows the premium tier is not implemented yet:**
 

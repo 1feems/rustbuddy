@@ -12,15 +12,17 @@ const MAPPINGS = [
   { md: '02-numbers.md',              html: 'numbers.html' },
   { md: '03-chars-bools.md',          html: 'chars-bools.html' },
   { md: '04-statements-expressions.md', html: 'statements-expressions.html' },
+  { md: '05-functions.md',            html: 'functions.html',  track: 'A', limit: 6 },
+  { md: '06-ownership.md',            html: 'ownership.html',  track: 'A', limit: 6 },
 ];
 
 // ─── main ────────────────────────────────────────────────────────────────────
 
-for (const { md, html } of MAPPINGS) {
+for (const { md, html, track, limit } of MAPPINGS) {
   try {
     const mdText   = fs.readFileSync(path.join(DIR, md),   'utf8');
     const htmlText = fs.readFileSync(path.join(DIR, html), 'utf8');
-    const exercises = parseMd(mdText);
+    const exercises = parseMd(mdText, track, limit);
     const newHtml   = replaceArray(htmlText, exercises);
     fs.writeFileSync(path.join(DIR, html), newHtml, 'utf8');
     console.log(`OK  ${html}  (${exercises.length} exercises from ${md})`);
@@ -32,22 +34,35 @@ for (const { md, html } of MAPPINGS) {
 
 // ─── parser ──────────────────────────────────────────────────────────────────
 
-function parseMd(mdText) {
+function parseMd(mdText, track = null, limit = null) {
+  // If a track is specified, extract only that section of the document
+  if (track) {
+    const trackHeader = `## Track ${track}`;
+    const trackIdx    = mdText.indexOf(trackHeader);
+    if (trackIdx >= 0) {
+      const nextTrack = mdText.indexOf('\n## Track', trackIdx + trackHeader.length);
+      mdText = mdText.slice(trackIdx, nextTrack >= 0 ? nextTrack : undefined);
+    }
+  }
+
   const exercises = [];
   // Exercises are separated by horizontal rules: \n---\n
   const sections = mdText.split(/\n---\n/);
 
   for (const section of sections) {
-    const headerMatch = section.match(/^## Exercise (\d+) - (.+)$/m);
+    // Handle both ## Exercise N and ### Exercise N headers
+    const headerMatch = section.match(/^#{2,3} Exercise (\d+) - (.+)$/m);
     if (!headerMatch) continue;
 
     const num   = parseInt(headerMatch[1], 10);
     const title = headerMatch[2].trim();
-    // body = everything after the ## Exercise ... line
+    // body = everything after the exercise header line
     const headerEnd = section.indexOf(headerMatch[0]) + headerMatch[0].length;
     const body = section.slice(headerEnd).trim();
 
     exercises.push(parseExercise(num, title, body));
+
+    if (limit && exercises.length >= limit) break;
   }
   return exercises;
 }

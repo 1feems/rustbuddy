@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rust: Ownership - Rust Bud</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg:        #FFFFFF;
+      --color-surface:   #1E1E1A;
+      --color-primary:   #FF7657;
+      --color-secondary: #DFFF65;
+      --color-ink:       #171714;
+      --color-muted:     #77766F;
+      --color-border:    #171714;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--color-bg); color: var(--color-ink); min-height: 100vh; }
+    .site-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid var(--color-border); }
+    .site-header-left { display: flex; align-items: center; gap: 10px; }
+    .site-name { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; text-decoration: none; color: var(--color-ink); }
+    .back-link { font-size: 14px; color: var(--color-muted); text-decoration: none; transition: color 200ms ease; }
+    .back-link:hover { color: var(--color-ink); }
+    .header-sep { color: var(--color-muted); font-size: 14px; }
+    .header-title { font-size: 14px; font-weight: 500; color: var(--color-muted); }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-link { font-size: 13px; font-weight: 600; color: var(--color-muted); text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase; }
+    .nav-link:hover { color: var(--color-ink); }
+    .nav-link.active { color: var(--color-primary); }
+    .main { padding: 32px; max-width: 1400px; margin: 0 auto; }
+    .tab-container { border: 1px solid var(--color-border); border-radius: 20px; overflow: hidden; }
+    .tab-bar { display: flex; border-bottom: 1px solid var(--color-border); }
+    .tab-btn { padding: 14px 28px; font-family: inherit; font-size: 14px; font-weight: 600; border: none; border-right: 1px solid var(--color-border); background: transparent; color: var(--color-muted); cursor: pointer; transition: background 200ms ease, color 200ms ease; }
+    .tab-btn:last-child { border-right: none; }
+    .tab-btn.active { background: var(--color-primary); color: #fff; }
+    .tab-btn:not(.active):hover { background: #f7f6f3; color: var(--color-ink); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .exercise-subnav { display: flex; gap: 8px; flex-wrap: wrap; padding: 16px 24px; border-bottom: 1px solid var(--color-border); }
+    .ex-btn { padding: 7px 16px; font-family: inherit; font-size: 13px; font-weight: 500; border: none; border-radius: 9999px; cursor: pointer; background: var(--color-surface); color: var(--color-muted); transition: background 200ms ease, color 200ms ease; }
+    .ex-btn.active { background: var(--color-primary); color: #fff; }
+    .ex-btn:not(.active):hover { background: #2a2a26; color: #c0bfbb; }
+    .exercise-split { display: grid; grid-template-columns: 1fr 1fr; height: 100vh; max-height: 900px; }
+    .exercise-left { padding: 32px; border-right: 1px solid var(--color-border); overflow-y: auto; }
+    .ex-kicker { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 8px; }
+    .ex-title { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 16px; }
+    .ex-explainer { font-size: 14px; line-height: 1.65; color: #3a3935; margin-bottom: 24px; }
+    .ex-explainer p { margin-bottom: 10px; }
+    .ex-explainer p:last-child { margin-bottom: 0; }
+    .task-rule { height: 1px; background: rgba(23,23,20,0.12); margin-bottom: 20px; }
+    .task-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 12px; }
+    .task-body { font-size: 14px; line-height: 1.65; color: #3a3935; margin-bottom: 20px; }
+    .task-body p { margin-bottom: 10px; }
+    .task-body ol { padding-left: 20px; margin: 8px 0 10px; }
+    .task-body li { margin-bottom: 4px; }
+    .ex-explainer code, .task-body code, .task-instruction code { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; background: #f0efeb; padding: 1px 5px; border-radius: 4px; color: var(--color-ink); }
+    .starter-block { background: var(--color-surface); border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; overflow-x: auto; }
+    .starter-block pre { font-family: "SF Mono", "Fira Code", "Menlo", monospace; font-size: 13px; line-height: 1.7; color: #c9d1e3; white-space: pre; margin: 0; }
+    .task-instruction { font-size: 14px; font-weight: 600; color: var(--color-ink); margin-bottom: 20px; }
+    .expected-output-wrap { border-top: 1px solid rgba(23,23,20,0.12); padding-top: 16px; }
+    .expected-output-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 8px; }
+    .expected-output-text { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; line-height: 1.6; color: var(--color-ink); background: #f0efeb; border-radius: 8px; padding: 12px 16px; white-space: pre; }
+    .exercise-right { display: flex; flex-direction: column; overflow: hidden; }
+    .playground-bar { background: var(--color-surface); padding: 10px 20px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .playground-bar-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-primary); }
+    .playground-bar-label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.6); letter-spacing: 0.04em; }
+    .exercise-right iframe { flex: 1; width: 100%; border: none; display: block; }
+    .answers-list { padding: 32px; display: flex; flex-direction: column; gap: 20px; }
+    .answer-card { border: 1px solid var(--color-border); border-radius: 20px; overflow: hidden; }
+    .answer-card-head { padding: 14px 24px; border-bottom: 1px solid var(--color-border); font-size: 15px; font-weight: 600; }
+    .answer-card-body { padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+    .answer-code { background: var(--color-surface); border-radius: 12px; padding: 20px; overflow-x: auto; }
+    .answer-code pre { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; line-height: 1.7; color: #c9d1e3; margin: 0; }
+    .answer-why-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 4px; }
+    .answer-why { font-size: 14px; line-height: 1.6; color: #3a3935; }
+    .answer-why code { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; background: #f0efeb; padding: 1px 5px; border-radius: 4px; color: var(--color-ink); }
+    .starter-hint { font-size: 12px; color: var(--color-muted); margin-bottom: 8px; }
+    .overview-wrap { padding: 40px 48px; max-width: 720px; }
+    .overview-topic { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 10px; }
+    .overview-headline { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .overview-desc { font-size: 16px; line-height: 1.65; color: #3a3935; margin-bottom: 36px; }
+    .overview-divider { height: 1px; background: rgba(23,23,20,0.12); margin-bottom: 28px; }
+    .overview-ref-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 16px; }
+    .terms-wrap { padding: 32px; }
+    .terms-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .terms-table th { text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); border-bottom: 1px solid var(--color-border); }
+    .terms-table td { padding: 14px 16px; border-bottom: 1px solid rgba(23,23,20,0.12); vertical-align: top; line-height: 1.55; }
+    .terms-table tr:last-child td { border-bottom: none; }
+    .terms-table td:first-child { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; font-weight: 600; white-space: nowrap; width: 160px; }
+    .terms-table td:last-child { color: var(--color-muted); }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header-left">
+    <a href="../index.html" class="site-name">Rust Buddy</a>
+    <span class="header-sep">/</span>
+    <a href="index.html" class="back-link">Exercises</a>
+    <span class="header-sep">/</span>
+    <span class="header-title">Ownership</span>
+  </div>
+  <nav class="nav-links">
+    <a href="index.html" class="nav-link active">Exercises</a>
+    <a href="../flashcards/index.html" class="nav-link">Flashcards</a>
+    <a href="../resources/index.html" class="nav-link">Resources</a>
+  </nav>
+</header>
+
+<main class="main">
+  <div class="tab-container">
+    <div class="tab-bar">
+      <button class="tab-btn" data-tab="overview">Overview</button>
+      <button class="tab-btn active" data-tab="exercises">Exercises</button>
+      <button class="tab-btn" data-tab="answers">Answers</button>
+      <button class="tab-btn" data-tab="terms">Terms to Know</button>
+    </div>
+
+    <div class="tab-panel" id="panel-overview">
+      <div class="overview-wrap">
+        <div class="overview-topic">Topic</div>
+        <div class="overview-headline">Ownership</div>
+        <div class="overview-desc">Ownership is how Rust manages memory without a garbage collector. Every value has exactly one owner. When you assign a heap value to a new variable, ownership moves and the old variable becomes invalid. This prevents two parts of your code from trying to free the same memory.</div>
+        <div class="overview-divider"></div>
+        <div class="overview-ref-label">Quick Reference</div>
+        <table class="terms-table">
+          <thead>
+            <tr><th>Concept</th><th>What it means</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Owner</td><td>The variable that holds a value. Only one owner at a time.</td></tr>
+            <tr><td>Move</td><td>Transferring ownership to a new variable. The old one becomes invalid.</td></tr>
+            <tr><td>.clone()</td><td>Deep copy — duplicates heap data so both variables stay valid.</td></tr>
+            <tr><td>Copy trait</td><td>Stack-only types like i32 and bool copy automatically. No move.</td></tr>
+            <tr><td>into_bytes()</td><td>Consumes a String — the original is gone afterward.</td></tr>
+            <tr><td>as_bytes()</td><td>Borrows a String — the original stays valid.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-panel active" id="panel-exercises">
+      <div class="exercise-subnav" id="subnav"></div>
+      <div class="exercise-split">
+        <div class="exercise-left" id="ex-left"></div>
+        <div class="exercise-right" id="ex-right"></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-answers">
+      <div class="answers-list" id="answers-list"></div>
+    </div>
+
+    <div class="tab-panel" id="panel-terms">
+      <div class="terms-wrap">
+        <table class="terms-table">
+          <thead>
+            <tr><th>Term</th><th>What it means</th><th>When you use it</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Owner</td><td>The variable that holds a value, only one at a time</td><td>Every heap value in Rust has exactly one owner</td></tr>
+            <tr><td>Move</td><td>Transferring ownership to a new variable, the old one becomes invalid</td><td>Assigning a String or Vec to another variable</td></tr>
+            <tr><td>.clone()</td><td>Deep copies heap data so both variables stay valid</td><td>When you need a separate copy of a String or Vec</td></tr>
+            <tr><td>Copy trait</td><td>Stack-only types copy automatically on assignment, no move</td><td>i32, u64, bool, char and other fixed-size stack types</td></tr>
+            <tr><td>into_bytes()</td><td>Consumes a String and returns its bytes as Vec&lt;u8&gt;</td><td>When you only need the bytes and are done with the original</td></tr>
+            <tr><td>as_bytes()</td><td>Borrows a String and returns its bytes as &amp;[u8]</td><td>When you need to read the bytes but keep the String usable</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const EMBED = 'https://play.rust-lang.org/?version=stable&edition=2021&code=';
+
+  const exercises = [
+    {
+      num: 1,
+      title: "Move Semantics",
+      explainer: "<p>In Rust, every value has exactly one owner. When you assign a heap value like <code>String</code> to a new variable, ownership moves - the old variable becomes invalid. Rust does this to prevent double-free errors.</p><p>Think of it as handing over the keys to a car - only one person can own it at a time.</p>",
+      task: "<p>A string is assigned to a new variable, which moves ownership. Right now it fails because <code>s1</code> is no longer valid after the move.</p><ol><li>Create a string <code>s1</code></li><li>Keep both <code>s1</code> and <code>s2</code> usable after the assignment</li><li>Print both</li></ol>",
+      starterCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1;\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
+      instruction: "Fix this so both variables can be printed",
+      expectedOutput: "s1 = hello\ns2 = hello",
+      answerCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1.clone();\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
+      why: ""
+    },
+    {
+      num: 2,
+      title: "Clone",
+      explainer: "<p><code>.clone()</code> duplicates the entire heap allocation so both variables get independent copies. Stack types like <code>i32</code> don't need it - they copy automatically. Heap types like <code>String</code> do not copy automatically.</p>",
+      task: "<p>A string is moved to a new variable, invalidating the original. Right now <code>s1</code> is invalidated by the move to <code>s2</code>.</p><ol><li>Keep both <code>s1</code> and <code>s2</code> usable after the assignment</li><li>Print both</li></ol>",
+      starterCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1;\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
+      instruction: "Add one method call so both variables stay valid",
+      expectedOutput: "s1 = hello\ns2 = hello",
+      answerCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1.clone();\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
+      why: ""
+    },
+    {
+      num: 3,
+      title: "Copy Trait",
+      explainer: "<p>Some types implement the <code>Copy</code> trait - meaning assignment duplicates the value instead of moving it. These are stack-only types with a fixed size: <code>i32</code>, <code>u64</code>, <code>bool</code>, etc.</p><p>Heap types like <code>String</code> do NOT implement <code>Copy</code>. That's why they move instead of copy.</p>",
+      task: "<p>This code already compiles. Run it in the Playground and make sure you understand why both variables are valid.</p>",
+      starterCode: "fn main() {\n    let x1: i32 = 10;\n    let x2 = x1;\n\n    println!(\"x1 = {}, x2 = {}\", x1, x2);\n}",
+      instruction: "",
+      expectedOutput: "x1 = 10, x2 = 10",
+      answerCode: "",
+      why: ""
+    },
+    {
+      num: 4,
+      title: "Ownership into Function",
+      explainer: "<p>Passing a <code>String</code> to a function moves ownership to the function parameter. When the function ends, the parameter is dropped. The caller's variable is now invalid.</p><p>Two ways to fix: clone the value before passing it, or have the function return ownership back.</p>",
+      task: "<p>A string is passed into a function, moving ownership. Right now it fails because <code>s</code> was moved into the function and is no longer valid in <code>main</code>.</p><ol><li>Pass <code>s</code> to <code>take_ownership()</code></li><li>Print the string inside the function</li><li>Print it again in <code>main</code> after the call</li></ol>",
+      starterCode: "fn take_ownership(s: String) {\n    println!(\"Got: {}\", s);\n}\n\nfn main() {\n    let s = String::from(\"hello\");\n    take_ownership(s);\n    println!(\"Still have: {}\", s);\n}",
+      instruction: "Fix this in two ways so <code>s</code> can still be printed after the call",
+      expectedOutput: "Got: hello\nStill have: hello",
+      answerCode: "fn take_ownership(s: String) {\n    println!(\"Got: {}\", s);\n}\n\nfn main() {\n    let s = String::from(\"hello\");\n    take_ownership(s.clone());\n    println!(\"Still have: {}\", s);\n}\n\n// Answer - Way 2 (return ownership):\n// fn take_ownership(s: String) -> String {\n//     println!(\"Got: {}\", s);\n//     s\n// }\n// \n// fn main() {\n//     let s = String::from(\"hello\");\n//     let s = take_ownership(s);\n//     println!(\"Still have: {}\", s);\n// }",
+      why: ""
+    },
+    {
+      num: 5,
+      title: "Returning Ownership",
+      explainer: "<p>If a function takes ownership of a <code>String</code>, it can give it back by returning it. Add <code>-&gt; String</code> as the return type and put the variable as the last expression in the function body - no semicolon.</p><p>In smart contracts, a helper that processes a wallet string and hands it back lets the caller keep using it.</p>",
+      task: "<p>The code below wants to:</p><ol><li>Pass a string into <code>process()</code></li><li>Print it inside the function</li><li>Use the returned string in <code>main</code></li></ol><p>Right now <code>process()</code> takes the string but doesn't return it, so <code>main</code> can't use it.</p>",
+      starterCode: "fn process(s: String) {\n    println!(\"Processing: {}\", s);\n}\n\nfn main() {\n    let s = String::from(\"hello\");\n    let s = process(s);\n    println!(\"Done: {}\", s);\n}",
+      instruction: "Fix the function so it returns the String",
+      expectedOutput: "Processing: hello\nDone: hello",
+      answerCode: "fn process(s: String) -> String {\n    println!(\"Processing: {}\", s);\n    s\n}\n\nfn main() {\n    let s = String::from(\"hello\");\n    let s = process(s);\n    println!(\"Done: {}\", s);\n}",
+      why: ""
+    },
+    {
+      num: 6,
+      title: "into_bytes vs as_bytes",
+      explainer: "<p><code>into_bytes()</code> converts a <code>String</code> into a <code>Vec&lt;u8&gt;</code> and destroys the original - ownership is consumed. <code>as_bytes()</code> returns a slice reference (<code>&amp;[u8]</code>) and leaves the original <code>String</code> intact.</p><p>If you need the string afterward, use <code>as_bytes()</code>.</p><p>In smart contracts, inspecting a wallet string's bytes for validation should not consume the string if you still need it afterward.</p>",
+      task: "<p>The code below wants to:</p><ol><li>Get the bytes of the string</li><li>Print the bytes</li><li>Print the original string</li></ol><p>Right now <code>into_bytes()</code> consumes <code>s</code>, so the final print fails.</p>",
+      starterCode: "fn main() {\n    let s = String::from(\"hello\");\n    let bytes = s.into_bytes();\n    println!(\"Bytes: {:?}\", bytes);\n    println!(\"String: {}\", s);\n}",
+      instruction: "Change one method so the original string stays usable",
+      expectedOutput: "Bytes: [104, 101, 108, 108, 111]\nString: hello",
+      answerCode: "fn main() {\n    let s = String::from(\"hello\");\n    let bytes = s.as_bytes();\n    println!(\"Bytes: {:?}\", bytes);\n    println!(\"String: {}\", s);\n}",
+      why: ""
+    }
+  ];
+
+  let currentEx = 0;
+
+  function buildSubnav() {
+    const subnav = document.getElementById('subnav');
+    subnav.innerHTML = '';
+    exercises.forEach((ex, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'ex-btn' + (i === currentEx ? ' active' : '');
+      btn.textContent = 'Exercise ' + ex.num;
+      btn.addEventListener('click', () => selectExercise(i));
+      subnav.appendChild(btn);
+    });
+  }
+
+  function renderLeft(ex) {
+    const left = document.getElementById('ex-left');
+    left.innerHTML =
+      '<div class="ex-kicker">Exercise ' + ex.num + ' of ' + exercises.length + '</div>' +
+      '<div class="ex-title">' + ex.title + '</div>' +
+      '<div class="ex-explainer">' + ex.explainer + '</div>' +
+      '<div class="task-rule"></div>' +
+      '<div class="task-label">Your Task</div>' +
+      '<div class="task-body">' + ex.task + '</div>';
+    const hint = document.createElement('p');
+    hint.className = 'starter-hint';
+    hint.textContent = 'Clear the Playground on the right and paste this code to begin.';
+    left.appendChild(hint);
+
+    const starterWrap = document.createElement('div');
+    starterWrap.className = 'starter-block';
+    const starterPre = document.createElement('pre');
+    starterPre.textContent = ex.starterCode;
+    starterWrap.appendChild(starterPre);
+    left.appendChild(starterWrap);
+    const instr = document.createElement('p');
+    instr.className = 'task-instruction';
+    instr.innerHTML = ex.instruction;
+    left.appendChild(instr);
+    const outputWrap = document.createElement('div');
+    outputWrap.className = 'expected-output-wrap';
+    const outputLabel = document.createElement('div');
+    outputLabel.className = 'expected-output-label';
+    outputLabel.textContent = 'Expected Output';
+    const outputText = document.createElement('div');
+    outputText.className = 'expected-output-text';
+    outputText.textContent = ex.expectedOutput;
+    outputWrap.appendChild(outputLabel);
+    outputWrap.appendChild(outputText);
+    left.appendChild(outputWrap);
+  }
+
+  let iframeEl = null;
+
+  function renderRight(ex) {
+    const right = document.getElementById('ex-right');
+    if (!iframeEl) {
+      right.innerHTML =
+        '<div class="playground-bar">' +
+          '<div class="playground-bar-dot"></div>' +
+          '<span class="playground-bar-label">Rust Playground</span>' +
+        '</div>';
+      iframeEl = document.createElement('iframe');
+      right.appendChild(iframeEl);
+    }
+    iframeEl.src = EMBED + encodeURIComponent(ex.starterCode);
+  }
+
+  function selectExercise(i) {
+    currentEx = i;
+    buildSubnav();
+    renderLeft(exercises[i]);
+    renderRight(exercises[i]);
+  }
+
+  function buildAnswers() {
+    const list = document.getElementById('answers-list');
+    if (list.children.length > 0) return;
+    exercises.forEach(ex => {
+      const card = document.createElement('div');
+      card.className = 'answer-card';
+      const head = document.createElement('div');
+      head.className = 'answer-card-head';
+      head.textContent = 'Exercise ' + ex.num + ' — ' + ex.title;
+      const body = document.createElement('div');
+      body.className = 'answer-card-body';
+      const codeWrap = document.createElement('div');
+      codeWrap.className = 'answer-code';
+      const pre = document.createElement('pre');
+      pre.textContent = ex.answerCode;
+      codeWrap.appendChild(pre);
+      const whyLabel = document.createElement('div');
+      whyLabel.className = 'answer-why-label';
+      whyLabel.textContent = 'Why';
+      const whyText = document.createElement('div');
+      whyText.className = 'answer-why';
+      whyText.innerHTML = ex.why;
+      body.appendChild(codeWrap);
+      body.appendChild(whyLabel);
+      body.appendChild(whyText);
+      card.appendChild(head);
+      card.appendChild(body);
+      list.appendChild(card);
+    });
+  }
+
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === tabId);
+    });
+    document.querySelectorAll('.tab-panel').forEach(panel => {
+      panel.classList.toggle('active', panel.id === 'panel-' + tabId);
+    });
+    if (tabId === 'answers') buildAnswers();
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
+
+  buildSubnav();
+  renderLeft(exercises[0]);
+  renderRight(exercises[0]);
+</script>
+</body>
+</html>

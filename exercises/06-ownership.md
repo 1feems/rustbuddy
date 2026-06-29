@@ -32,17 +32,13 @@ In Rust, every value has exactly one owner. When you assign a heap value like `S
 
 Think of it as handing over the keys to a car - only one person can own it at a time.
 
-In smart contracts, passing a subscriber ID string to a new variable or function moves it. If you need the original afterward, you must plan for that.
-
 #### Your Task
 
-The code below wants to:
+A string is assigned to a new variable, which moves ownership. Right now it fails because `s1` is no longer valid after the move.
 
 1. Create a string `s1`
-2. Assign it to `s2`
-3. Print both `s1` and `s2`
-
-Right now it fails because assigning `s1` to `s2` moves ownership - `s1` is no longer valid.
+2. Keep both `s1` and `s2` usable after the assignment
+3. Print both
 
 **Fix this so both variables can be printed:**
 
@@ -84,16 +80,12 @@ fn main() {
 
 `.clone()` duplicates the entire heap allocation so both variables get independent copies. Stack types like `i32` don't need it - they copy automatically. Heap types like `String` do not copy automatically.
 
-In smart contracts, if you need a backup copy of a wallet address or plan name before passing the original somewhere else, use `.clone()`.
-
 #### Your Task
 
-The code below wants to:
+A string is moved to a new variable, invalidating the original. Right now `s1` is invalidated by the move to `s2`.
 
-1. Keep both `s1` and `s2` usable after assignment
+1. Keep both `s1` and `s2` usable after the assignment
 2. Print both
-
-Right now `s1` is invalidated by the move to `s2`.
 
 **Add one method call so both variables stay valid:**
 
@@ -137,7 +129,6 @@ Some types implement the `Copy` trait - meaning assignment duplicates the value 
 
 Heap types like `String` do NOT implement `Copy`. That's why they move instead of copy.
 
-In smart contracts, lamport amounts are `u64` - they copy automatically without `.clone()`.
 
 #### Your Task
 
@@ -176,16 +167,13 @@ Passing a `String` to a function moves ownership to the function parameter. When
 
 Two ways to fix: clone the value before passing it, or have the function return ownership back.
 
-In smart contracts, passing a wallet address into a helper function consumes it. If `main` still needs it, clone it first or return it.
-
 #### Your Task
 
-The code below wants to:
+A string is passed into a function, moving ownership. Right now it fails because `s` was moved into the function and is no longer valid in `main`.
 
 1. Pass `s` to `take_ownership()`
-2. Print inside the function and again in `main` after the call
-
-Right now it fails because `s` was moved into the function and is no longer valid in `main`.
+2. Print the string inside the function
+3. Print it again in `main` after the call
 
 **Fix this in two ways so `s` can still be printed after the call:**
 
