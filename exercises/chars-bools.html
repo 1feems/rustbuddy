@@ -172,58 +172,69 @@
   const exercises = [
     {
       num: 1,
-      title: 'char Uses Single Quotes',
-      explainer: '<p>A <code>char</code> is a single character — one letter, one digit, one symbol. In Rust, every character in the world is supported. A <code>char</code> always takes 4 bytes in memory, regardless of which character it holds.</p><p>The critical rule: a <code>char</code> is always written in <strong>single quotes</strong> like <code>\'A\'</code>. Double quotes like <code>"A"</code> are for strings — a completely different type. If you use double quotes for a char, Rust will refuse to compile.</p>',
-      task: '<p>A function prints a single character. It expects a <code>char</code>, but <code>letter</code> is assigned with double quotes.</p><p>Right now it fails because double quotes create a string, not a char.</p><ol><li>Store <code>A</code> as a <code>char</code> using single quotes</li><li>Pass it to <code>print_char</code></li><li>Print <code>Got: A</code></li></ol>',
-      starterCode: 'fn print_char(c: char) {\n    println!("Got: {}", c);\n}\n\nfn main() {\n    let letter: char = "A";\n    print_char(letter);\n}',
-      instruction: 'Change one character pair so <code>letter</code> is a valid <code>char</code>',
-      expectedOutput: 'Got: A',
-      answerCode: 'fn print_char(c: char) {\n    println!("Got: {}", c);\n}\n\nfn main() {\n    let letter: char = \'A\';\n    print_char(letter);\n}',
-      why: '<code>"A"</code> is a string literal — even with one character. <code>\'A\'</code> is a char. They are different types. Rust will not accept one where the other is expected.'
+      title: "char Uses Single Quotes",
+      explainer: "<p>A <code>char</code> is a single character, one letter, one digit, one symbol. In Rust, every character in the world is supported (emoji, Chinese characters, accented letters, all of it). A <code>char</code> takes up 4 bytes in memory, regardless of which character it holds.</p><p>The important rule: a <code>char</code> is always written in <strong>single quotes</strong> <code>'a'</code>. Double quotes <code>\"a\"</code> are for strings, a completely different type. If you use double quotes for a char, Rust will refuse to compile.</p>",
+      task: "<p>A function prints a single character, but <code>letter</code> is assigned with double quotes instead of single quotes. Right now it fails because <code>letter</code> is using double quotes instead of single quotes.</p><ol><li>Store the letter <code>A</code> as a <code>char</code></li><li>Pass it to a function that expects a <code>char</code></li><li>Print <code>Got: A</code></li></ol>",
+      starterCode: "fn print_char(c: char) {\n    println!(\"Got: {}\", c);\n}\n\nfn main() {\n    let letter: char = \"A\";\n    print_char(letter);\n}",
+      instruction: "Change one character pair so <code>letter</code> is a valid <code>char</code>",
+      expectedOutput: "Got: A",
+      answerCode: "fn print_char(c: char) {\n    println!(\"Got: {}\", c);\n}\n\nfn main() {\n    let letter: char = 'A';\n    print_char(letter);\n}",
+      why: "<p>Change double quotes to single quotes:</p>"
     },
     {
       num: 2,
-      title: 'bool and the NOT Operator',
-      explainer: '<p>A <code>bool</code> holds exactly one of two values: <code>true</code> or <code>false</code>. Nothing in between. Rust uses bools to make decisions — if something is <code>true</code>, run this block; if <code>false</code>, skip it.</p><p>The <code>!</code> operator flips a bool. <code>!true</code> becomes <code>false</code>. <code>!false</code> becomes <code>true</code>. Think of it like flipping a switch.</p>',
-      task: '<p>A subscription check should only print when the account is active.</p><p>Right now it fails because the condition uses <code>!is_active</code>, which flips the value to <code>false</code>.</p><ol><li>Set <code>is_active</code> to <code>true</code></li><li>Print the message only when active</li></ol>',
-      starterCode: 'fn main() {\n    let is_active: bool = true;\n    if !is_active {\n        println!("Subscription is active.");\n    }\n}',
-      instruction: 'Remove one character so the correct line prints',
-      expectedOutput: 'Subscription is active.',
-      answerCode: 'fn main() {\n    let is_active: bool = true;\n    if is_active {\n        println!("Subscription is active.");\n    }\n}',
-      why: 'Removing the <code>!</code> makes the condition <code>is_active</code> directly. Since <code>is_active</code> is <code>true</code>, the block runs and the message prints.'
+      title: "bool and the NOT Operator",
+      explainer: "<p>A <code>bool</code> holds exactly one of two values: <code>true</code> or <code>false</code>. Nothing in between. Rust uses bools to make decisions, if something is <code>true</code>, do this; if <code>false</code>, do something else (or nothing).</p><p>The <code>!</code> operator flips a bool. <code>!true</code> becomes <code>false</code>. <code>!false</code> becomes <code>true</code>. Think of it like flipping a switch.</p>",
+      task: "<p>A subscription check should only print when the account is active. Right now it fails to print because the condition uses <code>!is_active</code>, which flips the value to <code>false</code>.</p><ol><li>Set <code>is_active</code> to <code>true</code></li><li>Print <code>\"Subscription is active.\"</code> only when <code>is_active</code> is true</li><li>Not print anything if <code>is_active</code> is false</li></ol>",
+      starterCode: "fn main() {\n    let is_active: bool = true;\n    if !is_active {\n        println!(\"Subscription is active.\");\n    }\n}",
+      instruction: "Remove one character so the correct line prints",
+      expectedOutput: "Subscription is active.",
+      answerCode: "fn main() {\n    let is_active: bool = true;\n    if is_active {\n        println!(\"Subscription is active.\");\n    }\n}",
+      why: "<p>Remove the <code>!</code>, you want the condition to be <code>is_active</code>, not the flipped version:</p>"
     },
     {
       num: 3,
-      title: 'bool and the AND Operator',
-      explainer: '<p>The <code>&amp;&amp;</code> operator (AND) takes two bools and produces one. It only outputs <code>true</code> when <strong>both</strong> inputs are <code>true</code>. If either input is <code>false</code>, the result is <code>false</code>.</p><p>Think of it like a security check: the subscriber must have an active account AND enough funds. Both conditions must pass or the payment is blocked.</p>',
-      task: '<p>A payment gate requires both the account to be active and funds to be available before approving.</p><p>Right now it fails because <code>has_funds</code> is missing its value.</p><ol><li>Set <code>is_active</code> to <code>true</code></li><li>Set <code>has_funds</code> so both conditions pass</li><li>Print <code>Payment approved.</code></li></ol>',
-      starterCode: 'fn main() {\n    let is_active: bool = true;\n    let has_funds: bool = ___;\n\n    if is_active && has_funds {\n        println!("Payment approved.");\n    }\n}',
-      instruction: 'Fill in the blank so both conditions are true and the payment is approved',
-      expectedOutput: 'Payment approved.',
-      answerCode: 'fn main() {\n    let is_active: bool = true;\n    let has_funds: bool = true;\n\n    if is_active && has_funds {\n        println!("Payment approved.");\n    }\n}',
-      why: '<code>&amp;&amp;</code> requires both sides to be <code>true</code>. Setting <code>has_funds = true</code> makes both conditions pass and the block runs.'
+      title: "bool and the AND Operator",
+      explainer: "<p>The <code>&amp;&amp;</code> operator (AND) takes two bools and produces one. It only outputs <code>true</code> when BOTH inputs are <code>true</code>. If either input is <code>false</code>, the result is <code>false</code>.</p><p>Think of it like a security check: the subscriber must have an active account AND enough funds. Both conditions must pass or the payment gets blocked.</p>",
+      task: "<p>A payment gate requires both the account to be active and funds to be available before approving. Right now <code>has_funds</code> is set incorrectly so the check fails.</p><ol><li>Check that a subscription is both active and has sufficient funds</li><li>Print <code>\"Payment approved.\"</code> only when both are true</li></ol>",
+      starterCode: "fn main() {\n    let is_active: bool = true;\n    let has_funds: bool = ___;\n\n    if is_active && has_funds {\n        println!(\"Payment approved.\");\n    }\n}",
+      instruction: "Fill in the blank so both conditions are true and the payment is approved",
+      expectedOutput: "Payment approved.",
+      answerCode: "fn main() {\n    let is_active: bool = true;\n    let has_funds: bool = true;\n\n    if is_active && has_funds {\n        println!(\"Payment approved.\");\n    }\n}",
+      why: ""
     },
     {
       num: 4,
-      title: 'The Unit Type',
-      explainer: '<p>When a function in Rust does not return a value, it implicitly returns the <strong>unit type</strong>, written as <code>()</code>. The unit type holds nothing — its size is zero bytes. You rarely write it yourself; Rust adds it automatically.</p><p>Think of it as Rust\'s way of saying "this function did its job but has nothing to hand back." A variable assigned the result of such a function will hold <code>()</code>.</p>',
-      task: '<p>A function logs a payment but returns nothing. The assert checks its return value.</p><p>Right now it fails because the assert compares to <code>5</code> instead of <code>()</code>.</p><ol><li>Call <code>log_payment()</code></li><li>Assert the return value is the unit type</li><li>Print <code>Done.</code></li></ol>',
-      starterCode: 'fn log_payment() {\n    println!("Payment logged.");\n}\n\nfn main() {\n    let result = log_payment();\n    assert_eq!(result, 5);\n    println!("Done.");\n}',
-      instruction: 'Replace <code>5</code> with the unit type so the assert passes',
-      expectedOutput: 'Payment logged.\nDone.',
-      answerCode: 'fn log_payment() {\n    println!("Payment logged.");\n}\n\nfn main() {\n    let result = log_payment();\n    assert_eq!(result, ());\n    println!("Done.");\n}',
-      why: '<code>log_payment</code> prints but returns nothing. When a function returns nothing, Rust implicitly returns <code>()</code> — the unit type. Replacing <code>5</code> with <code>()</code> makes the assert pass.'
+      title: "The Unit Type",
+      explainer: "<p>When a function in Rust does not return a value, it implicitly returns the <strong>unit type</strong>, written as <code>()</code>. The unit type holds nothing, its size is zero bytes. You rarely write it yourself; Rust adds it automatically.</p><p>Think of it as Rust's way of saying \"this function did its job but has nothing to hand back.\"</p><p>A variable assigned the result of a function that returns nothing will hold <code>()</code>. If you try to compare it to anything else, the assertion fails.</p>",
+      task: "<p>A function logs a payment but returns nothing. The assert checks its return value. Right now the assert fails because <code>result</code> is compared to <code>5</code> instead of <code>()</code>.</p><ol><li>Call <code>log_payment()</code>, which prints but returns nothing</li><li>Store the return value in <code>result</code></li><li>Assert that <code>result</code> is the unit type</li><li>Print <code>Done.</code></li></ol>",
+      starterCode: "fn log_payment() {\n    println!(\"Payment logged.\");\n}\n\nfn main() {\n    let result = log_payment();\n    assert_eq!(result, 5);\n    println!(\"Done.\");\n}",
+      instruction: "Replace <code>5</code> with the unit type so the assert passes",
+      expectedOutput: "Payment logged.\nDone.",
+      answerCode: "fn log_payment() {\n    println!(\"Payment logged.\");\n}\n\nfn main() {\n    let result = log_payment();\n    assert_eq!(result, ());\n    println!(\"Done.\");\n}",
+      why: "<p>Replace <code>5</code> with <code>()</code>, that is what <code>log_payment</code> implicitly returns:</p>"
     },
     {
       num: 5,
-      title: 'Build: Subscription Gate',
-      explainer: '<p>You now know the three small types that show up constantly in contracts:</p><p><code>char</code> for single-character codes like a plan tier label.<br><code>bool</code> for yes/no flags like active, approved, or valid.<br><code>()</code> for functions that act but return nothing.</p><p>This exercise puts them together into a real subscription check.</p>',
-      task: '<p>A subscription gate checks the plan tier and account status before charging a subscriber.</p><p>Right now it has two bugs: <code>plan</code> uses double quotes, and <code>is_active</code> is set to the wrong value.</p><ol><li>Set <code>plan</code> to the character <code>\'P\'</code> for Pro tier</li><li>Set <code>is_active</code> to <code>true</code></li><li>Check both with <code>&amp;&amp;</code></li><li>Print <code>Charging Pro subscriber.</code></li></ol>',
-      starterCode: 'fn main() {\n    let plan: char = "P";\n    let is_active: bool = false;\n\n    if plan == \'P\' && is_active {\n        println!("Charging Pro subscriber.");\n    }\n}',
-      instruction: 'Fix both bugs so the payment message prints',
-      expectedOutput: 'Charging Pro subscriber.',
-      answerCode: 'fn main() {\n    let plan: char = \'P\';\n    let is_active: bool = true;\n\n    if plan == \'P\' && is_active {\n        println!("Charging Pro subscriber.");\n    }\n}',
-      why: '<code>"P"</code> is a string — change to <code>\'P\'</code> for a char. <code>false</code> blocks the AND check — change to <code>true</code> so both conditions pass.'
+      title: "bool and the OR Operator",
+      explainer: "<p>The <code>||</code> operator (OR) takes two bools and produces one. It outputs <code>true</code> when EITHER input is <code>true</code>. Both do not need to be true, just one.</p><p>Compare it to AND:</p><ul><li><code>&amp;&amp;</code> (AND): BOTH must be true, like needing a key AND a passcode</li><li><code>||</code> (OR): EITHER can be true, like a door that opens with a key OR a code</li></ul>",
+      task: "<p>A subscription gate should grant access when either trial OR paid status is true. Right now it uses <code>&amp;&amp;</code> instead of <code>||</code>, so access is denied when only one condition is true.</p><ol><li>Check whether a user has trial access OR a paid account</li><li>Print <code>\"Access granted.\"</code> if either condition is true</li></ol>",
+      starterCode: "fn main() {\n    let is_trial: bool = true;\n    let is_paid: bool = false;\n\n    if is_trial && is_paid {\n        println!(\"Access granted.\");\n    }\n}",
+      instruction: "Change one operator so the check passes when either is true",
+      expectedOutput: "Access granted.",
+      answerCode: "fn main() {\n    let is_trial: bool = true;\n    let is_paid: bool = false;\n\n    if is_trial || is_paid {\n        println!(\"Access granted.\");\n    }\n}",
+      why: "<p>Change <code>&amp;&amp;</code> to <code>||</code>, access is granted when either condition is true:</p>"
+    },
+    {
+      num: 6,
+      title: "Contract Build: Subscription Gate",
+      explainer: "<p>You now know the four small types that show up constantly in contracts:</p><ul><li><code>char</code> for single-character codes (like a plan tier label)</li><li><code>bool</code> for yes/no flags (active, approved, valid)</li><li><code>()</code> for functions that act but return nothing</li><li><code>||</code> and <code>&amp;&amp;</code> to combine bool conditions, OR for either, AND for both</li></ul><p>This exercise puts them together. The contract checks whether a subscriber can be charged before processing a payment.</p>",
+      task: "<p>A subscription gate checks the plan tier and account status before charging a subscriber. Right now it has two bugs: <code>plan</code> uses double quotes, and <code>is_active</code> is set to the wrong value.</p><ol><li>Set <code>plan</code> to the character <code>'P'</code> (for Pro tier)</li><li>Set <code>is_active</code> to <code>true</code></li><li>Check both conditions with <code>&amp;&amp;</code></li><li>Print <code>\"Charging Pro subscriber.\"</code> if both pass</li></ol>",
+      starterCode: "fn main() {\n    let plan: char = \"P\";\n    let is_active: bool = false;\n\n    if plan == 'P' && is_active {\n        println!(\"Charging Pro subscriber.\");\n    }\n}",
+      instruction: "Fix both bugs so the payment message prints",
+      expectedOutput: "Charging Pro subscriber.",
+      answerCode: "fn main() {\n    let plan: char = 'P';\n    let is_active: bool = true;\n\n    if plan == 'P' && is_active {\n        println!(\"Charging Pro subscriber.\");\n    }\n}",
+      why: "<p>Change <code>\"P\"</code> to <code>'P'</code> and <code>false</code> to <code>true</code>:</p>"
     }
   ];
 
