@@ -32,40 +32,41 @@
       align-items: center;
       justify-content: space-between;
       padding: 16px 40px;
-      border-bottom: 1px solid var(--color-border);
     }
     .site-header-left { display: flex; align-items: center; gap: 10px; }
-    .site-name { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; text-decoration: none; color: var(--color-ink); }
+    .site-name { font-size: 16px; font-weight: 800; letter-spacing: -0.03em; text-decoration: none; color: var(--color-primary); }
     .header-sep { color: var(--color-muted); font-size: 14px; }
     .header-section { font-size: 14px; font-weight: 500; color: var(--color-muted); }
-    .nav-links { display: flex; gap: 24px; }
-    .nav-link { font-size: 13px; font-weight: 600; color: var(--color-muted); text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase; }
-    .nav-link:hover { color: var(--color-ink); }
-    .nav-link.active { color: var(--color-primary); }
+    .nav-links { display: flex; gap: 8px; }
+    .nav-link { font-size: 11px; font-weight: 700; color: var(--color-ink); text-decoration: none; letter-spacing: 0.05em; text-transform: uppercase; background: #C5E94E; padding: 5px 14px; border-radius: 20px; transition: opacity 150ms ease; }
+    .nav-link:hover { opacity: 0.85; }
+    .nav-link.active { opacity: 1; }
 
     /* ── Hero ── */
     .hero {
-      padding: 44px 40px 44px;
+      padding: 24px 40px 28px;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 40px;
       align-items: end;
-      border-bottom: 1px solid var(--color-border);
       max-width: 1400px;
       margin: 0 auto;
     }
     .hero-page-label {
-      display: block;
+      display: inline-block;
       font-size: 11px;
       font-weight: 700;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      color: var(--color-muted);
+      background: #C5E94E;
+      color: var(--color-ink);
+      padding: 5px 14px;
+      border-radius: 20px;
       margin-bottom: 24px;
     }
     .hero-title {
-      font-size: clamp(48px, 6vw, 80px);
-      font-weight: 600;
+      font-size: clamp(36px, 4vw, 58px);
+      font-weight: 700;
       line-height: 1;
       letter-spacing: -0.04em;
       color: var(--color-ink);
@@ -180,11 +181,11 @@
   <section class="hero">
     <div class="hero-left">
       <div class="hero-page-label">Rust Flashcards</div>
-      <h1 class="hero-title">Know your terms. Code with confidence.</h1>
+      <h1 class="hero-title">Make it stick.</h1>
     </div>
     <div class="hero-right">
       <p class="hero-desc">
-        Strengthen your Rust knowledge with flashcards that reinforce key concepts and terminology as you learn.
+        Learn the key terms and definitions behind every Rust topic.
       </p>
     </div>
   </section>

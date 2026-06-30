@@ -19,10 +19,7 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html, body {
-      height: 100%;
-    }
+    html, body { height: 100%; }
 
     body {
       font-family: 'Inter', system-ui, sans-serif;
@@ -39,40 +36,54 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 40px;
-      border-bottom: 1px solid var(--color-border);
+      padding: 16px 40px;
       flex-shrink: 0;
     }
+
     .site-logo {
       display: flex;
       align-items: center;
       gap: 8px;
       text-decoration: none;
     }
+
     .site-logo img {
       width: 28px;
       height: 28px;
       object-fit: contain;
     }
+
     .site-logo-name {
       font-size: 16px;
       font-weight: 800;
       letter-spacing: -0.03em;
-      color: var(--color-ink);
+      color: var(--color-primary);
     }
-    .nav-links { display: flex; gap: 24px; }
-    .nav-link {
-      font-size: 13px; font-weight: 600; color: var(--color-muted);
-      text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase;
-    }
-    .nav-link:hover { color: var(--color-ink); }
 
-    /* ── Page body — fills remaining height ── */
+    .nav-links { display: flex; gap: 8px; }
+
+    .nav-link {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--color-ink);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background: #C5E94E;
+      padding: 5px 14px;
+      border-radius: 20px;
+      transition: opacity 150ms ease;
+    }
+    .nav-link:hover { opacity: 0.85; }
+
+    /* ── Page body ── */
     .page-body {
       flex: 1;
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      padding: 20px 40px 48px;
+      gap: 56px;
     }
 
     /* ── Hero ── */
@@ -80,129 +91,119 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 40px;
-      align-items: center;
-      padding: 40px 40px 36px;
-      border-bottom: 1px solid var(--color-border);
+      align-items: start;
       flex-shrink: 0;
     }
-    .hero-left {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-    .hero-ferris {
-      width: 72px;
-      height: 72px;
-      object-fit: contain;
-      flex-shrink: 0;
-    }
+
     .hero-title {
-      font-size: clamp(36px, 4vw, 60px);
-      font-weight: 600;
+      font-size: 68px;
+      font-weight: 500;
       line-height: 1;
-      letter-spacing: -0.04em;
+      letter-spacing: -0.05em;
       color: var(--color-ink);
     }
+
     .hero-title .accent { color: var(--color-primary); }
-    .hero-right {}
+
     .hero-tagline {
       font-size: 14px;
       font-weight: 400;
-      line-height: 1.6;
+      line-height: 1.65;
       color: var(--color-muted);
-      max-width: 400px;
+      max-width: 300px;
+      padding-top: 4px;
     }
-    .hero-tagline strong { color: var(--color-ink); font-weight: 600; }
 
-    /* ── Products — fills remaining space ── */
+    /* ── Products grid ── */
     .products-section {
-      flex: 1;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      padding: 24px 40px 32px;
-      min-height: 0;
+      grid-template-columns: repeat(3, 300px);
+      gap: 32px;
+      justify-content: center;
+      flex-shrink: 0;
     }
 
-    /* ── Product Card ── */
+    /* ── Product card — full colored, notch clip-path ── */
+    /*
+      Path scaled from flashcards/index.html deck-panel (178×215) to 300×480:
+      Scale X = 300/178 = 1.685,  Scale Y = 480/215 = 2.233
+    */
     .product-card {
-      border-radius: 20px;
-      padding: 24px 24px 28px;
+      width: 300px;
+      height: 480px;
+      clip-path: path('M 52 0 L 282 0 a 19 25 0 0 1 19 25 L 300 404 Q 300 431 292 443 L 265 469 Q 263 480 253 480 L 19 480 a 19 25 0 0 1 -19 -25 L 0 60 L 15 60 Q 24 60 27 49 L 42 11 Q 47 0 52 0 Z');
+      padding: 32px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
       text-decoration: none;
-      transition: transform 200ms ease, box-shadow 200ms ease;
-      border: 1px solid rgba(0,0,0,0.06);
-      min-height: 0;
+      transition: transform 200ms ease, filter 200ms ease;
     }
+
     .product-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 24px 52px -8px rgba(0,0,0,0.2);
+      transform: translateY(-4px);
+      filter: brightness(1.04);
     }
 
-    .card-exercises  { background: linear-gradient(135deg, #A8D92F 0%, #C5E94E 40%, #EFF8A7 100%); }
-    .card-flashcards { background: linear-gradient(135deg, #FF7657 0%, #F97316 50%, #E85D04 100%); }
-    .card-resources  { background: var(--color-surface); border-color: rgba(255,255,255,0.08); }
+    .card-exercises  { background: linear-gradient(135deg, #FFB49A 0%, #FFC282 50%, #FFD9B8 100%); }
+    .card-flashcards { background: linear-gradient(135deg, #CCF25F 0%, #DCFA8A 40%, #F3FFCA 100%); }
+    .card-resources  { background: linear-gradient(135deg, #F07898 0%, #F59DB8 40%, #FAC8B4 100%); }
 
-    .product-top {
+    /* ── Card top — label left, arrow right ── */
+    .card-top {
       display: flex;
-      align-items: flex-start;
       justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
     }
-    .product-label {
-      font-size: 11px; font-weight: 700;
-      letter-spacing: 0.08em; text-transform: uppercase;
+
+    .card-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(0,0,0,0.4);
     }
-    .card-exercises  .product-label { color: rgba(0,0,0,0.45); }
-    .card-flashcards .product-label { color: rgba(255,255,255,0.6); }
-    .card-resources  .product-label { color: rgba(255,255,255,0.4); }
 
-    .product-arrow {
-      width: 28px; height: 28px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    .card-arrow-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .card-exercises  .product-arrow { background: rgba(0,0,0,0.12); }
-    .card-flashcards .product-arrow { background: rgba(255,255,255,0.18); }
-    .card-resources  .product-arrow { background: rgba(255,255,255,0.08); }
 
-    .card-exercises  .product-arrow path { stroke: rgba(0,0,0,0.6); }
-    .card-flashcards .product-arrow path { stroke: rgba(255,255,255,0.85); }
-    .card-resources  .product-arrow path { stroke: rgba(255,255,255,0.7); }
-
-    .product-icon {
+    /* ── Card icon — centered, fills middle ── */
+    .card-icon {
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 16px 0 8px;
-      min-height: 0;
     }
 
-    .product-title {
+    /* ── Card bottom — title + desc ── */
+    .card-bottom { flex-shrink: 0; }
+
+    .card-title {
       font-size: 26px;
-      font-weight: 600;
+      font-weight: 800;
       letter-spacing: -0.03em;
       line-height: 1.1;
+      margin-bottom: 10px;
+      color: var(--color-ink);
     }
-    .card-exercises  .product-title { color: #171714; }
-    .card-flashcards .product-title,
-    .card-resources  .product-title { color: #FFFFFF; }
 
-    .product-desc {
-      font-size: 13px;
+    .card-desc {
+      font-size: 12px;
       font-weight: 400;
-      line-height: 1.55;
-      margin-top: 6px;
+      line-height: 1.6;
+      color: rgba(0,0,0,0.55);
     }
-    .card-exercises  .product-desc { color: rgba(0,0,0,0.55); }
-    .card-flashcards .product-desc { color: rgba(255,255,255,0.65); }
-    .card-resources  .product-desc { color: rgba(255,255,255,0.4); }
   </style>
 </head>
 <body>
 
-  <!-- Nav -->
   <header class="site-header">
     <a href="index.html" class="site-logo">
       <img src="_design/assets/rust.png" alt="Ferris">
@@ -217,89 +218,82 @@
 
   <div class="page-body">
 
-    <!-- Hero -->
     <section class="hero">
-      <div class="hero-left">
-        <img src="_design/assets/rust.png" alt="Ferris the crab" class="hero-ferris">
-        <h1 class="hero-title">Learn Rust by writing <span class="accent">Rust.</span></h1>
-      </div>
-      <div class="hero-right">
-        <p class="hero-tagline">
-          Master Rust through guided practice designed to help you learn faster and remember more.
-        </p>
-      </div>
+      <h1 class="hero-title">Learn Rust. One challenge at a <span class="accent">time.</span></h1>
+      <p class="hero-tagline">Strengthen your Rust fundamentals with interactive exercises, flashcards, and concise learning resources.</p>
     </section>
 
-    <!-- Products — fills remaining height -->
     <div class="products-section">
 
       <!-- Exercises -->
       <a href="exercises/index.html" class="product-card card-exercises">
-        <div class="product-top">
-          <span class="product-label">01 / EXERCISES</span>
-          <span class="product-arrow">
-            <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="card-top">
+          <span class="card-label">01 / Exercises</span>
+          <span class="card-arrow-btn">
+            <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+              <path d="M2 12L12 2M12 2H5M12 2V9" stroke="rgba(0,0,0,0.5)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
           </span>
         </div>
-        <div class="product-icon">
-          <svg width="88" height="88" fill="none" viewBox="0 0 100 100">
-            <rect x="14" y="22" width="72" height="54" rx="8" stroke="#171714" stroke-width="4"/>
-            <line x1="14" y1="38" x2="86" y2="38" stroke="#171714" stroke-width="4"/>
-            <circle cx="25" cy="30" r="3" fill="#171714"/>
-            <circle cx="35" cy="30" r="3" fill="#171714"/>
-            <path d="M25 52 L36 58 L25 64" stroke="#171714" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-            <line x1="41" y1="58" x2="64" y2="58" stroke="#171714" stroke-width="3.5" stroke-linecap="round"/>
+        <div class="card-icon">
+          <svg width="96" height="96" fill="none" viewBox="0 0 88 88">
+            <path d="M44 8 L80 38 L44 80 L8 38 Z" stroke="rgba(0,0,0,0.45)" stroke-width="2.5" stroke-linejoin="round"/>
+            <line x1="8" y1="38" x2="80" y2="38" stroke="rgba(0,0,0,0.35)" stroke-width="2" stroke-linecap="round"/>
+            <path d="M44 8 L28 38" stroke="rgba(0,0,0,0.2)" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M44 8 L60 38" stroke="rgba(0,0,0,0.2)" stroke-width="1.5" stroke-linecap="round"/>
           </svg>
         </div>
-        <div>
-          <p class="product-title">Exercises</p>
-          <p class="product-desc">One page per concept. Read the challenge, write the fix, run it in the Rust Playground.</p>
+        <div class="card-bottom">
+          <p class="card-title">Practice with purpose.</p>
+          <p class="card-desc">Build confidence through guided Rust exercises that reinforce each concept one step at a time.</p>
         </div>
       </a>
 
       <!-- Flashcards -->
       <a href="flashcards/index.html" class="product-card card-flashcards">
-        <div class="product-top">
-          <span class="product-label">02 / FLASHCARDS</span>
-          <span class="product-arrow">
-            <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="card-top">
+          <span class="card-label">02 / Flashcards</span>
+          <span class="card-arrow-btn">
+            <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+              <path d="M2 12L12 2M12 2H5M12 2V9" stroke="rgba(0,0,0,0.5)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
           </span>
         </div>
-        <div class="product-icon">
-          <svg width="88" height="88" fill="none" viewBox="0 0 100 100">
-            <rect x="24" y="36" width="58" height="42" rx="7" fill="rgba(0,0,0,0.12)" stroke="rgba(255,255,255,0.2)" stroke-width="3"/>
-            <rect x="18" y="28" width="58" height="42" rx="7" fill="rgba(0,0,0,0.14)" stroke="rgba(255,255,255,0.3)" stroke-width="3"/>
-            <rect x="12" y="20" width="58" height="42" rx="7" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.6)" stroke-width="3"/>
-            <line x1="24" y1="34" x2="58" y2="34" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/>
-            <line x1="24" y1="44" x2="48" y2="44" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" stroke-linecap="round"/>
+        <div class="card-icon">
+          <svg width="96" height="96" fill="none" viewBox="0 0 84 76">
+            <rect x="22" y="6" width="56" height="40" rx="5" stroke="rgba(0,0,0,0.18)" stroke-width="2.5"/>
+            <rect x="14" y="16" width="56" height="40" rx="5" stroke="rgba(0,0,0,0.3)" stroke-width="2.5"/>
+            <rect x="6" y="26" width="56" height="40" rx="5" stroke="rgba(0,0,0,0.55)" stroke-width="2.5"/>
+            <line x1="16" y1="38" x2="52" y2="38" stroke="rgba(0,0,0,0.45)" stroke-width="2" stroke-linecap="round"/>
+            <line x1="16" y1="48" x2="38" y2="48" stroke="rgba(0,0,0,0.3)" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </div>
-        <div>
-          <p class="product-title">Flashcards</p>
-          <p class="product-desc">15 decks of key Rust terms. Flip to see the definition. One deck per topic.</p>
+        <div class="card-bottom">
+          <p class="card-title">Remember more.</p>
+          <p class="card-desc">Review key Rust terms and concepts with flashcards designed to improve recall and reinforce your learning.</p>
         </div>
       </a>
 
       <!-- Resources -->
       <a href="resources/index.html" class="product-card card-resources">
-        <div class="product-top">
-          <span class="product-label">03 / RESOURCES</span>
-          <span class="product-arrow">
-            <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="card-top">
+          <span class="card-label">03 / Resources</span>
+          <span class="card-arrow-btn">
+            <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+              <path d="M2 12L12 2M12 2H5M12 2V9" stroke="rgba(0,0,0,0.5)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
           </span>
         </div>
-        <div class="product-icon">
-          <svg width="88" height="88" fill="none" viewBox="0 0 100 100">
-            <rect x="18" y="16" width="46" height="60" rx="5" stroke="rgba(255,255,255,0.35)" stroke-width="3.5"/>
-            <rect x="36" y="24" width="46" height="60" rx="5" stroke="rgba(255,255,255,0.15)" stroke-width="3.5"/>
-            <line x1="28" y1="32" x2="54" y2="32" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" stroke-linecap="round"/>
-            <line x1="28" y1="42" x2="50" y2="42" stroke="rgba(255,255,255,0.3)" stroke-width="2.5" stroke-linecap="round"/>
-            <line x1="28" y1="52" x2="54" y2="52" stroke="rgba(255,255,255,0.3)" stroke-width="2.5" stroke-linecap="round"/>
+        <div class="card-icon">
+          <svg width="96" height="96" fill="none" viewBox="0 0 88 88">
+            <circle cx="44" cy="44" r="36" stroke="rgba(0,0,0,0.15)" stroke-width="2.5"/>
+            <circle cx="44" cy="44" r="24" stroke="rgba(0,0,0,0.28)" stroke-width="2.5"/>
+            <circle cx="44" cy="44" r="12" stroke="rgba(0,0,0,0.45)" stroke-width="2.5"/>
           </svg>
         </div>
-        <div>
-          <p class="product-title">Resources</p>
-          <p class="product-desc">Study guides, term glossaries, and reference material organized by topic.</p>
+        <div class="card-bottom">
+          <p class="card-title">Learn with clarity.</p>
+          <p class="card-desc">Explore concise explanations, cheat sheets, and reference material whenever you need a deeper understanding.</p>
         </div>
       </a>
 
