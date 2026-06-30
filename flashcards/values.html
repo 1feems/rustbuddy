@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Values — Rust Flashcards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg:      #FFFFFF;
+      --color-ink:     #171714;
+      --color-muted:   #77766F;
+      --color-border:  #171714;
+      --color-primary: #FF7657;
+      --card-shell:    #F2F5F7;
+      --card-w:        260px;
+      --card-h:        360px;
+      --shell-pad:     14px;
+      --footer-h:      62px;
+      --radius-card:   8px;
+      --label-color:   #A8D92F;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--color-bg); color: var(--color-ink); min-height: 100vh; }
+
+    /* ── Nav ── */
+    .site-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid var(--color-border); }
+    .site-header-left { display: flex; align-items: center; gap: 10px; }
+    .site-name { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; text-decoration: none; color: var(--color-ink); }
+    .header-sep { color: var(--color-muted); font-size: 14px; }
+    .header-title { font-size: 14px; font-weight: 500; color: var(--color-muted); }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-link { font-size: 13px; font-weight: 600; color: var(--color-muted); text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase; }
+    .nav-link.active { color: var(--color-primary); }
+
+    /* ── Page header ── */
+    .page-header { padding: 40px 32px 48px; border-bottom: 1px solid var(--color-border); display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; }
+    .page-header-left { display: flex; flex-direction: column; gap: 8px; }
+    .page-title { font-size: clamp(32px, 4vw, 52px); font-weight: 900; letter-spacing: -0.04em; line-height: 1; }
+    .page-hint { font-size: 13px; color: var(--color-muted); }
+    .page-header-right { max-width: 340px; padding-bottom: 4px; }
+    .page-description { font-size: 14px; font-weight: 400; line-height: 1.5; color: var(--color-muted); }
+
+    /* ── Cards ── */
+    .cards-section { padding: 40px 32px 80px; }
+    .cards-grid { display: flex; flex-wrap: wrap; gap: 24px; }
+
+    /* ── Flip card ── */
+    .flashcard { width: var(--card-w); height: var(--card-h); perspective: 1000px; cursor: pointer; border: none; background: transparent; padding: 0; display: block; }
+    .flashcard-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1); }
+    .flashcard.is-flipped .flashcard-inner { transform: rotateY(180deg); }
+    .flashcard-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; background: var(--card-shell); border-radius: var(--radius-card); padding: var(--shell-pad); overflow: hidden; box-shadow: 0 12px 28px rgba(0,0,0,0.14); }
+    .flashcard-back { transform: rotateY(180deg); }
+
+    /* ── RUST label ── */
+    .card-label { position: absolute; top: 8px; left: 4px; z-index: 10; font-size: 9px; font-weight: 800; color: rgba(11,13,18,0.5); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* ── Front panel 232×280 ── */
+    .card-panel {
+      width: 232px; height: 280px;
+      background: linear-gradient(135deg, #A8D92F 0%, #C5E94E 34%, #DAF06F 68%, #EFF8A7 100%);
+      clip-path: path('M 41 0 L 218 0 a 14 14 0 0 1 14 14 L 232 236 Q 232 252 225 259 L 205 274 Q 204 280 196 280 L 14 280 a 14 14 0 0 1 -14 -14 L 0 35 L 12 35 Q 18 35 21 29 L 32 6 Q 36 0 41 0 Z');
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card-icon { width: 108px; height: 108px; position: relative; z-index: 1; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12)); }
+    .card-icon svg { width: 100%; height: 100%; display: block; }
+
+    /* ── Front footer ── */
+    .card-footer { position: absolute; bottom: 0; left: 0; right: 0; height: var(--footer-h); padding: 0 14px; display: flex; align-items: center; background: var(--card-shell); }
+    .card-title { font-size: 28px; font-weight: 900; line-height: 1; letter-spacing: -0.04em; text-transform: uppercase; color: #0B0D12; }
+    .card-title.long { font-size: 18px; }
+    .card-title.medium { font-size: 22px; }
+
+    /* ── Back panel 232×332 ── */
+    .back-panel {
+      width: 232px; height: 332px;
+      background: linear-gradient(135deg, #DCF5A8 0%, #EDFCCB 100%);
+      clip-path: path('M 41 0 L 218 0 a 14 14 0 0 1 14 14 L 232 286 Q 232 302 225 309 L 205 326 Q 204 332 196 332 L 14 332 a 14 14 0 0 1 -14 -14 L 0 35 L 12 35 Q 18 35 21 29 L 32 6 Q 36 0 41 0 Z');
+      padding: 42px 18px 18px;
+      display: flex; flex-direction: column;
+    }
+    .back-title { font-size: 26px; font-weight: 900; letter-spacing: -0.04em; text-transform: uppercase; color: #0B0D12; line-height: 0.95; text-align: right; margin-bottom: 16px; }
+    .back-sections { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; }
+    .back-section { padding-top: 14px; margin-top: 14px; border-top: 1px solid rgba(11,13,18,0.18); }
+    .back-section:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+    .section-label { display: block; font-size: 11px; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; color: var(--label-color); margin-bottom: 4px; }
+    .section-body { font-size: 11.5px; font-weight: 400; line-height: 1.35; color: #0B0D12; }
+    code { font-family: "SF Mono","Fira Code",monospace; font-size: 11px; color: #0B0D12; }
+
+    /* ── Progress bar ── */
+    .progress-bar-wrap { position: fixed; bottom: 0; left: 0; right: 0; height: 4px; background: rgba(0,0,0,0.08); z-index: 100; }
+    .progress-bar { height: 100%; background: var(--color-primary); transition: width 300ms ease; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header-left">
+      <a href="../index.html" class="site-name">Rust Buddy</a>
+      <span class="header-sep">/</span>
+      <a href="index.html" class="header-title" style="text-decoration:none;color:var(--color-muted);">Flashcards</a>
+      <span class="header-sep">/</span>
+      <span class="header-title">Values</span>
+    </div>
+    <nav class="nav-links">
+      <a href="../exercises/index.html" class="nav-link">Exercises</a>
+      <a href="index.html" class="nav-link active">Flashcards</a>
+      <a href="../resources/index.html" class="nav-link">Resources</a>
+    </nav>
+  </header>
+
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1 class="page-title">Values</h1>
+      <p class="page-hint">Click a card to flip it · 16 terms</p>
+    </div>
+    <div class="page-header-right">
+      <p class="page-description">In Rust, values and numbers are the basic data a program works with — specifically numeric values like integers and floating-point numbers.</p>
+    </div>
+  </div>
+
+  <section class="cards-section">
+    <div class="cards-grid">
+
+      <!-- 1. let -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="10" y="28" width="60" height="10" rx="3" fill="rgba(0,0,0,0.25)"/><rect x="10" y="44" width="40" height="10" rx="3" fill="rgba(0,0,0,0.18)"/><circle cx="64" cy="20" r="7" fill="rgba(0,0,0,0.2)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title">LET</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">LET</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Creates a new variable — gives a name to a value in your program.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Every time you store a value.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let age = 25;</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <!-- 2. mut -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><path d="M 16 50 Q 40 20 64 50" stroke="rgba(0,0,0,0.25)" stroke-width="6" stroke-linecap="round" fill="none"/><path d="M 54 44 L 64 50 L 58 62" stroke="rgba(0,0,0,0.25)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title">MUT</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">MUT</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Allows a variable to change after it is set.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When your program needs to update a value over time.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let mut count = 0;<br>count += 1;</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <!-- 3. Immutable -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="20" y="38" width="40" height="30" rx="4" fill="rgba(0,0,0,0.25)"/><path d="M 28 38 L 28 28 a 12 12 0 0 1 24 0 L 52 38" stroke="rgba(0,0,0,0.25)" stroke-width="5" stroke-linecap="round" fill="none"/><circle cx="40" cy="53" r="4" fill="rgba(0,0,0,0.4)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">IMMUTABLE</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">IMMUTABLE</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Cannot change after being set.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">This is the default in Rust — every variable is immutable unless you add <code>mut</code>.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let x = 5;<br>// x = 10; ← won't compile</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <!-- 4. Variable -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="12" y="22" width="56" height="36" rx="5" fill="rgba(0,0,0,0.22)"/><rect x="20" y="30" width="24" height="6" rx="2" fill="rgba(0,0,0,0.25)"/><rect x="20" y="42" width="16" height="6" rx="2" fill="rgba(0,0,0,0.18)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">VARIABLE</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">VARIABLE</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A named place to store a value in your program.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Any time you need to remember a piece of data.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let name = "Alice";<br>let age = 25;</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <!-- 5. Shadowing -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="10" y="18" width="40" height="40" rx="4" fill="rgba(0,0,0,0.18)"/><rect x="28" y="28" width="40" height="40" rx="4" fill="rgba(0,0,0,0.28)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">SHADOWING</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">SHADOWING</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Reusing a variable name with a new <code>let</code> — the old value is replaced.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Transforming a value while keeping the same name.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let amount = "1000";<br>let amount: u64 = amount.parse().unwrap();</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <!-- 6. _ Underscore -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="14" y="46" width="52" height="8" rx="4" fill="rgba(0,0,0,0.28)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">_ UNDERSCORE</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">_ UNDERSCORE</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Tells the compiler to ignore this variable or value — silences unused warnings.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When you have a variable you don't need, or want to skip a value in a pattern.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let _unused = 5;<br>let (plan, _) = (1_000, 50);</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <!-- 7. Destructuring -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="20" y="14" width="40" height="22" rx="4" fill="rgba(0,0,0,0.22)"/><rect x="10" y="48" width="22" height="18" rx="3" fill="rgba(0,0,0,0.28)"/><rect x="48" y="48" width="22" height="18" rx="3" fill="rgba(0,0,0,0.28)"/><line x1="40" y1="36" x2="21" y2="48" stroke="rgba(0,0,0,0.2)" stroke-width="3"/><line x1="40" y1="36" x2="59" y2="48" stroke="rgba(0,0,0,0.2)" stroke-width="3"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">DESTRUCTURING</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">DESTRUCTURING</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Unpacking a tuple or struct into individual named variables in one line.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When you need each value separately from a grouped type.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let (plan, fee) = (1_000_000u64, 50_000u64);</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <!-- 8. const -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><path d="M 40 12 L 66 40 L 40 68 L 14 40 Z" fill="rgba(0,0,0,0.25)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title">CONST</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">CONST</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A value that never changes — must have an explicit type and cannot be computed at runtime.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Storing fixed limits or rates that never change.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>const MAX_FEE: u64 = 50_000;</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <!-- 9. Integer -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="14" y="14" width="52" height="52" rx="4" fill="rgba(0,0,0,0.22)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">INTEGER</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">INTEGER</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A whole number — no decimals.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Counts, balances, indexes.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let count: i32 = 10;<br>let balance: u64 = 5_000_000;</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <!-- 10. Signed i -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="36" y="14" width="8" height="52" rx="3" fill="rgba(0,0,0,0.28)"/><rect x="14" y="36" width="52" height="8" rx="3" fill="rgba(0,0,0,0.28)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">SIGNED  I</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">SIGNED  I</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">An integer that can be negative or positive (i8, i32, i64).</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Temperatures, gains/losses — anything that can go below zero.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let temp: i32 = -5;<br>let gain: i64 = -1_000;</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <!-- 11. Unsigned u -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="14" y="36" width="52" height="8" rx="3" fill="rgba(0,0,0,0.28)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">UNSIGNED  U</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">UNSIGNED  U</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">An integer that cannot be negative (u8, u32, u64).</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Balances, counts, addresses — anything that can only be zero or positive.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let balance: u64 = 1_000_000;</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <!-- 12. u64 -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="8" y="28" width="64" height="24" rx="4" fill="rgba(0,0,0,0.25)"/><rect x="8" y="28" width="48" height="24" rx="4" fill="rgba(0,0,0,0.15)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title">U64</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">U64</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Unsigned 64-bit integer — a whole number that can't be negative. Holds up to 18 quintillion.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Payment amounts, token balances, timestamps on Solana.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let amount: u64 = 5_000_000;</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <!-- 13. u8 -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="24" y="28" width="32" height="24" rx="4" fill="rgba(0,0,0,0.25)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title">U8</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">U8</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Unsigned 8-bit integer — holds values from 0 to 255 only.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Bytes and wallet address components on Solana.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let byte: u8 = 255;<br>let addr: [u8; 32] = [0; 32];</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <!-- 14. Float f -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><path d="M 10 40 Q 25 20 40 40 Q 55 60 70 40" stroke="rgba(0,0,0,0.28)" stroke-width="6" stroke-linecap="round" fill="none"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">FLOAT  F</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">FLOAT  F</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A decimal number (f32, f64).</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Measurements — rarely used in Solana. Prefer integers (lamports) for money.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let price: f64 = 3.14;</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <!-- 15. f64 -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><path d="M 8 44 Q 22 24 40 44 Q 58 64 72 44" stroke="rgba(0,0,0,0.22)" stroke-width="5" stroke-linecap="round" fill="none"/><path d="M 8 34 Q 22 14 40 34 Q 58 54 72 34" stroke="rgba(0,0,0,0.14)" stroke-width="4" stroke-linecap="round" fill="none"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title">F64</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">F64</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A 64-bit decimal number — high precision but not exact.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Avoid in Solana — use integer lamports instead. Decimals cause rounding errors in money.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let rate: f64 = 0.05;<br>// Use u64 lamports for SOL</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <!-- 16. as -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="10" y="22" width="24" height="16" rx="3" fill="rgba(0,0,0,0.25)"/><rect x="46" y="42" width="24" height="16" rx="3" fill="rgba(0,0,0,0.25)"/><path d="M 34 30 Q 52 30 52 42" stroke="rgba(0,0,0,0.22)" stroke-width="4" stroke-linecap="round" fill="none"/><path d="M 46 36 L 52 42 L 58 36" stroke="rgba(0,0,0,0.22)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title">AS</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">AS</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Converts one type to another.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When two types need to work together and one must be cast to match the other.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let x: i32 = 5;<br>let y = x as u64;</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+    </div>
+  </section>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+  </div>
+
+  <script>
+    const cards = document.querySelectorAll('.flashcard');
+    const bar = document.getElementById('progress-bar');
+    const seen = new Set();
+    cards.forEach((card, i) => {
+      card.addEventListener('click', () => {
+        seen.add(i);
+        bar.style.width = (seen.size / cards.length * 100) + '%';
+      });
+    });
+  </script>
+
+  <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[DECK NAME] — Rust Flashcards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!--
+    ╔══════════════════════════════════════════════════════════════╗
+    ║  RUST BUD — FLASHCARD DECK TEMPLATE                         ║
+    ║  Last updated: 2026-06-30                                    ║
+    ║                                                              ║
+    ║  DESIGN REFERENCE (open before touching anything):          ║
+    ║  file:///tmp/flashcard-3-card-preview.html                  ║
+    ║                                                              ║
+    ║  CONTENT SOURCE:                                             ║
+    ║  lessons/solana/rust-for-solana/VOCABULARY.md               ║
+    ║                                                              ║
+    ║  TO BUILD A NEW DECK:                                        ║
+    ║  1. Copy this file — rename to [deck-name].html             ║
+    ║  2. Update <title> and .page-title                          ║
+    ║  3. Swap the gradient class on .card-panel and .back-panel  ║
+    ║     to the correct deck color (see Deck Colors below)       ║
+    ║  4. Replace placeholder cards with real cards from          ║
+    ║     VOCABULARY.md — one .card-shell-wrap per term           ║
+    ║  5. DO NOT edit the CSS. Copy terms only.                   ║
+    ║  6. Commit + push from game/ repo so Vercel picks it up     ║
+    ╚══════════════════════════════════════════════════════════════╝
+
+    DECK COLOR CLASSES (apply to .card-panel and .back-panel):
+      Lime   → grad-lime   / grad-lime-back   (Deck 01 — Values)
+      Orange → grad-orange / grad-orange-back (Deck 02 — Types)
+      Cyan   → grad-cyan   / grad-cyan-back   (Deck 03 — Functions)
+      Pink   → grad-pink   / grad-pink-back   (Deck 04 — Ownership)
+      Yellow → grad-yellow / grad-yellow-back (Deck 05 — Borrowing)
+      Repeat from Lime for decks 06+
+
+    SECTION LABEL COLOR:
+      Use the matching solid color per deck (see --label-* vars below).
+      Lime deck  → #A8D92F
+      Orange     → #E85D04
+      Cyan       → #14A6C8
+      Pink       → #DE4775
+      Yellow     → #E8C800
+  -->
+
+  <style>
+    /* ── Tokens ── */
+    :root {
+      --color-bg:      #FFFFFF;
+      --color-ink:     #171714;
+      --color-muted:   #77766F;
+      --color-border:  #171714;
+      --color-primary: #FF7657;
+
+      --card-shell:  #F2F5F7;
+      --card-w:      260px;
+      --card-h:      360px;
+      --shell-pad:   14px;
+      --footer-h:    62px;
+      --radius-card: 8px;
+
+      /* Front panel gradients */
+      --grad-lime:   linear-gradient(135deg, #A8D92F 0%, #C5E94E 34%, #DAF06F 68%, #EFF8A7 100%);
+      --grad-orange: linear-gradient(135deg, #FF7657 0%, #F97316 50%, #E85D04 100%);
+      --grad-cyan:   linear-gradient(135deg, #14A6C8 0%, #35BFDA 40%, #A8EDF0 100%);
+      --grad-pink:   linear-gradient(135deg, #DE4775 0%, #EA6689 40%, #F6A56F 100%);
+      --grad-yellow: linear-gradient(135deg, #E8C800 0%, #F5DC3A 40%, #FFFD74 100%);
+
+      /* Back panel gradients */
+      --grad-lime-back:   linear-gradient(135deg, #DCF5A8 0%, #EDFCCB 100%);
+      --grad-orange-back: linear-gradient(135deg, #FFE8E0 0%, #FFF5F0 100%);
+      --grad-cyan-back:   linear-gradient(135deg, #D0F3FA 0%, #EDFBFD 100%);
+      --grad-pink-back:   linear-gradient(135deg, #FAD5E0 0%, #FDF0F5 100%);
+      --grad-yellow-back: linear-gradient(135deg, #FFFACC 0%, #FFFDE8 100%);
+
+      /* Section label colors — one per deck */
+      --label-lime:   #A8D92F;
+      --label-orange: #E85D04;
+      --label-cyan:   #14A6C8;
+      --label-pink:   #DE4775;
+      --label-yellow: #E8C800;
+
+      /* Active deck label color — change this to match the deck */
+      --label-color: var(--label-lime);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-ink);
+      min-height: 100vh;
+    }
+
+    /* ── Nav ── */
+    .site-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 32px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .site-header-left { display: flex; align-items: center; gap: 10px; }
+    .site-name { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; text-decoration: none; color: var(--color-ink); }
+    .header-sep { color: var(--color-muted); font-size: 14px; }
+    .header-title { font-size: 14px; font-weight: 500; color: var(--color-muted); }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-link { font-size: 13px; font-weight: 600; color: var(--color-muted); text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase; }
+    .nav-link:hover { color: var(--color-ink); }
+    .nav-link.active { color: var(--color-primary); }
+
+    /* ── Page header ── */
+    .page-header {
+      padding: 40px 32px 32px;
+      border-bottom: 1px solid var(--color-border);
+      display: flex; align-items: flex-end; justify-content: space-between;
+    }
+    .page-title { font-size: clamp(32px, 4vw, 52px); font-weight: 900; letter-spacing: -0.04em; line-height: 1; }
+    .page-hint { font-size: 13px; color: var(--color-muted); padding-bottom: 4px; }
+
+    /* ── Cards section ── */
+    .cards-section { padding: 40px 32px 80px; }
+    .cards-grid { display: flex; flex-wrap: wrap; gap: 24px; }
+
+    /* ── Card shell ── */
+    .flashcard {
+      width: var(--card-w);
+      height: var(--card-h);
+      perspective: 1000px;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      padding: 0;
+      display: block;
+    }
+
+    .flashcard-inner {
+      width: 100%; height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    .flashcard.is-flipped .flashcard-inner { transform: rotateY(180deg); }
+
+    .flashcard-face {
+      position: absolute; inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      background: var(--card-shell);
+      border-radius: var(--radius-card);
+      padding: var(--shell-pad);
+      overflow: hidden;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.14);
+    }
+
+    .flashcard-back { transform: rotateY(180deg); }
+
+    /* ── RUST label in notch tab pocket ── */
+    .card-label {
+      position: absolute;
+      top: 8px; left: 4px;
+      z-index: 10;
+      font-size: 9px; font-weight: 800; line-height: 1;
+      color: rgba(11,13,18,0.5);
+      text-transform: uppercase; letter-spacing: 0.08em;
+    }
+
+    /* ── FRONT panel — 232 × 280 — DO NOT CHANGE CLIP-PATH ── */
+    .card-panel {
+      width: 232px;
+      height: 280px;
+      clip-path: path('M 41 0 L 218 0 a 14 14 0 0 1 14 14 L 232 236 Q 232 252 225 259 L 205 274 Q 204 280 196 280 L 14 280 a 14 14 0 0 1 -14 -14 L 0 35 L 12 35 Q 18 35 21 29 L 32 6 Q 36 0 41 0 Z');
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-panel.grad-lime   { background: var(--grad-lime); }
+    .card-panel.grad-orange { background: var(--grad-orange); }
+    .card-panel.grad-cyan   { background: var(--grad-cyan); }
+    .card-panel.grad-pink   { background: var(--grad-pink); }
+    .card-panel.grad-yellow { background: var(--grad-yellow); }
+
+    .card-icon {
+      width: 108px; height: 108px;
+      position: relative; z-index: 1;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12));
+    }
+    .card-icon svg { width: 100%; height: 100%; display: block; }
+
+    /* ── FRONT footer — term only, no sublabel ── */
+    .card-footer {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: var(--footer-h);
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      background: var(--card-shell);
+    }
+
+    .card-title {
+      font-size: 28px; font-weight: 900; line-height: 1;
+      letter-spacing: -0.04em; text-transform: uppercase;
+      color: #0B0D12;
+    }
+    .card-title.long   { font-size: 20px; }
+    .card-title.medium { font-size: 23px; }
+
+    /* Symbol cards: title already includes symbol + name side by side, e.g. "( )  UNIT TYPE" */
+
+    /* ── BACK panel — 232 × 332 — DO NOT CHANGE CLIP-PATH ── */
+    .back-panel {
+      width: 232px;
+      height: 332px;
+      padding: 42px 18px 18px;
+      clip-path: path('M 41 0 L 218 0 a 14 14 0 0 1 14 14 L 232 286 Q 232 302 225 309 L 205 326 Q 204 332 196 332 L 14 332 a 14 14 0 0 1 -14 -14 L 0 35 L 12 35 Q 18 35 21 29 L 32 6 Q 36 0 41 0 Z');
+      display: flex;
+      flex-direction: column;
+    }
+
+    .back-panel.grad-lime-back   { background: var(--grad-lime-back); }
+    .back-panel.grad-orange-back { background: var(--grad-orange-back); }
+    .back-panel.grad-cyan-back   { background: var(--grad-cyan-back); }
+    .back-panel.grad-pink-back   { background: var(--grad-pink-back); }
+    .back-panel.grad-yellow-back { background: var(--grad-yellow-back); }
+
+    /* Back title — top right */
+    .back-title {
+      font-size: 26px; font-weight: 900;
+      letter-spacing: -0.04em; text-transform: uppercase;
+      color: #0B0D12; line-height: 0.95;
+      text-align: right;
+      margin-bottom: 16px;
+    }
+
+    /* Back sections — flow from top, breathing room at bottom */
+    .back-sections {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    .back-section {
+      padding-top: 14px;
+      margin-top: 14px;
+      border-top: 1px solid rgba(11,13,18,0.18);
+    }
+    .back-section:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+
+    /* Section label — uses deck color, update --label-color in :root for each deck */
+    .section-label {
+      display: block;
+      font-size: 11px; font-weight: 900;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--label-color);
+      margin-bottom: 4px;
+    }
+
+    .section-body {
+      font-size: 11.5px; font-weight: 400;
+      line-height: 1.35; color: #0B0D12;
+    }
+
+    code {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 11px; color: #0B0D12;
+    }
+
+    /* ── Progress bar ── */
+    .progress-bar-wrap {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: 4px; background: rgba(0,0,0,0.08); z-index: 100;
+    }
+    .progress-bar { height: 100%; background: var(--color-primary); transition: width 300ms ease; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <header class="site-header">
+    <div class="site-header-left">
+      <a href="../index.html" class="site-name">Rust Buddy</a>
+      <span class="header-sep">/</span>
+      <a href="index.html" class="nav-link">Flashcards</a>
+      <span class="header-sep">/</span>
+      <span class="header-title">[DECK NAME]</span>
+    </div>
+    <nav class="nav-links">
+      <a href="../exercises/index.html" class="nav-link">Exercises</a>
+      <a href="index.html" class="nav-link active">Flashcards</a>
+      <a href="../resources/index.html" class="nav-link">Resources</a>
+    </nav>
+  </header>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <h1 class="page-title">[DECK NAME]</h1>
+    <p class="page-hint">Click a card to flip it · [N] terms</p>
+  </div>
+
+  <!-- CARDS -->
+  <section class="cards-section">
+    <div class="cards-grid" id="cards-grid">
+
+      <!--
+        ═══════════════════════════════════════════════════
+        CARD TEMPLATE — copy this block for each term
+        Source: lessons/solana/rust-for-solana/VOCABULARY.md
+        ═══════════════════════════════════════════════════
+
+        For regular terms: set .card-title to the TERM
+        For symbol terms: set .card-title to "SYMBOL  NAME" on one line
+          e.g. "( )  UNIT TYPE"  (symbol + 2 spaces + name)
+
+        Swap gradient classes to match the deck:
+          .card-panel → grad-lime / grad-orange / grad-cyan / grad-pink / grad-yellow
+          .back-panel → grad-lime-back / grad-orange-back / etc.
+
+        Replace icon SVG with the term's Bauhaus icon (inline SVG only).
+      -->
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')" aria-label="[TERM]">
+        <div class="flashcard-inner">
+
+          <!-- FRONT -->
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel grad-lime">
+              <!-- ICON: replace with term's Bauhaus inline SVG -->
+              <div class="card-icon">
+                <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="20" y="20" width="40" height="40" rx="4" fill="rgba(0,0,0,0.25)"/>
+                </svg>
+              </div>
+            </div>
+            <div class="card-footer">
+              <p class="card-title">[TERM]</p>
+            </div>
+          </div>
+
+          <!-- BACK -->
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel grad-lime-back">
+              <h2 class="back-title">[TERM]</h2>
+              <div class="back-sections">
+                <div class="back-section">
+                  <span class="section-label">Meaning</span>
+                  <p class="section-body">[What it is — from VOCABULARY.md]</p>
+                </div>
+                <div class="back-section">
+                  <span class="section-label">When to use it</span>
+                  <p class="section-body">[When it's used — from VOCABULARY.md]</p>
+                </div>
+                <div class="back-section">
+                  <span class="section-label">Example</span>
+                  <p class="section-body"><code>[code example]</code></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </button>
+
+      <!-- ADD MORE CARDS HERE — one block per term from VOCABULARY.md -->
+
+    </div>
+  </section>
+
+  <!-- PROGRESS BAR -->
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+  </div>
+
+  <script>
+    // Progress bar — tracks how many cards have been flipped at least once
+    const cards = document.querySelectorAll('.flashcard');
+    const bar = document.getElementById('progress-bar');
+    const seen = new Set();
+
+    cards.forEach((card, i) => {
+      card.addEventListener('click', () => {
+        seen.add(i);
+        bar.style.width = (seen.size / cards.length * 100) + '%';
+      });
+    });
+  </script>
+
+</body>
+</html>

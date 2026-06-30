@@ -5,8 +5,9 @@ Status: Active — apply to all Rust Bud web pages
 
 Source: `game/Creative-Cards-DESIGN.md` — this document adapts those tokens for the Rust Bud website.
 
-**Scope:** Website only (exercise pages, index, game levels on site).
-**Not this doc:** Flashcard card design → see `game/rust-flashcards-visual-design.md`
+**Scope:** Website — exercise pages, index, game levels, and flashcard pages.
+**Flashcard card shape + layout:** `game/_design/rust-flashcards-visual-design.md`
+**Flashcard colors:** defined in this doc under Flashcard Deck Colors below.
 
 ---
 
@@ -185,6 +186,24 @@ border-top: 1px solid rgba(23,23,20,0.12);
 
 ---
 
+## Flashcard Deck Colors
+
+Flashcard shell: `#F2F5F7` (hint-of-blue-white — not pure white, not dark).
+
+Five deck colors cycle in order for front panels. Each has a pale back variant.
+
+| Deck | Name | Front gradient | Back gradient |
+|---|---|---|---|
+| 01 | Lime | `135deg, #A8D92F 0%, #C5E94E 34%, #DAF06F 68%, #EFF8A7 100%` | `135deg, #DCF5A8 0%, #EDFCCB 100%` |
+| 02 | Orange | `135deg, #FF7657 0%, #F97316 50%, #E85D04 100%` | `135deg, #FFE8E0 0%, #FFF5F0 100%` |
+| 03 | Cyan | `135deg, #14A6C8 0%, #35BFDA 40%, #A8EDF0 100%` | `135deg, #D0F3FA 0%, #EDFBFD 100%` |
+| 04 | Pink | `135deg, #DE4775 0%, #EA6689 40%, #F6A56F 100%` | `135deg, #FAD5E0 0%, #FDF0F5 100%` |
+| 05 | Yellow | `135deg, #E8C800 0%, #F5DC3A 40%, #FFFD74 100%` | `135deg, #FFFACC 0%, #FFFDE8 100%` |
+
+Colors repeat from Lime for decks 06–13. Deck 5 is Yellow — not Gold.
+
+---
+
 ## Do's and Don'ts
 
 ### Do
@@ -196,7 +215,7 @@ border-top: 1px solid rgba(23,23,20,0.12);
 
 ### Don't
 - Don't use the flashcard gradients (purple, blue) on the website UI
-- Don't use `#F1EFEA` warm grey background — that's flashcard territory
-- Don't use Space Grotesk — that's the flashcard font
+- Don't use `#F1EFEA` as any background — old design, retired
+- Don't use Space Grotesk — Inter only across the whole site
 - Don't introduce extra accent colors outside the palette
 - Don't mix shadow recipes

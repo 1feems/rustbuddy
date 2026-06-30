@@ -9,7 +9,7 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: #FFFFFF;
+      background: #F0F2F5;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -35,7 +35,7 @@
     .card {
       width: 260px;
       height: 360px;
-      background: #FFFFFF;
+      background: #F5F8FA;
       border-radius: 8px;
       box-shadow: 0 12px 28px rgba(0,0,0,0.14);
       position: relative;
@@ -56,16 +56,16 @@
       z-index: 10;
     }
 
-    /* ── FRONT panel — 232 × 270, leaves 62px footer ── */
+    /* ── FRONT panel — 232 × 280, leaves ~18px gap above 62px footer ── */
     .front-panel {
       width: 232px;
-      height: 270px;
+      height: 280px;
       background: linear-gradient(135deg, #A8D92F 0%, #C5E94E 34%, #DAF06F 68%, #EFF8A7 100%);
       /*
         Stepped notch top-left + diagonal cut bottom-right.
-        Path from card-proof.html — exact coordinates for 232×270.
+        Coordinates for 232×280 (extended from 270 to reduce white gap above footer).
       */
-      clip-path: path('M 41 0 L 218 0 a 14 14 0 0 1 14 14 L 232 226 Q 232 242 225 249 L 205 264 Q 204 270 196 270 L 14 270 a 14 14 0 0 1 -14 -14 L 0 35 L 12 35 Q 18 35 21 29 L 32 6 Q 36 0 41 0 Z');
+      clip-path: path('M 41 0 L 218 0 a 14 14 0 0 1 14 14 L 232 236 Q 232 252 225 259 L 205 274 Q 204 280 196 280 L 14 280 a 14 14 0 0 1 -14 -14 L 0 35 L 12 35 Q 18 35 21 29 L 32 6 Q 36 0 41 0 Z');
       display: flex;
       align-items: center;
       justify-content: center;
@@ -130,20 +130,21 @@
       text-transform: uppercase;
       color: #0B0D12;
       line-height: 0.95;
-      margin-bottom: 14px;
+      text-align: right;
+      margin-bottom: 16px;
     }
 
     .back-sections {
       flex: 1;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;
     }
 
     .back-section {
-      padding-top: 11px;
-      margin-top: 11px;
-      border-top: 1px solid rgba(11,13,18,0.14);
+      padding-top: 14px;
+      margin-top: 14px;
+      border-top: 1px solid rgba(11,13,18,0.18);
     }
 
     .back-section:first-child {
@@ -154,11 +155,11 @@
 
     .section-label {
       display: block;
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 900;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      color: #0B0D12;
+      color: #A8D92F;
       margin-bottom: 4px;
     }
 
@@ -195,8 +196,8 @@
         </svg>
       </div>
       <div class="front-footer">
-        <p class="front-term">( )</p>
-        <p class="front-term-label">unit type</p>
+        <p class="front-term">STRUCT</p>
+        <p class="front-term-label">struct</p>
       </div>
     </div>
   </div>
@@ -207,19 +208,19 @@
     <div class="card">
       <span class="card-label">Rust</span>
       <div class="back-panel">
-        <h2 class="back-title">( )</h2>
+        <h2 class="back-title">STRUCT</h2>
         <div class="back-sections">
           <div class="back-section">
             <span class="section-label">Meaning</span>
-            <p class="section-body">A named place to store a value in your program.</p>
+            <p class="section-body">A way to group related pieces of data together under one name.</p>
           </div>
           <div class="back-section">
             <span class="section-label">When to use it</span>
-            <p class="section-body">Every time you need to remember a piece of data in your code.</p>
+            <p class="section-body">When you need to describe something that has multiple properties, like a user with a name, age, and wallet address.</p>
           </div>
           <div class="back-section">
             <span class="section-label">Example</span>
-            <p class="section-body"><code>let age = 25;</code></p>
+            <p class="section-body"><code>struct User {<br>&nbsp;&nbsp;name: String,<br>&nbsp;&nbsp;age: u32,<br>}</code></p>
           </div>
         </div>
       </div>

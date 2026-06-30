@@ -10,7 +10,6 @@
   <style>
     :root {
       --color-bg:        #FFFFFF;
-      --color-surface:   #1E1E1A;
       --color-primary:   #FF7657;
       --color-secondary: #DFFF65;
       --color-ink:       #171714;
@@ -36,17 +35,11 @@
       border-bottom: 1px solid var(--color-border);
     }
     .site-header-left { display: flex; align-items: center; gap: 10px; }
-    .site-name {
-      font-size: 16px; font-weight: 700; letter-spacing: -0.02em;
-      text-decoration: none; color: var(--color-ink);
-    }
+    .site-name { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; text-decoration: none; color: var(--color-ink); }
     .header-sep { color: var(--color-muted); font-size: 14px; }
     .header-section { font-size: 14px; font-weight: 500; color: var(--color-muted); }
     .nav-links { display: flex; gap: 24px; }
-    .nav-link {
-      font-size: 13px; font-weight: 600; color: var(--color-muted);
-      text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase;
-    }
+    .nav-link { font-size: 13px; font-weight: 600; color: var(--color-muted); text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase; }
     .nav-link:hover { color: var(--color-ink); }
     .nav-link.active { color: var(--color-primary); }
 
@@ -89,7 +82,6 @@
       max-width: 360px;
       padding-bottom: 8px;
     }
-    .hero-desc strong { color: var(--color-ink); font-weight: 600; }
 
     /* ── Cards Grid ── */
     .cards-section {
@@ -99,107 +91,78 @@
     }
     .cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, 200px);
+      gap: 20px;
     }
 
-    /* ── Deck Card ── */
+    /* ── Clip-path deck card ── */
+    .deck-card-wrap {
+      width: 200px;
+      position: relative;
+      text-decoration: none;
+    }
+    .deck-card-wrap.live { cursor: pointer; }
+    .deck-card-wrap.live:hover .deck-card { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.16); }
+    .deck-card-wrap.soon { opacity: 0.4; pointer-events: none; }
+
     .deck-card {
-      border-radius: 20px;
-      padding: 20px 20px 22px;
-      min-height: 280px;
+      width: 200px;
+      height: 277px;
+      background: #F2F5F7;
+      border-radius: 6px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+      padding: 11px;
+      transition: transform 240ms ease, box-shadow 240ms ease;
+    }
+
+    .card-label {
+      position: absolute;
+      top: 6px; left: 3px;
+      font-size: 7px; font-weight: 800;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: rgba(11,13,18,0.5);
+      z-index: 10;
+    }
+
+    /* Scaled-down panel: 178 × 215 (~77% of 232 × 280) */
+    .deck-panel {
+      width: 178px;
+      height: 215px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      text-decoration: none;
-      transition: transform 200ms ease, box-shadow 200ms ease;
-      border: 1px solid rgba(0,0,0,0.06);
-    }
-    .deck-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 24px 52px -8px rgba(0,0,0,0.22);
-    }
-
-    /* ── Deck Colors ── */
-    .deck-lime   { background: linear-gradient(135deg, #A8D92F 0%, #C5E94E 40%, #EFF8A7 100%); }
-    .deck-orange { background: linear-gradient(135deg, #FF7657 0%, #F97316 50%, #E85D04 100%); }
-    .deck-cyan   { background: linear-gradient(135deg, #14A6C8 0%, #35BFDA 40%, #A8EDF0 100%); }
-    .deck-pink   { background: linear-gradient(135deg, #DE4775 0%, #EA6689 40%, #F6A56F 100%); }
-    .deck-gold   { background: linear-gradient(135deg, #D99700 0%, #EDB51F 40%, #FFDF86 100%); }
-
-    /* ── Icon color per card type ── */
-    .deck-lime  .icon-shape,
-    .deck-gold  .icon-shape,
-    .deck-cyan  .icon-shape { fill: #171714; stroke: #171714; }
-
-    .deck-orange .icon-shape,
-    .deck-pink   .icon-shape { fill: rgba(255,255,255,0.9); stroke: rgba(255,255,255,0.9); }
-
-    /* ── Top row ── */
-    .card-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-    }
-    .card-count {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-    .deck-lime  .card-count,
-    .deck-gold  .card-count,
-    .deck-cyan  .card-count { color: rgba(0,0,0,0.45); }
-    .deck-orange .card-count,
-    .deck-pink   .card-count { color: rgba(255,255,255,0.6); }
-
-    .card-arrow {
-      width: 28px; height: 28px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    .deck-lime  .card-arrow,
-    .deck-gold  .card-arrow,
-    .deck-cyan  .card-arrow { background: rgba(0,0,0,0.12); }
-    .deck-orange .card-arrow,
-    .deck-pink   .card-arrow { background: rgba(255,255,255,0.18); }
-
-    .deck-lime  .card-arrow path,
-    .deck-gold  .card-arrow path,
-    .deck-cyan  .card-arrow path { stroke: rgba(0,0,0,0.6); }
-    .deck-orange .card-arrow path,
-    .deck-pink   .card-arrow path { stroke: rgba(255,255,255,0.85); }
-
-    /* ── Icon area ── */
-    .card-icon {
-      display: flex;
       align-items: center;
       justify-content: center;
-      flex: 1;
-      padding: 8px 0;
+      gap: 8px;
+      clip-path: path('M 31 0 L 167 0 a 11 11 0 0 1 11 11 L 178 181 Q 178 193 173 199 L 157 210 Q 156 215 150 215 L 11 215 a 11 11 0 0 1 -11 -11 L 0 27 L 9 27 Q 14 27 16 22 L 25 5 Q 28 0 31 0 Z');
     }
-    .card-icon svg { display: block; }
 
-    /* ── Deck name ── */
-    .card-name {
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      line-height: 1.1;
-    }
-    .deck-lime  .card-name,
-    .deck-gold  .card-name,
-    .deck-cyan  .card-name { color: #171714; }
-    .deck-orange .card-name,
-    .deck-pink   .card-name { color: #FFFFFF; }
+    .deck-panel.lime   { background: linear-gradient(135deg, #A8D92F 0%, #C5E94E 34%, #DAF06F 68%, #EFF8A7 100%); }
+    .deck-panel.orange { background: linear-gradient(135deg, #FF7657 0%, #F97316 50%, #E85D04 100%); }
+    .deck-panel.cyan   { background: linear-gradient(135deg, #14A6C8 0%, #35BFDA 40%, #A8EDF0 100%); }
+    .deck-panel.pink   { background: linear-gradient(135deg, #DE4775 0%, #EA6689 40%, #F6A56F 100%); }
+    .deck-panel.yellow { background: linear-gradient(135deg, #E8C800 0%, #F5DC3A 40%, #FFFD74 100%); }
 
-    /* ── Coming Soon ── */
-    .deck-card.soon {
-      opacity: 0.45;
-      pointer-events: none;
-      cursor: default;
+    .deck-count {
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: rgba(11,13,18,0.45);
     }
-    .deck-card.soon .card-count {
-      letter-spacing: 0.06em;
+
+    .deck-footer {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 48px;
+      padding: 0 11px;
+      display: flex;
+      align-items: center;
+    }
+
+    .deck-name {
+      font-size: 20px; font-weight: 900;
+      letter-spacing: -0.04em; text-transform: uppercase;
+      color: #0B0D12; line-height: 1;
     }
   </style>
 </head>
@@ -233,241 +196,240 @@
   <section class="cards-section">
     <div class="cards-grid">
 
-      <!-- 01 Variables — Lime · tag + squares (live) -->
-      <a href="variables.html" class="deck-card deck-lime">
-        <div class="card-top">
-          <span class="card-count">11 Terms</span>
-          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <!-- 01 VALUES — LIVE -->
+      <a class="deck-card-wrap live" href="values.html">
+        <div class="deck-card">
+          <span class="card-label">Rust</span>
+          <div class="deck-panel lime">
+            <svg width="64" height="64" viewBox="0 0 80 80" fill="none">
+              <rect x="8" y="8" width="64" height="64" rx="4" fill="white" opacity="0.9"/>
+              <rect x="22" y="22" width="36" height="36" rx="3" fill="none" stroke="rgba(80,120,0,0.5)" stroke-width="5"/>
+              <rect x="33" y="33" width="14" height="14" rx="2" fill="rgba(80,120,0,0.4)"/>
+            </svg>
+            <span class="deck-count">16 terms</span>
+          </div>
+          <div class="deck-footer">
+            <p class="deck-name">VALUES</p>
+          </div>
         </div>
-        <div class="card-icon">
-          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-            <rect x="8" y="8" width="64" height="64" rx="4" class="icon-shape" fill="none" stroke-width="5"/>
-            <rect x="22" y="22" width="36" height="36" rx="3" class="icon-shape" fill="none" stroke-width="5"/>
-            <rect x="33" y="33" width="14" height="14" rx="2" class="icon-shape" stroke-width="0"/>
-          </svg>
-        </div>
-        <p class="card-name">Variables</p>
       </a>
 
-      <!-- 02 Values & Numbers — Lime · tag + circles (coming soon) -->
-      <a href="values-numbers.html" class="deck-card deck-lime soon">
-        <div class="card-top">
-          <span class="card-count">16 Terms</span>
-          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <!-- 02 TYPES — soon -->
+      <div class="deck-card-wrap soon">
+        <div class="deck-card">
+          <span class="card-label">Rust</span>
+          <div class="deck-panel orange">
+            <svg width="64" height="64" viewBox="0 0 80 80" fill="none">
+              <circle cx="24" cy="40" r="18" fill="white" opacity="0.9"/>
+              <rect x="48" y="18" width="28" height="10" rx="3" fill="white" opacity="0.9"/>
+              <rect x="48" y="35" width="28" height="10" rx="3" fill="white" opacity="0.55"/>
+              <rect x="48" y="52" width="28" height="10" rx="3" fill="white" opacity="0.3"/>
+            </svg>
+            <span class="deck-count">15 terms</span>
+          </div>
+          <div class="deck-footer">
+            <p class="deck-name">TYPES</p>
+          </div>
         </div>
-        <div class="card-icon">
-          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-            <rect x="8" y="8" width="64" height="64" rx="4" class="icon-shape" fill="none" stroke-width="5"/>
-            <rect x="22" y="22" width="36" height="36" rx="3" class="icon-shape" fill="none" stroke-width="5"/>
-            <rect x="33" y="33" width="14" height="14" rx="2" class="icon-shape" stroke-width="0"/>
-          </svg>
-        </div>
-        <p class="card-name">Values &amp; Numbers</p>
-      </a>
+      </div>
 
-      <!-- 02 Types & Output — Orange · circle + stacked bars -->
-      <a href="types-output.html" class="deck-card deck-orange soon">
-        <div class="card-top">
-          <span class="card-count">15 Terms</span>
-          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <!-- 03 FUNCTIONS — soon -->
+      <div class="deck-card-wrap soon">
+        <div class="deck-card">
+          <span class="card-label">Rust</span>
+          <div class="deck-panel yellow">
+            <svg width="64" height="64" viewBox="0 0 80 80" fill="none">
+              <path d="M8 40H60M60 40L44 24M60 40L44 56" stroke="rgba(120,90,0,0.7)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="deck-count">11 terms</span>
+          </div>
+          <div class="deck-footer">
+            <p class="deck-name">FUNCTIONS</p>
+          </div>
         </div>
-        <div class="card-icon">
-          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-            <circle cx="24" cy="40" r="18" class="icon-shape" fill="none" stroke-width="5"/>
-            <rect x="48" y="18" width="28" height="10" rx="3" class="icon-shape" stroke-width="0"/>
-            <rect x="48" y="35" width="28" height="10" rx="3" class="icon-shape" stroke-width="0" opacity="0.6"/>
-            <rect x="48" y="52" width="28" height="10" rx="3" class="icon-shape" stroke-width="0" opacity="0.3"/>
-          </svg>
-        </div>
-        <p class="card-name">Types &amp; Output</p>
-      </a>
+      </div>
 
-      <!-- 03 Functions — Cyan · solid arrow right -->
-      <a href="functions.html" class="deck-card deck-gold soon">
-        <div class="card-top">
-          <span class="card-count">11 Terms</span>
-          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <!-- 04 OWNERSHIP — soon -->
+      <div class="deck-card-wrap soon">
+        <div class="deck-card">
+          <span class="card-label">Rust</span>
+          <div class="deck-panel lime">
+            <svg width="64" height="64" viewBox="0 0 80 80" fill="none">
+              <path d="M40 8L72 68H8L40 8Z" fill="rgba(80,120,0,0.7)"/>
+            </svg>
+            <span class="deck-count">12 terms</span>
+          </div>
+          <div class="deck-footer">
+            <p class="deck-name">OWNERSHIP</p>
+          </div>
         </div>
-        <div class="card-icon">
-          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-            <path d="M8 40H60M60 40L44 24M60 40L44 56" class="icon-shape" fill="none" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <p class="card-name">Functions</p>
-      </a>
+      </div>
 
-      <!-- 04 Ownership — Lime · solid upward triangle -->
-      <a href="ownership.html" class="deck-card deck-lime soon">
-        <div class="card-top">
-          <span class="card-count">12 Terms</span>
-          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <!-- 05 BORROWING — soon -->
+      <div class="deck-card-wrap soon">
+        <div class="deck-card">
+          <span class="card-label">Rust</span>
+          <div class="deck-panel orange">
+            <svg width="64" height="64" viewBox="0 0 80 80" fill="none">
+              <path d="M68 20C68 20 68 56 40 56H16" stroke="white" stroke-width="7" stroke-linecap="round"/>
+              <path d="M28 44L16 56L28 68" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="deck-count">11 terms</span>
+          </div>
+          <div class="deck-footer">
+            <p class="deck-name">BORROWING</p>
+          </div>
         </div>
-        <div class="card-icon">
-          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-            <path d="M40 8L72 68H8L40 8Z" class="icon-shape" stroke-width="0"/>
-          </svg>
-        </div>
-        <p class="card-name">Ownership</p>
-      </a>
+      </div>
 
-      <!-- 05 Borrowing — Orange · curved return arrow -->
-      <a href="borrowing.html" class="deck-card deck-orange soon">
-        <div class="card-top">
-          <span class="card-count">11 Terms</span>
-          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <!-- 06 STRINGS — soon -->
+      <div class="deck-card-wrap soon">
+        <div class="deck-card">
+          <span class="card-label">Rust</span>
+          <div class="deck-panel cyan">
+            <svg width="64" height="64" viewBox="0 0 80 80" fill="none">
+              <rect x="8" y="12" width="64" height="9" rx="2" fill="white" opacity="0.9"/>
+              <rect x="8" y="26" width="48" height="9" rx="2" fill="white" opacity="0.9"/>
+              <rect x="8" y="40" width="56" height="9" rx="2" fill="white" opacity="0.9"/>
+              <rect x="8" y="54" width="36" height="9" rx="2" fill="white" opacity="0.9"/>
+            </svg>
+            <span class="deck-count">10 terms</span>
+          </div>
+          <div class="deck-footer">
+            <p class="deck-name">STRINGS</p>
+          </div>
         </div>
-        <div class="card-icon">
-          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-            <path d="M68 20C68 20 68 56 40 56H16" class="icon-shape" fill="none" stroke-width="7" stroke-linecap="round"/>
-            <path d="M28 44L16 56L28 68" class="icon-shape" fill="none" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <p class="card-name">Borrowing</p>
-      </a>
+      </div>
 
-      <!-- 06 String vs &str — Cyan · horizontal stripes -->
-      <a href="string-vs-str.html" class="deck-card deck-cyan soon">
-        <div class="card-top">
-          <span class="card-count">10 Terms</span>
-          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <!-- 07 SLICES — soon -->
+      <div class="deck-card-wrap soon">
+        <div class="deck-card">
+          <span class="card-label">Rust</span>
+          <div class="deck-panel pink">
+            <svg width="64" height="64" viewBox="0 0 80 80" fill="none">
+              <circle cx="16" cy="16" r="6" fill="white" opacity="0.9"/><circle cx="32" cy="16" r="6" fill="white" opacity="0.9"/>
+              <circle cx="48" cy="16" r="6" fill="white" opacity="0.9"/><circle cx="64" cy="16" r="6" fill="white" opacity="0.9"/>
+              <circle cx="16" cy="32" r="6" fill="white" opacity="0.9"/><circle cx="32" cy="32" r="6" fill="white" opacity="0.9"/>
+              <circle cx="48" cy="32" r="6" fill="white" opacity="0.9"/><circle cx="64" cy="32" r="6" fill="white" opacity="0.9"/>
+              <circle cx="16" cy="48" r="6" fill="white" opacity="0.9"/><circle cx="32" cy="48" r="6" fill="white" opacity="0.9"/>
+              <circle cx="48" cy="48" r="6" fill="white" opacity="0.35"/><circle cx="64" cy="48" r="6" fill="white" opacity="0.35"/>
+              <circle cx="16" cy="64" r="6" fill="white" opacity="0.9"/><circle cx="32" cy="64" r="6" fill="white" opacity="0.9"/>
+              <circle cx="48" cy="64" r="6" fill="white" opacity="0.35"/><circle cx="64" cy="64" r="6" fill="white" opacity="0.35"/>
+            </svg>
+            <span class="deck-count">10 terms</span>
+          </div>
+          <div class="deck-footer">
+            <p class="deck-name">SLICES</p>
+          </div>
         </div>
-        <div class="card-icon">
-          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-            <rect x="8"  y="12" width="64" height="9" rx="2" class="icon-shape" stroke-width="0"/>
-            <rect x="8"  y="26" width="48" height="9" rx="2" class="icon-shape" stroke-width="0"/>
-            <rect x="8"  y="40" width="56" height="9" rx="2" class="icon-shape" stroke-width="0"/>
-            <rect x="8"  y="54" width="36" height="9" rx="2" class="icon-shape" stroke-width="0"/>
-          </svg>
-        </div>
-        <p class="card-name">String vs &amp;str</p>
-      </a>
+      </div>
 
-      <!-- 07 Slices — Pink · grid of dots -->
-      <a href="slices.html" class="deck-card deck-pink soon">
-        <div class="card-top">
-          <span class="card-count">10 Terms</span>
-          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <!-- 08 TUPLES — soon -->
+      <div class="deck-card-wrap soon">
+        <div class="deck-card">
+          <span class="card-label">Rust</span>
+          <div class="deck-panel yellow">
+            <svg width="64" height="64" viewBox="0 0 80 80" fill="none">
+              <circle cx="24" cy="40" r="20" fill="rgba(120,90,0,0.7)"/>
+              <circle cx="56" cy="40" r="20" fill="none" stroke="rgba(120,90,0,0.7)" stroke-width="5"/>
+            </svg>
+            <span class="deck-count">10 terms</span>
+          </div>
+          <div class="deck-footer">
+            <p class="deck-name">TUPLES</p>
+          </div>
         </div>
-        <div class="card-icon">
-          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-            <!-- 4x4 dot grid -->
-            <circle cx="16" cy="16" r="6" class="icon-shape" stroke-width="0"/>
-            <circle cx="32" cy="16" r="6" class="icon-shape" stroke-width="0"/>
-            <circle cx="48" cy="16" r="6" class="icon-shape" stroke-width="0"/>
-            <circle cx="64" cy="16" r="6" class="icon-shape" stroke-width="0"/>
-            <circle cx="16" cy="32" r="6" class="icon-shape" stroke-width="0"/>
-            <circle cx="32" cy="32" r="6" class="icon-shape" stroke-width="0"/>
-            <circle cx="48" cy="32" r="6" class="icon-shape" stroke-width="0"/>
-            <circle cx="64" cy="32" r="6" class="icon-shape" stroke-width="0"/>
-            <circle cx="16" cy="48" r="6" class="icon-shape" stroke-width="0"/>
-            <circle cx="32" cy="48" r="6" class="icon-shape" stroke-width="0"/>
-            <circle cx="48" cy="48" r="6" class="icon-shape" stroke-width="0" opacity="0.35"/>
-            <circle cx="64" cy="48" r="6" class="icon-shape" stroke-width="0" opacity="0.35"/>
-            <circle cx="16" cy="64" r="6" class="icon-shape" stroke-width="0"/>
-            <circle cx="32" cy="64" r="6" class="icon-shape" stroke-width="0"/>
-            <circle cx="48" cy="64" r="6" class="icon-shape" stroke-width="0" opacity="0.35"/>
-            <circle cx="64" cy="64" r="6" class="icon-shape" stroke-width="0" opacity="0.35"/>
-          </svg>
-        </div>
-        <p class="card-name">Slices</p>
-      </a>
+      </div>
 
-      <!-- 08 Tuples — Gold · two circles -->
-      <a href="tuples.html" class="deck-card deck-gold soon">
-        <div class="card-top">
-          <span class="card-count">10 Terms</span>
-          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <!-- 09 STRUCTS — soon -->
+      <div class="deck-card-wrap soon">
+        <div class="deck-card">
+          <span class="card-label">Rust</span>
+          <div class="deck-panel lime">
+            <svg width="64" height="64" viewBox="0 0 80 80" fill="none">
+              <rect x="8" y="8" width="28" height="28" rx="3" fill="rgba(80,120,0,0.7)"/>
+              <rect x="44" y="8" width="28" height="28" rx="3" fill="rgba(80,120,0,0.35)"/>
+              <rect x="8" y="44" width="28" height="28" rx="3" fill="rgba(80,120,0,0.35)"/>
+              <rect x="44" y="44" width="28" height="28" rx="3" fill="rgba(80,120,0,0.7)"/>
+            </svg>
+            <span class="deck-count">12 terms</span>
+          </div>
+          <div class="deck-footer">
+            <p class="deck-name">STRUCTS</p>
+          </div>
         </div>
-        <div class="card-icon">
-          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-            <circle cx="24" cy="40" r="20" class="icon-shape" stroke-width="0"/>
-            <circle cx="56" cy="40" r="20" class="icon-shape" fill="none" stroke-width="5"/>
-          </svg>
-        </div>
-        <p class="card-name">Tuples</p>
-      </a>
+      </div>
 
-      <!-- 09 Structs — Lime · 2×2 block grid -->
-      <a href="structs.html" class="deck-card deck-lime soon">
-        <div class="card-top">
-          <span class="card-count">12 Terms</span>
-          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <!-- 10 ENUMS — soon -->
+      <div class="deck-card-wrap soon">
+        <div class="deck-card">
+          <span class="card-label">Rust</span>
+          <div class="deck-panel orange">
+            <svg width="64" height="64" viewBox="0 0 80 80" fill="none">
+              <line x1="40" y1="10" x2="40" y2="40" stroke="white" stroke-width="7" stroke-linecap="round"/>
+              <line x1="40" y1="40" x2="16" y2="68" stroke="white" stroke-width="7" stroke-linecap="round"/>
+              <line x1="40" y1="40" x2="64" y2="68" stroke="white" stroke-width="7" stroke-linecap="round"/>
+              <circle cx="40" cy="10" r="7" fill="white"/>
+              <circle cx="16" cy="68" r="7" fill="white"/>
+              <circle cx="64" cy="68" r="7" fill="white"/>
+            </svg>
+            <span class="deck-count">11 terms</span>
+          </div>
+          <div class="deck-footer">
+            <p class="deck-name">ENUMS</p>
+          </div>
         </div>
-        <div class="card-icon">
-          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-            <rect x="8"  y="8"  width="28" height="28" rx="3" class="icon-shape" stroke-width="0"/>
-            <rect x="44" y="8"  width="28" height="28" rx="3" class="icon-shape" stroke-width="0" opacity="0.5"/>
-            <rect x="8"  y="44" width="28" height="28" rx="3" class="icon-shape" stroke-width="0" opacity="0.5"/>
-            <rect x="44" y="44" width="28" height="28" rx="3" class="icon-shape" stroke-width="0"/>
-          </svg>
-        </div>
-        <p class="card-name">Structs</p>
-      </a>
+      </div>
 
-      <!-- 10 Enums — Orange · quarter-circle fork -->
-      <a href="enums.html" class="deck-card deck-orange soon">
-        <div class="card-top">
-          <span class="card-count">11 Terms</span>
-          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <!-- 11 OPTION — soon -->
+      <div class="deck-card-wrap soon">
+        <div class="deck-card">
+          <span class="card-label">Rust</span>
+          <div class="deck-panel cyan">
+            <svg width="64" height="64" viewBox="0 0 80 80" fill="none">
+              <circle cx="24" cy="40" r="20" fill="white" opacity="0.9"/>
+              <circle cx="58" cy="40" r="17" fill="none" stroke="white" stroke-width="4" stroke-dasharray="6 4" opacity="0.9"/>
+            </svg>
+            <span class="deck-count">10 terms</span>
+          </div>
+          <div class="deck-footer">
+            <p class="deck-name">OPTION</p>
+          </div>
         </div>
-        <div class="card-icon">
-          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-            <!-- Y-branch -->
-            <line x1="40" y1="10" x2="40" y2="40" class="icon-shape" stroke-width="7" stroke-linecap="round"/>
-            <line x1="40" y1="40" x2="16" y2="68" class="icon-shape" stroke-width="7" stroke-linecap="round"/>
-            <line x1="40" y1="40" x2="64" y2="68" class="icon-shape" stroke-width="7" stroke-linecap="round"/>
-            <circle cx="40" cy="10" r="7" class="icon-shape" stroke-width="0"/>
-            <circle cx="16" cy="68" r="7" class="icon-shape" stroke-width="0"/>
-            <circle cx="64" cy="68" r="7" class="icon-shape" stroke-width="0"/>
-          </svg>
-        </div>
-        <p class="card-name">Enums</p>
-      </a>
+      </div>
 
-      <!-- 11 Option — Cyan · filled + dashed circle -->
-      <a href="option.html" class="deck-card deck-cyan soon">
-        <div class="card-top">
-          <span class="card-count">10 Terms</span>
-          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <!-- 12 FLOW — soon -->
+      <div class="deck-card-wrap soon">
+        <div class="deck-card">
+          <span class="card-label">Rust</span>
+          <div class="deck-panel pink">
+            <svg width="64" height="64" viewBox="0 0 80 80" fill="none">
+              <path d="M40 6L74 40L40 74L6 40Z" fill="white" opacity="0.9"/>
+            </svg>
+            <span class="deck-count">11 terms</span>
+          </div>
+          <div class="deck-footer">
+            <p class="deck-name">FLOW</p>
+          </div>
         </div>
-        <div class="card-icon">
-          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-            <!-- Some = filled, None = dashed outline -->
-            <circle cx="24" cy="40" r="20" class="icon-shape" stroke-width="0"/>
-            <circle cx="58" cy="40" r="17" class="icon-shape" fill="none" stroke-width="4" stroke-dasharray="6 4"/>
-          </svg>
-        </div>
-        <p class="card-name">Option</p>
-      </a>
+      </div>
 
-      <!-- 12 Flow Control — Pink · solid diamond -->
-      <a href="flow-control.html" class="deck-card deck-pink soon">
-        <div class="card-top">
-          <span class="card-count">11 Terms</span>
-          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <!-- 13 ANCHOR — soon -->
+      <div class="deck-card-wrap soon">
+        <div class="deck-card">
+          <span class="card-label">Rust</span>
+          <div class="deck-panel yellow">
+            <svg width="64" height="64" viewBox="0 0 80 80" fill="none">
+              <rect x="32" y="8" width="16" height="64" rx="4" fill="rgba(120,90,0,0.7)"/>
+              <rect x="8" y="32" width="64" height="16" rx="4" fill="rgba(120,90,0,0.7)"/>
+            </svg>
+            <span class="deck-count">22 terms</span>
+          </div>
+          <div class="deck-footer">
+            <p class="deck-name">ANCHOR</p>
+          </div>
         </div>
-        <div class="card-icon">
-          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-            <path d="M40 6L74 40L40 74L6 40Z" class="icon-shape" stroke-width="0"/>
-          </svg>
-        </div>
-        <p class="card-name">Flow Control</p>
-      </a>
-
-      <!-- 13 Anchor + Solana — Gold · plus / anchor cross -->
-      <a href="anchor-solana.html" class="deck-card deck-gold soon">
-        <div class="card-top">
-          <span class="card-count">12 Terms</span>
-          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        </div>
-        <div class="card-icon">
-          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-            <rect x="32" y="8"  width="16" height="64" rx="4" class="icon-shape" stroke-width="0"/>
-            <rect x="8"  y="32" width="64" height="16" rx="4" class="icon-shape" stroke-width="0"/>
-          </svg>
-        </div>
-        <p class="card-name">Anchor + Solana</p>
-      </a>
+      </div>
 
     </div>
   </section>

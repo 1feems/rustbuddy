@@ -619,6 +619,17 @@
     },
     {
       num: 5,
+      title: 'Destructuring',
+      explainer: '<p>A tuple holds multiple values packed together as one thing. Destructuring unpacks them into separate named variables in a single line.</p><p>Instead of reaching into a tuple by index (<code>pair.0</code>, <code>pair.1</code>), you pull everything out at once and give each piece its own name.</p><p>In smart contracts, a function often returns two pieces of data together, like an amount paired with a status flag. Destructuring lets you name both in one step.</p>',
+      task: '<p>A contract check returns two values packed in a tuple: the payment amount and whether the payment is valid.</p><p>Right now the blanks need to be filled in so the tuple gets unpacked into two named variables.</p><ol><li>Destructure <code>pair</code> into <code>amount</code> and <code>is_valid</code></li><li>Print both values to match the expected output</li></ol>',
+      starterCode: 'fn main() {\n    let pair = (500_u64, true);\n    let (___, ___) = pair;\n    println!("Amount: {}, Valid: {}", amount, is_valid);\n}',
+      instruction: 'Fill in the two blanks so the tuple unpacks correctly',
+      expectedOutput: 'Amount: 500, Valid: true',
+      answerCode: 'fn main() {\n    let pair = (500_u64, true);\n    let (amount, is_valid) = pair;\n    println!("Amount: {}, Valid: {}", amount, is_valid);\n}',
+      why: '<code>let (amount, is_valid) = pair</code> unpacks the tuple in one step. Each blank becomes a variable name that matches one slot in the tuple, left to right.'
+    },
+    {
+      num: 6,
       title: 'Build: Subscription Variables',
       explainer: '<p>Before a Solana payment contract can do anything, it needs to know four things: who is subscribing, how much they owe, what plan they are on, and whether their subscription is active.</p><p>Each piece of information has a type. Getting the types right is the first step in any contract.</p>',
       task: '<p>Declare four variables for a subscription contract:</p><ol><li><code>wallet</code> - type <code>&amp;str</code>, value <code>"ABC123"</code></li><li><code>amount</code> - type <code>u64</code>, value <code>1_000_000</code></li><li><code>plan</code> - type <code>&amp;str</code>, value <code>"pro"</code></li><li><code>is_active</code> - type <code>bool</code>, value <code>true</code></li></ol>',
