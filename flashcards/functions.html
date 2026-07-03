@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Functions | Rust Flashcards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg:      #FFFFFF;
+      --color-ink:     #171714;
+      --color-muted:   #77766F;
+      --color-border:  #171714;
+      --color-primary: #FF7657;
+      --card-shell:    #F2F5F7;
+      --card-w:        260px;
+      --card-h:        360px;
+      --shell-pad:     14px;
+      --footer-h:      62px;
+      --radius-card:   8px;
+      --label-color:   #14A6C8;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--color-bg); color: var(--color-ink); min-height: 100vh; }
+
+    /* ── Nav ── */
+    .site-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid var(--color-border); }
+    .site-header-left { display: flex; align-items: center; gap: 10px; }
+    .site-name { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; text-decoration: none; color: var(--color-ink); }
+    .header-sep { color: var(--color-muted); font-size: 14px; }
+    .header-title { font-size: 14px; font-weight: 500; color: var(--color-muted); }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-link { font-size: 13px; font-weight: 600; color: var(--color-muted); text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase; }
+    .nav-link.active { color: var(--color-primary); }
+
+    /* ── Page header ── */
+    .page-header { padding: 40px 32px 48px; border-bottom: 1px solid var(--color-border); display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; }
+    .page-header-left { display: flex; flex-direction: column; gap: 8px; }
+    .page-title { font-size: clamp(32px, 4vw, 52px); font-weight: 900; letter-spacing: -0.04em; line-height: 1; }
+    .page-hint { font-size: 13px; color: var(--color-muted); }
+    .page-header-right { max-width: 340px; padding-bottom: 4px; }
+    .page-description { font-size: 14px; font-weight: 400; line-height: 1.5; color: var(--color-muted); }
+
+    /* ── Cards ── */
+    .cards-section { padding: 40px 32px 80px; }
+    .cards-grid { display: flex; flex-wrap: wrap; gap: 24px; }
+
+    /* ── Flip card ── */
+    .flashcard { width: var(--card-w); height: var(--card-h); perspective: 1000px; cursor: pointer; border: none; background: transparent; padding: 0; display: block; }
+    .flashcard-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1); }
+    .flashcard.is-flipped .flashcard-inner { transform: rotateY(180deg); }
+    .flashcard-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; background: var(--card-shell); border-radius: var(--radius-card); padding: var(--shell-pad); overflow: hidden; box-shadow: 0 12px 28px rgba(0,0,0,0.14); }
+    .flashcard-back { transform: rotateY(180deg); }
+
+    /* ── RUST label ── */
+    .card-label { position: absolute; top: 8px; left: 4px; z-index: 10; font-size: 9px; font-weight: 800; color: rgba(11,13,18,0.5); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* ── Front panel 232x280 ── */
+    .card-panel {
+      width: 232px; height: 280px;
+      background: linear-gradient(135deg, #14A6C8 0%, #35BFDA 40%, #A8EDF0 100%);
+      clip-path: path('M 41 0 L 218 0 a 14 14 0 0 1 14 14 L 232 236 Q 232 252 225 259 L 205 274 Q 204 280 196 280 L 14 280 a 14 14 0 0 1 -14 -14 L 0 35 L 12 35 Q 18 35 21 29 L 32 6 Q 36 0 41 0 Z');
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card-icon { width: 108px; height: 108px; position: relative; z-index: 1; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12)); }
+    .card-icon svg { width: 100%; height: 100%; display: block; }
+
+    /* ── Front footer ── */
+    .card-footer { position: absolute; bottom: 0; left: 0; right: 0; height: var(--footer-h); padding: 0 14px; display: flex; align-items: center; background: var(--card-shell); }
+    .card-title { font-size: 28px; font-weight: 900; line-height: 1; letter-spacing: -0.04em; text-transform: uppercase; color: #0B0D12; }
+    .card-title.long { font-size: 18px; }
+    .card-title.medium { font-size: 22px; }
+
+    /* ── Back panel 232x332 ── */
+    .back-panel {
+      width: 232px; height: 332px;
+      background: linear-gradient(135deg, #B8EEF5 0%, #DDF8FB 100%);
+      clip-path: path('M 41 0 L 218 0 a 14 14 0 0 1 14 14 L 232 286 Q 232 302 225 309 L 205 326 Q 204 332 196 332 L 14 332 a 14 14 0 0 1 -14 -14 L 0 35 L 12 35 Q 18 35 21 29 L 32 6 Q 36 0 41 0 Z');
+      padding: 42px 18px 18px;
+      display: flex; flex-direction: column;
+    }
+    .back-title { font-size: 26px; font-weight: 900; letter-spacing: -0.04em; text-transform: uppercase; color: #0B0D12; line-height: 0.95; text-align: right; margin-bottom: 16px; }
+    .back-sections { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; }
+    .back-section { padding-top: 14px; margin-top: 14px; border-top: 1px solid rgba(11,13,18,0.18); }
+    .back-section:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+    .section-label { display: block; font-size: 11px; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; color: var(--label-color); margin-bottom: 4px; }
+    .section-body { font-size: 11.5px; font-weight: 400; line-height: 1.35; color: #0B0D12; }
+    code { font-family: "SF Mono","Fira Code",monospace; font-size: 11px; color: #0B0D12; }
+
+    /* ── Progress bar ── */
+    .progress-bar-wrap { position: fixed; bottom: 0; left: 0; right: 0; height: 4px; background: rgba(0,0,0,0.08); z-index: 100; }
+    .progress-bar { height: 100%; background: var(--color-primary); transition: width 300ms ease; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header-left">
+      <a href="../index.html" class="site-name">Rust Buddy</a>
+      <span class="header-sep">/</span>
+      <a href="index.html" class="header-title" style="text-decoration:none;color:var(--color-muted);">Flashcards</a>
+      <span class="header-sep">/</span>
+      <span class="header-title">Functions</span>
+    </div>
+    <nav class="nav-links">
+      <a href="../exercises/index.html" class="nav-link">Exercises</a>
+      <a href="index.html" class="nav-link active">Flashcards</a>
+      <a href="../resources/index.html" class="nav-link">Resources</a>
+    </nav>
+  </header>
+
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1 class="page-title">Functions</h1>
+      <p class="page-hint">Click a card to flip it · 10 terms</p>
+    </div>
+    <div class="page-header-right">
+      <p class="page-description">Functions are reusable blocks of code that perform a task. This deck covers how to define them with <code>fn</code>, pass values as parameters, and return results.</p>
+    </div>
+  </div>
+
+  <section class="cards-section">
+    <div class="cards-grid">
+
+      <!-- 1. fn -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none">
+                <rect x="14" y="20" width="52" height="40" rx="5" fill="rgba(0,0,0,0.22)"/>
+                <rect x="22" y="30" width="20" height="5" rx="2" fill="rgba(0,0,0,0.3)"/>
+                <rect x="22" y="40" width="32" height="5" rx="2" fill="rgba(0,0,0,0.22)"/>
+              </svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title">FN</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">FN</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">The keyword that starts a function definition</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Every function you write</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>fn greet() { println!("hi"); }<br>fn add(a: i32) -> i32 { a + 1 }</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <!-- 2. Function -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none">
+                <rect x="20" y="22" width="40" height="36" rx="5" fill="rgba(0,0,0,0.22)"/>
+                <line x1="8" y1="40" x2="20" y2="40" stroke="rgba(0,0,0,0.28)" stroke-width="4" stroke-linecap="round"/>
+                <line x1="60" y1="40" x2="72" y2="40" stroke="rgba(0,0,0,0.28)" stroke-width="4" stroke-linecap="round"/>
+                <path d="M 54 34 L 60 40 L 54 46" fill="none" stroke="rgba(0,0,0,0.28)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">FUNCTION</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">FUNCTION</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A named block of code with typed inputs and optional output</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Any time you want reusable logic</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>fn double(n: i32) -> i32 { n * 2 }<br>let result = double(5);</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <!-- 3. Parameter -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none">
+                <rect x="10" y="30" width="60" height="20" rx="4" fill="rgba(0,0,0,0.15)"/>
+                <rect x="10" y="30" width="28" height="20" rx="4" stroke="rgba(0,0,0,0.28)" stroke-width="3" fill="rgba(0,0,0,0.22)"/>
+                <rect x="42" y="30" width="28" height="20" rx="4" stroke="rgba(0,0,0,0.22)" stroke-width="2" stroke-dasharray="4 2" fill="rgba(0,0,0,0.1)"/>
+              </svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">PARAMETER ()</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">PARAMETER ()</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A typed input slot in the function signature: <code>name: &amp;str</code></p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">What goes inside the <code>()</code> when defining a function</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>fn add(a: i32, b: i32) -> i32 { a + b }<br>// a and b are parameters</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <!-- 4. Argument -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none">
+                <rect x="8" y="28" width="20" height="24" rx="3" fill="rgba(0,0,0,0.28)"/>
+                <path d="M 28 40 L 44 40" stroke="rgba(0,0,0,0.22)" stroke-width="4" stroke-linecap="round"/>
+                <path d="M 38 34 L 44 40 L 38 46" fill="none" stroke="rgba(0,0,0,0.22)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <rect x="44" y="20" width="28" height="40" rx="4" fill="rgba(0,0,0,0.18)"/>
+              </svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">ARGUMENT</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">ARGUMENT</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">The actual value passed when calling: <code>"Shane"</code></p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When you call a function</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>greet("Shane", 30);<br>// "Shane" and 30 are arguments</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <!-- 5. Return type -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none">
+                <line x1="12" y1="40" x2="50" y2="40" stroke="rgba(0,0,0,0.22)" stroke-width="4" stroke-linecap="round"/>
+                <path d="M 42 32 L 50 40 L 42 48" fill="none" stroke="rgba(0,0,0,0.28)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                <rect x="52" y="26" width="20" height="28" rx="4" fill="rgba(0,0,0,0.25)"/>
+              </svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">RETURN TYPE -></p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">RETURN TYPE -></h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">The type of value a function sends back</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Declared after <code>-&gt;</code>, if you declare it, you must return it</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>fn add(a: i32, b: i32) -> i32 {<br>a + b } // -> i32 is the return type</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <!-- 6. return -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none">
+                <line x1="66" y1="40" x2="26" y2="40" stroke="rgba(0,0,0,0.22)" stroke-width="4" stroke-linecap="round"/>
+                <path d="M 32 32 L 24 40 L 32 48" fill="none" stroke="rgba(0,0,0,0.28)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                <rect x="8" y="28" width="18" height="24" rx="4" fill="rgba(0,0,0,0.25)"/>
+              </svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title">RETURN</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">RETURN</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Sends a value back to the caller and exits the function</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">At the end of a function that gives something back</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>fn double(n: i32) -> i32 { return n * 2; }<br>// exits and sends n * 2 back</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <!-- 7. Implicit return -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none">
+                <rect x="12" y="14" width="56" height="52" rx="4" fill="rgba(0,0,0,0.18)"/>
+                <rect x="20" y="24" width="28" height="5" rx="2" fill="rgba(0,0,0,0.2)"/>
+                <rect x="20" y="34" width="20" height="5" rx="2" fill="rgba(0,0,0,0.2)"/>
+                <rect x="20" y="44" width="36" height="5" rx="2" fill="rgba(0,0,0,0.35)"/>
+              </svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">IMPLICIT RETURN</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">IMPLICIT RETURN</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">The last expression without a semicolon is returned automatically</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Leave off the semicolon on the last expression; Rust returns it</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>fn double(n: i32) -> i32 {<br>n * 2 // implicit return</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <!-- 8. Scope -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none">
+                <rect x="10" y="10" width="60" height="60" rx="6" stroke="rgba(0,0,0,0.22)" stroke-width="4" fill="none"/>
+                <rect x="22" y="22" width="36" height="36" rx="4" fill="rgba(0,0,0,0.22)"/>
+                <rect x="30" y="30" width="20" height="6" rx="2" fill="rgba(0,0,0,0.28)"/>
+              </svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title">SCOPE {}</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">SCOPE {}</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">The block of code where a variable is valid, from its declaration to the closing <code>}</code></p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">A variable declared inside <code>{ }</code> cannot be used outside that block</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>{ let x = 5; }<br>// x is gone outside the braces</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <!-- 9. Diverging function -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none">
+                <path d="M 40 14 L 40 52" stroke="rgba(0,0,0,0.28)" stroke-width="5" stroke-linecap="round"/>
+                <circle cx="40" cy="64" r="5" fill="rgba(0,0,0,0.35)"/>
+              </svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">DIVERGING FN !</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">DIVERGING FN !</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A function that never returns to the caller, its return type is <code>!</code></p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When a function always panics, loops forever, or exits the program</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>fn crash() -> ! { panic!("broken"); }<br>fn run() -> ! { loop {} }</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <!-- 10. Never type -->
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none">
+                <rect x="34" y="10" width="12" height="36" rx="4" fill="rgba(0,0,0,0.28)"/>
+                <circle cx="40" cy="60" r="8" fill="rgba(0,0,0,0.35)"/>
+              </svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">NEVER TYPE !</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">NEVER TYPE !</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">The return type of a function that never returns</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body"><code>fn never_return() -> ! { panic!() }</code></p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>fn forever() -> ! { loop {} }<br>fn crash() -> ! { panic!(); }</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+    </div>
+  </section>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+  </div>
+
+  <script>
+    const cards = document.querySelectorAll('.flashcard');
+    const bar = document.getElementById('progress-bar');
+    const seen = new Set();
+    cards.forEach((card, i) => {
+      card.addEventListener('click', () => {
+        seen.add(i);
+        bar.style.width = (seen.size / cards.length * 100) + '%';
+      });
+    });
+  </script>
+
+  <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
