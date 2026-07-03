@@ -3,7 +3,7 @@
 > Read this every session before touching anything in `game/`.
 > This is the game's source of truth. Root `HANDOFF.md` points here.
 
-Last updated: 2026-06-29 (session 2)
+Last updated: 2026-07-03 (session 5)
 
 ---
 
@@ -13,14 +13,16 @@ A web-based Rust learning platform with four products:
 
 | Product | Subfolder | Status |
 |---|---|---|
-| Exercise Pages | `game/exercises/` | In progress — 4 built, ready to push |
-| Flashcard Decks | `game/flashcards/` | In progress — landing + Variables deck built |
-| Resources | `game/resources/` | Not yet built |
-| Game Levels | `game/levels/` | Level 1 built (old style, needs reskin) |
+| Home | `game/index.html` | ✅ Live on Vercel |
+| Exercise Pages | `game/exercises/` | ✅ Live — 6 pages built |
+| Flashcard Decks | `game/flashcards/` | ✅ Live — landing + 7 decks built |
+| Resources | `game/resources/` | ✅ Live — landing + 2 resource pages |
+| Game Levels | `game/levels/` | ✅ Pushed — old style, reskin later |
 
 Site name: **Rust Buddy**
-GitHub: https://github.com/1feems/rust-bud (pushed ✅)
-Deployment: Vercel — **not yet connected** ← NEXT STEP
+GitHub: https://github.com/1feems/rustbuddy (was rust-bud, redirects)
+Live site: https://rustbuddy.vercel.app/flashcards/index.html
+Deployment: Vercel — **connected and live** — auto-deploys on every push to `main`
 
 ---
 
@@ -29,115 +31,140 @@ Deployment: Vercel — **not yet connected** ← NEXT STEP
 1. This file — you're reading it
 2. `AGENT-ARCHITECTURE.md` — platform map, source assets, agent routing
 3. `_design/DESIGN_SYSTEM.md` — all UI tokens. Never invent styles.
-4. The relevant product doc for what you're building (see below)
+4. `_docs/COPY.md` — all page copy. Never write new copy without checking here first.
+5. The relevant product doc for what you're building (see below)
 
 ---
 
 ## What's Built
 
-| File | Product | Status |
+### Site-wide
+
+| File | Status | Notes |
 |---|---|---|
-| `game/index.html` | Home page | ✅ Pushed — Ferris logo, hero, 3 product cards (Exercises, Flashcards, Resources) |
-| `game/exercises/index.html` | Exercise landing | ✅ Pushed — 4 topic cards (Variables, Numbers, Chars & Bools, Statements & Expressions) |
-| `game/exercises/variables.html` | Exercise page | ✅ Pushed — canonical template for all exercise pages |
-| `game/exercises/numbers.html` | Exercise page | Updated — ready to push |
-| `game/exercises/chars-bools.html` | Exercise page | Updated — ready to push |
-| `game/exercises/statements-expressions.html` | Exercise page | Updated — ready to push |
-| `game/flashcards/index.html` | Flashcard landing | ✅ Pushed — 15 deck cards, Bauhaus icons, term counts |
-| `game/flashcards/variables.html` | Flashcard deck | ✅ Pushed — 11 cards, lime gradient, CSS 3D flip |
-| `game/levels/level-01-data-types-functions.html` | Game level | ✅ Pushed — old style, reskin later |
+| `game/index.html` | ✅ Live | Full redesign (session 3) — colored portrait cards, notch clip-path, lime nav, orange logo |
+| `_design/DESIGN_SYSTEM.md` | ✅ Updated | Complete rewrite (session 3) — card dimensions, clip-path, gradients, spacing, nav, landing hero |
+| `_docs/COPY.md` | ✅ New | Created session 3 — all page labels, titles, subtexts for home + all three landings |
+
+### Exercises
+
+| File | Status |
+|---|---|
+| `game/exercises/index.html` | ✅ Live — updated nav, hero, copy (session 3) |
+| `game/exercises/variables.html` | ✅ Live — canonical template |
+| `game/exercises/numbers.html` | ✅ Live |
+| `game/exercises/chars-bools.html` | ✅ Live |
+| `game/exercises/statements-expressions.html` | ✅ Live |
+| `game/exercises/functions.html` | ✅ Live |
+| `game/exercises/ownership.html` | ✅ Live |
+
+### Flashcards
+
+| File | Color | Terms | Status |
+|---|---|---|---|
+| `game/flashcards/index.html` | — | — | ✅ Live — 6 decks live, 7 soon |
+| `game/flashcards/values.html` | Lime | 16 | ✅ Live |
+| `game/flashcards/symbols.html` | Purple | 8 | ✅ Live (session 5) |
+| `game/flashcards/types.html` | Orange | 9 | ✅ Live (session 5) |
+| `game/flashcards/functions.html` | Cyan | 10 | ✅ Live (session 5) |
+| `game/flashcards/ownership.html` | Pink | 8 | ✅ Live (session 5) |
+| `game/flashcards/borrowing.html` | Yellow | 8 | ✅ Live (session 5) |
+
+### Resources
+
+| File | Status |
+|---|---|
+| `game/resources/index.html` | ✅ Live — updated nav, hero, copy (session 3) |
+| `game/resources/rust-101.html` | ✅ Live |
+| `game/resources/vocabulary.html` | ✅ Live |
 
 ---
 
-## What's Next — In Order
+## What's Next
 
-### Phase 4 — Deploy to Vercel ← DO THIS FIRST
+### Flashcard Decks — Build Remaining 7
 
-1. **Connect Vercel**
-   - Go to vercel.com → Add New Project → Import `1feems/rust-bud`
-   - Framework: Other (static HTML, no build step)
-   - Root directory: `/` (repo root)
-   - Click Deploy
-   - Every `git push origin main` auto-redeploys after this
+Build one HTML file per deck. Use `game/flashcards/values.html` as the template — copy exactly, swap gradient class and card content only. For the symbols deck pattern (monospace card titles), use `flashcards/symbols.html` as reference.
 
-### Phase 5 — Exercise Pages ✅ Complete (2026-06-29)
+**Term source:** `lessons/solana/rust-for-solana/VOCABULARY.md`
+- Filter by the `Flashcard Deck` column (4th column on every term row)
+- The `## Flashcard Deck Map` section at the top maps each deck to its exercise and lists key terms
+- Do not invent terms or pull from anywhere else
 
-All four exercise pages built and standardized:
-- `variables.html`, `numbers.html`, `chars-bools.html`, `statements-expressions.html`
+| Deck | File | Gradient | Terms | Notes |
+|---|---|---|---|---|
+| STRINGS | `flashcards/strings.html` | Lime | 16 | — |
+| SLICES | `flashcards/slices.html` | Orange | 8 | — |
+| TUPLES | `flashcards/tuples.html` | Cyan | 13 | — |
+| STRUCTS | `flashcards/structs.html` | Pink | 19 | — |
+| ENUMS | `flashcards/enums.html` | Yellow | 8 | — |
+| OPTION | `flashcards/option.html` | Lime | 6 | — |
+| FLOW | `flashcards/flow.html` | Orange | 29 | Trim to ~16 before building |
 
-**Standards applied to all four pages:**
-- 4 tabs: Overview · Exercises · Answers · Terms to Know
-- Header: `Rust Buddy / Exercises / [Topic]` breadcrumb left, nav links right
-- Overview tab: topic label + headline + description + Quick Reference table
-- Task format: scenario context → "Right now it fails because..." → numbered steps. No "The code wants to:" language.
-- Playground hint: "Clear the Playground on the right and paste this code to begin." above every starter code block
-- No em dashes in Terms to Know or Overview content
+After each file is built: update `game/flashcards/index.html` to flip that deck card from `class="soon"` to `class="live"`, then commit and push from inside `game/`.
 
-**Next:** Commit + push all four files, then move to Phase 6 (flashcard decks).
+### Future
 
-### Phase 6 — Build Remaining Flashcard Decks
-
-Build one deck per exercise topic, in the same order as exercise pages.
-
-5. **`game/flashcards/numbers.html`** — Numbers deck, Orange gradient
-6. **`game/flashcards/chars-bools.html`** — Chars & Bools deck, Cyan gradient
-7. **`game/flashcards/statements-expressions.html`** — Statements & Expressions deck, Pink gradient
-8. **Continue** — one deck per topic as exercise pages are completed
-
-Before building any deck: check `VOCABULARY.md` for source terms. 10–12 terms per deck.
-`CARD-INVENTORY.md` still needs to be created — maps VOCABULARY.md terms to each deck topic.
-
-### Phase 7 — Resources Page
-
-9. **`game/resources/index.html`** — study guide landing page (layout like sqlnoir.com/blog)
-   - Cards link to topic study guides
-   - Not yet designed — brainstorm when ready
+- **Rebuild COPY.md** — restructure as a full sitemap + copy doc (1.0 Home, 2.0 Exercises, 2.1 Variables, etc.). Every page gets its own numbered section with all copy. Flashcard deck descriptions live here and in `VOCABULARY.md`. Pushed to GitHub so copy can be updated without touching HTML.
+- **CSS/HTML design tokens doc** — lists all design tokens (colors, font styles, spacing, gradients per deck). Lets styles be changed from GitHub and pushed to Vercel without digging through HTML files. Do after COPY.md rebuild.
+- V2 flashcard study mode: single card centered, flip on click, "Know it" / "Still learning" buttons, progress bar. Build after all decks are done.
+- Exercise pages for remaining topics (Borrowing, String vs &str, Slices, Structs, Enums, etc.) — source `.md` files exist in `game/exercises/`
+- Game levels reskin (`game/levels/`) — old style, low priority
 
 ---
 
 ## Design System
 
-**Colors (5 deck gradients — locked):**
+All tokens are in `_design/DESIGN_SYSTEM.md`. Summary of critical values:
 
-| Color | Gradient | Deck assignment |
-|---|---|---|
-| Lime | `#A8D92F → #C5E94E → #EFF8A7` | Variables (01) |
-| Orange | `#FF7657 → #F97316 → #E85D04` | Numbers (02) |
-| Cyan | `#14A6C8 → #35BFDA → #A8EDF0` | Chars & Bools (03) |
-| Pink | `#DE4775 → #EA6689 → #F6A56F` | Statements & Expressions (04) |
-| Gold | `#D99700 → #EDB51F → #FFDF86` | Functions (05) |
-| Repeats Lime → | — | Ownership (06), etc. |
+**Colors:**
+- Logo "Rust Buddy": always `#FF7657` (orange), never black
+- Nav + label pills: `#C5E94E` (lime), black text
+- Page background: `#FFFFFF`
+- Primary text: `#171714`
+- Muted text: `#77766F`
 
-Back panel = pale gradient version of front color.
-Page background = `#FFFFFF`. Cards pop against white.
-Card radius: 20px. Font: Inter throughout.
+**Home cards:** 300×480px fixed, notch clip-path (see DESIGN_SYSTEM.md for exact path), 32px padding
 
-Full tokens: `_design/DESIGN_SYSTEM.md`
+**Landing pages:** All three share identical nav, hero, and padding — lime pill label, no border-bottom, `padding: 24px 40px 28px` hero, `clamp(36px, 4vw, 58px)` title, cards section `padding: 24px 40px 80px`
+
+**Flashcard deck gradients:**
+
+| Color | CSS class | Gradient | Deck |
+|---|---|---|---|
+| Lime | `.lime` | `#A8D92F → #C5E94E → #EFF8A7` | Values (01) |
+| Purple | `.purple` | `#7B5EA7 → #9B7EC8 → #BDA8E0` | Symbols (02) |
+| Orange | `.orange` | `#FF7657 → #F97316 → #E85D04` | Types (03) |
+| Cyan | `.cyan` | `#14A6C8 → #35BFDA → #A8EDF0` | Functions (04) |
+| Pink | `.pink` | `#DE4775 → #EA6689 → #F6A56F` | Ownership (05) |
+| Yellow | `.yellow` | `#E8C800 → #F5DC3A → #FFFD74` | Borrowing (06) |
+| Repeats from Lime → | — | Strings (07), etc. |
+
+Full details: `_design/DESIGN_SYSTEM.md`
 Flashcard-specific: `_design/rust-flashcards-visual-design.md`
 
 ---
 
-## Flashcard Build Status
+## Docs Index
 
-| Step | Status |
+| File | Purpose |
 |---|---|
-| Design locked | ✅ Done |
-| Color palette locked (5 colors) | ✅ Done |
-| Variables deck built + pushed | ✅ Done |
-| CARD-INVENTORY.md | 🔲 Not yet created |
-| Remaining 14 decks | 🔲 Not started |
-| V2 study mode (flip + Know it / Still learning) | 🔲 Future feature |
-
-**V2 flashcard study mode (future):** Single card centered, flip on click, "Know it" / "Still learning" buttons below, progress bar at top. Build after all decks are done.
+| `_design/DESIGN_SYSTEM.md` | All UI tokens — colors, typography, spacing, card dimensions, nav, landing hero |
+| `_docs/COPY.md` | All page copy — labels, titles, subtexts for every page |
+| `_docs/EXERCISE-PAGE-DESIGN.md` | Exercise page layout spec |
+| `_docs/GAME-LEVELS-DESIGN.md` | Game levels design |
+| `_docs/ASSET-LIST.md` | Asset inventory |
+| `_docs/KEY-TERMS.md` | Glossary source |
+| `flashcards/FLASHCARD-CONTEXT.md` | Flashcard term source and deck context |
+| `AGENT-ARCHITECTURE.md` | Platform map, agent routing |
 
 ---
 
 ## Notes for Next Agent
 
-- Exercise page template: `exercises/variables.html` — copy this exactly, change only the title, exercises, and code snippets
-- Flashcard deck template: `flashcards/variables.html` — copy this exactly, change gradient class and card content
-- Exercise card descriptions on landing page (`exercises/index.html`): placeholder text — user will provide final copy
-- `rust-flashcards-visual-design.md` still needs the 5-color palette written in (low priority)
-- `design 1.webp`, `layout1.jpg`, `card ex.png` referenced in docs but not found locally — add when available
-- All game agents read `AGENT-ARCHITECTURE.md` before starting
-- Commit + push after every file — nothing is live until pushed to GitHub
+- Exercise page template: `exercises/variables.html` — copy exactly, change only title, exercises, and code snippets
+- Flashcard deck template: `flashcards/variables.html` — copy exactly, change gradient class and card content
+- No em dashes anywhere on the site
+- Hero titles are always one line — no `<br>` tags
+- All copy must match `_docs/COPY.md` — do not invent new page labels or titles
+- Commit + push after every completed file — nothing is live until pushed to GitHub
