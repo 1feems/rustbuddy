@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Values — Rust Flashcards</title>
+  <title>Values | Rust Flashcards</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
@@ -116,7 +116,7 @@
       <p class="page-hint">Click a card to flip it · 16 terms</p>
     </div>
     <div class="page-header-right">
-      <p class="page-description">In Rust, values and numbers are the basic data a program works with — specifically numeric values like integers and floating-point numbers.</p>
+      <p class="page-description">In Rust, values and numbers are the basic data a program works with, specifically numeric values like integers and floating-point numbers.</p>
     </div>
   </div>
 
@@ -138,7 +138,7 @@
             <div class="back-panel">
               <h2 class="back-title">LET</h2>
               <div class="back-sections">
-                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Creates a new variable — gives a name to a value in your program.</p></div>
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Creates a new variable.</p></div>
                 <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Every time you store a value.</p></div>
                 <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let age = 25;</code></p></div>
               </div>
@@ -187,7 +187,7 @@
               <h2 class="back-title medium">IMMUTABLE</h2>
               <div class="back-sections">
                 <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Cannot change after being set.</p></div>
-                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">This is the default in Rust — every variable is immutable unless you add <code>mut</code>.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">This is the default in Rust, every variable is immutable unless you add <code>mut</code>.</p></div>
                 <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let x = 5;<br>// x = 10; ← won't compile</code></p></div>
               </div>
             </div>
@@ -234,7 +234,7 @@
             <div class="back-panel">
               <h2 class="back-title medium">SHADOWING</h2>
               <div class="back-sections">
-                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Reusing a variable name with a new <code>let</code> — the old value is replaced.</p></div>
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Reusing a variable name with a new <code>let</code>, the old value is replaced.</p></div>
                 <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Transforming a value while keeping the same name.</p></div>
                 <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let amount = "1000";<br>let amount: u64 = amount.parse().unwrap();</code></p></div>
               </div>
@@ -258,7 +258,7 @@
             <div class="back-panel">
               <h2 class="back-title medium">_ UNDERSCORE</h2>
               <div class="back-sections">
-                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Tells the compiler to ignore this variable or value — silences unused warnings.</p></div>
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Tells the compiler to ignore this variable or value, silences unused warnings.</p></div>
                 <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When you have a variable you don't need, or want to skip a value in a pattern.</p></div>
                 <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let _unused = 5;<br>let (plan, _) = (1_000, 50);</code></p></div>
               </div>
@@ -306,7 +306,7 @@
             <div class="back-panel">
               <h2 class="back-title">CONST</h2>
               <div class="back-sections">
-                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A value that never changes — must have an explicit type and cannot be computed at runtime.</p></div>
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A value that never changes, must have an explicit type and cannot be computed at runtime.</p></div>
                 <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Storing fixed limits or rates that never change.</p></div>
                 <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>const MAX_FEE: u64 = 50_000;</code></p></div>
               </div>
@@ -330,7 +330,7 @@
             <div class="back-panel">
               <h2 class="back-title medium">INTEGER</h2>
               <div class="back-sections">
-                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A whole number — no decimals.</p></div>
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A whole number, no decimals.</p></div>
                 <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Counts, balances, indexes.</p></div>
                 <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let count: i32 = 10;<br>let balance: u64 = 5_000_000;</code></p></div>
               </div>
@@ -355,7 +355,7 @@
               <h2 class="back-title medium">SIGNED  I</h2>
               <div class="back-sections">
                 <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">An integer that can be negative or positive (i8, i32, i64).</p></div>
-                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Temperatures, gains/losses — anything that can go below zero.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Temperatures, gains/losses, anything that can go below zero.</p></div>
                 <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let temp: i32 = -5;<br>let gain: i64 = -1_000;</code></p></div>
               </div>
             </div>
@@ -379,7 +379,7 @@
               <h2 class="back-title medium">UNSIGNED  U</h2>
               <div class="back-sections">
                 <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">An integer that cannot be negative (u8, u32, u64).</p></div>
-                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Balances, counts, addresses — anything that can only be zero or positive.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Balances, counts, addresses, anything that can only be zero or positive.</p></div>
                 <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let balance: u64 = 1_000_000;</code></p></div>
               </div>
             </div>
@@ -402,7 +402,7 @@
             <div class="back-panel">
               <h2 class="back-title">U64</h2>
               <div class="back-sections">
-                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Unsigned 64-bit integer — a whole number that can't be negative. Holds up to 18 quintillion.</p></div>
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Unsigned 64-bit integer, a whole number that can't be negative. Holds up to 18 quintillion.</p></div>
                 <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Payment amounts, token balances, timestamps on Solana.</p></div>
                 <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let amount: u64 = 5_000_000;</code></p></div>
               </div>
@@ -426,7 +426,7 @@
             <div class="back-panel">
               <h2 class="back-title">U8</h2>
               <div class="back-sections">
-                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Unsigned 8-bit integer — holds values from 0 to 255 only.</p></div>
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Unsigned 8-bit integer, holds values from 0 to 255 only.</p></div>
                 <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Bytes and wallet address components on Solana.</p></div>
                 <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let byte: u8 = 255;<br>let addr: [u8; 32] = [0; 32];</code></p></div>
               </div>
@@ -451,7 +451,7 @@
               <h2 class="back-title medium">FLOAT  F</h2>
               <div class="back-sections">
                 <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A decimal number (f32, f64).</p></div>
-                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Measurements — rarely used in Solana. Prefer integers (lamports) for money.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Measurements, rarely used in Solana. Prefer integers (lamports) for money.</p></div>
                 <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let price: f64 = 3.14;</code></p></div>
               </div>
             </div>
@@ -474,8 +474,8 @@
             <div class="back-panel">
               <h2 class="back-title">F64</h2>
               <div class="back-sections">
-                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A 64-bit decimal number — high precision but not exact.</p></div>
-                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Avoid in Solana — use integer lamports instead. Decimals cause rounding errors in money.</p></div>
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A 64-bit decimal number, high precision but not exact.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Avoid in Solana, use integer lamports instead. Decimals cause rounding errors in money.</p></div>
                 <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let rate: f64 = 0.05;<br>// Use u64 lamports for SOL</code></p></div>
               </div>
             </div>

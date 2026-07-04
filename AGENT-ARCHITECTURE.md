@@ -4,6 +4,70 @@
 
 ---
 
+## Pipeline Overview
+
+```
+USER REQUEST
+      │
+      ▼
+┌─────────────────────────────────────────┐
+│           RUST GAME AGENT               │
+│         rust-game-agent.md              │
+│                                         │
+│  1. Check — does file already exist?    │
+│     Yes → update. No → create.          │
+│  2. Route based on request type         │
+└──────────────┬──────────────────────────┘
+               │
+       ┌───────┴────────┐
+       │                │
+       ▼                ▼
+┌─────────────┐  ┌──────────────────┐
+│  EXERCISE   │  │   FLASHCARD      │
+│    AGENT    │  │     AGENT        │
+│             │  │                  │
+│ Read order: │  │ Read order:      │
+│ 1. GAME-    │  │ 1. GAME-         │
+│    HANDOFF  │  │    HANDOFF       │
+│ 2. AGENT-   │  │ 2. AGENT-        │
+│    ARCH     │  │    ARCH          │
+│ 3. DESIGN_  │  │ 3. DESIGN_       │
+│    SYSTEM   │  │    SYSTEM        │
+│ 4. EXERCISE-│  │ 4. FLASHCARDS-   │
+│    PAGE-    │  │    VISUAL-DESIGN │
+│    DESIGN   │  │ 5. COPY.md       │
+│ 5. COPY.md  │  │ 6. STYLE-GUIDE   │
+│ 6. STYLE-   │  │ 7. VOCABULARY.md │
+│    GUIDE    │  │ 8. values.html   │
+│ 7. variables│  │    (template)    │
+│    .html    │  │                  │
+│    (tmpl)   │  │ Source:          │
+│             │  │ VOCABULARY.md    │
+│ Source:     │  │ (Deck Map +      │
+│ game/       │  │  Descriptions)   │
+│ exercises/  │  │                  │
+│ [NN]-[topic]│  │ Output:          │
+│ .md         │  │ flashcards/      │
+│             │  │ [deck].html      │
+│ Output:     │  │ + index.html     │
+│ exercises/  │  │ (flip soon→live) │
+│ [topic].html│  │                  │
+└──────┬──────┘  └────────┬─────────┘
+       │                  │
+       └────────┬─────────┘
+                │
+                ▼
+      git commit + push
+                │
+                ▼
+      Vercel auto-deploys
+                │
+                ▼
+   rustbuddy.vercel.app (live)
+```
+
+---
+
 ## 1. Platform Overview
 
 Rust Bud is a static HTML web platform for learning Rust. Four products:
@@ -67,10 +131,10 @@ One row per topic. `—` = lesson pages not yet built. Use transcript as source 
 
 | Task | Agent card | Source | Output |
 |---|---|---|---|
-| Build exercise .md file | `docs/agent-cards/practice-exercise-agent.md` | Transcript (timestamp range) | `game/exercises/[NN]-[topic].md` |
-| Build exercise HTML page | `docs/agent-cards/practice-exercise-agent.md` | Exercise .md + `exercises/variables.html` template | `game/exercises/[topic].html` |
-| Build flashcard deck | `docs/agent-cards/flashcard-agent.md` | `VOCABULARY.md` (content) + `flashcards/CARD-INVENTORY.md` (which terms) | `game/flashcards/[topic].html` |
-| Build game level | `docs/agent-cards/rust-game-agent.md` | Transcript + `_docs/GAME-LEVELS-DESIGN.md` | `game/levels/level-[N]-[topic].html` |
+| Build exercise .md file | `game/_docs/agent-cards/practice-exercise-agent.md` | Transcript (timestamp range) | `game/exercises/[NN]-[topic].md` |
+| Build exercise HTML page | `game/_docs/agent-cards/practice-exercise-agent.md` | Exercise .md + `exercises/variables.html` template | `game/exercises/[topic].html` |
+| Build flashcard deck | `game/_docs/agent-cards/flashcard-agent.md` | `VOCABULARY.md` (content) + `flashcards/CARD-INVENTORY.md` (which terms) | `game/flashcards/[topic].html` |
+| Build game level | `game/_docs/agent-cards/rust-game-agent.md` | Transcript + `_docs/GAME-LEVELS-DESIGN.md` | `game/levels/level-[N]-[topic].html` |
 | Build study guide page | (future) | `lessons/solana/rust-for-solana/[lesson]/` | `game/study-guides/[topic].html` |
 
 ---

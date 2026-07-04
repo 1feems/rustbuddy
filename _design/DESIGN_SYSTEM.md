@@ -1,35 +1,48 @@
-# Rust Bud — Design System
+# Rust Buddy — Design System
 
-Date: 2026-06-26
-Status: Active — apply to all Rust Bud web pages
-
-Source: `game/Creative-Cards-DESIGN.md` — this document adapts those tokens for the Rust Bud website.
-
-**Scope:** Website — exercise pages, index, game levels, and flashcard pages.
-**Flashcard card shape + layout:** `game/_design/rust-flashcards-visual-design.md`
-**Flashcard colors:** defined in this doc under Flashcard Deck Colors below.
+Last updated: 2026-06-30
+Status: Active — apply to all Rust Buddy web pages
 
 ---
 
 ## Colors
 
 ```css
---color-bg:         #FFFFFF;   /* page background */
---color-surface:    #1E1E1A;   /* dark card / panel surface */
---color-primary:    #FF7657;   /* orange — tabs, accents, active states, links */
---color-secondary:  #DFFF65;   /* lime — secondary accents, badges */
---color-tertiary:   #F97316;   /* supporting contrast moments */
---color-ink:        #171714;   /* primary text */
---color-muted:      #77766F;   /* secondary text, labels */
---color-border:     #171714;   /* hard 1px borders */
---color-border-dim: rgba(255,255,255,0.2); /* borders on dark surfaces */
+--color-bg:         #FFFFFF;    /* page background */
+--color-surface:    #1E1E1A;    /* dark panel surface */
+--color-primary:    #FF7657;    /* orange — logo, accents, active states */
+--color-secondary:  #C5E94E;    /* lime — nav pills, hero labels */
+--color-ink:        #171714;    /* primary text */
+--color-muted:      #77766F;    /* secondary text, breadcrumbs */
+--color-border:     #171714;    /* hard 1px borders (used sparingly) */
 ```
+
+### Home page card gradients
+
+| Card | Color | Gradient |
+|---|---|---|
+| 01 / Exercises | Pastel orange | `linear-gradient(135deg, #FFB49A 0%, #FFC282 50%, #FFD9B8 100%)` |
+| 02 / Flashcards | Light lime | `linear-gradient(135deg, #CCF25F 0%, #DCFA8A 40%, #F3FFCA 100%)` |
+| 03 / Resources | Pastel pink | `linear-gradient(135deg, #F07898 0%, #F59DB8 40%, #FAC8B4 100%)` |
+
+### Flashcard deck colors (flashcards landing page)
+
+| Deck | Name | Front gradient |
+|---|---|---|
+| 01 | Lime | `135deg, #A8D92F 0%, #C5E94E 34%, #DAF06F 68%, #EFF8A7 100%` |
+| 02 | Orange | `135deg, #FF7657 0%, #F97316 50%, #E85D04 100%` |
+| 03 | Cyan | `135deg, #14A6C8 0%, #35BFDA 40%, #A8EDF0 100%` |
+| 04 | Pink | `135deg, #DE4775 0%, #EA6689 40%, #F6A56F 100%` |
+| 05 | Yellow | `135deg, #E8C800 0%, #F5DC3A 40%, #FFFD74 100%` |
+
+Flashcard card shell background: `#F2F5F7`
+Deck colors repeat from Lime for decks 06+.
 
 ---
 
 ## Typography
 
-Font: **Inter** (single family across the site)
+Font: **Inter** (single family across the entire site)
 
 ```css
 font-family: "Inter", system-ui, sans-serif;
@@ -37,50 +50,170 @@ font-family: "Inter", system-ui, sans-serif;
 
 | Role | Size | Weight | Line Height | Letter Spacing |
 |---|---|---|---|---|
-| Display / hero | 68px | 500 | 68px | -0.05em |
-| Page title | 36px | 600 | 1.1 | -0.03em |
-| Section heading | 24px | 600 | 1.2 | -0.02em |
-| Card title | 18px | 600 | 1.3 | -0.01em |
+| Home hero title | 68px | 500 | 1 | -0.05em |
+| Landing page hero title | clamp(36px, 4vw, 58px) | 700 | 1 | -0.04em |
+| Home card title | 26px | 800 | 1.1 | -0.03em |
+| Home card label | 10px | 700 | 1 | 0.08em (uppercase) |
+| Home card desc | 12px | 400 | 1.6 | 0 |
+| Landing hero desc | 14px | 400 | 1.6 | 0 |
+| Nav link | 11px | 700 | 1 | 0.05em (uppercase) |
+| Logo | 16px | 800 | 1 | -0.03em |
 | Body | 14px | 400 | 22.75px | 0 |
-| Label / kicker | 11px | 700 | 1 | 0.08em (uppercase) |
-| Code | "SF Mono", "Fira Code", monospace — 13px | 400 | 1.7 | 0 |
+| Code | SF Mono / Fira Code — 13px | 400 | 1.7 | 0 |
 
 ---
 
-## Surfaces & Cards
+## Navigation
 
-### Light surface (page level)
-```css
-background: var(--color-bg);   /* #FFFFFF */
-```
+### Home page nav
+No border. Logo and links sit flush on white background.
 
-### Dark card surface
 ```css
-background: #1E1E1A;
-border: 1px solid rgba(255,255,255,0.2);
+/* Header */
+padding: 16px 40px;
+/* no border-bottom */
+
+/* Logo "Rust Buddy" */
+font-size: 16px;
+font-weight: 800;
+letter-spacing: -0.03em;
+color: #FF7657;  /* orange */
+
+/* Nav links — lime pills */
+font-size: 11px;
+font-weight: 700;
+letter-spacing: 0.05em;
+text-transform: uppercase;
+background: #C5E94E;
+color: #171714;
+padding: 5px 14px;
 border-radius: 20px;
-padding: 16px;
-box-shadow: 0px 25px 50px -12px rgba(0,0,0,0.25);
+gap: 8px;
 ```
 
-### Gradient border shell (premium depth treatment)
-Wrap card in an outer shell with gradient border instead of flat stroke:
+### Landing page nav (exercises, flashcards, resources)
+Same pill style. Left side shows breadcrumb: `Rust Buddy / [Section]`
+
 ```css
-.card-shell {
-  padding: 1px;
-  border-radius: 21px;   /* 1px larger than inner card */
-  background: linear-gradient(
-    to right bottom,
-    rgba(255,255,255,0.8),
-    rgba(255,255,255,0.2),
-    rgba(0,0,0,0.05)
-  );
-}
-.card-inner {
-  background: #1E1E1A;
-  border-radius: 20px;
-  padding: 16px;
-}
+/* "Rust Buddy" breadcrumb link */
+font-size: 16px;
+font-weight: 800;
+letter-spacing: -0.03em;
+color: #FF7657;
+
+/* "/" separator */
+color: #77766F;
+font-size: 14px;
+
+/* Section name */
+font-size: 14px;
+font-weight: 500;
+color: #77766F;
+
+/* Nav links — same lime pill as home */
+background: #C5E94E;
+color: #171714;
+padding: 5px 14px;
+border-radius: 20px;
+font-size: 11px;
+font-weight: 700;
+gap: 8px;
+```
+
+---
+
+## Home Page Cards
+
+Three tall portrait cards centered on the page. Full colored background with the notch clip-path shape (same shape as flashcard deck panels, scaled up).
+
+### Dimensions
+
+```
+Width:   300px (fixed)
+Height:  480px (fixed)
+Gap:     32px between cards
+Grid:    repeat(3, 300px), justify-content: center
+Padding: 32px
+```
+
+### Clip-path (notch shape)
+
+Derived from flashcards deck-panel path (178×215), scaled to 300×480 (scale X 1.685, scale Y 2.233):
+
+```css
+clip-path: path('M 52 0 L 282 0 a 19 25 0 0 1 19 25 L 300 404 Q 300 431 292 443 L 265 469 Q 263 480 253 480 L 19 480 a 19 25 0 0 1 -19 -25 L 0 60 L 15 60 Q 24 60 27 49 L 42 11 Q 47 0 52 0 Z');
+```
+
+To reuse at a different size, scale both coordinates sets proportionally from the original 178×215 path in `flashcards/index.html`.
+
+### Card structure (top → bottom)
+
+```
+[card-top]   label (10px, uppercase, rgba(0,0,0,0.4)) — left
+             arrow button (28×28px circle, rgba(0,0,0,0.1)) — right
+[card-icon]  icon SVG centered, flex: 1
+[card-bottom] title (26px, 800)
+              desc (12px, 400, rgba(0,0,0,0.55))
+```
+
+### Card icons
+
+| Card | Icon | Source |
+|---|---|---|
+| Exercises | Faceted diamond (outline) | minimal-logo-set.png row 4, col 2 |
+| Flashcards | Stacked card panels (outline) | minimal-logo-set.png row 2, col 4 |
+| Resources | Concentric rings (outline) | minimal-logo-set.png row 6, col 4 |
+
+All icons: single-line outline style, `rgba(0,0,0,0.45)` stroke on light cards.
+
+---
+
+## Landing Page Hero (exercises, flashcards, resources)
+
+Consistent across all three landing pages. Apply to any new landing page added.
+
+```css
+/* Hero section */
+padding: 24px 40px 28px;
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 40px;
+align-items: end;
+max-width: 1400px;
+margin: 0 auto;
+/* no border-bottom */
+
+/* Page label — lime pill */
+display: inline-block;
+font-size: 11px;
+font-weight: 700;
+letter-spacing: 0.05em;
+text-transform: uppercase;
+background: #C5E94E;
+color: #171714;
+padding: 5px 14px;
+border-radius: 20px;
+margin-bottom: 24px;
+
+/* Hero title */
+font-size: clamp(36px, 4vw, 58px);
+font-weight: 700;
+line-height: 1;
+letter-spacing: -0.04em;
+color: #171714;
+
+/* Hero description */
+font-size: 14px;
+font-weight: 400;
+line-height: 1.6;
+color: #77766F;
+max-width: 360px;
+```
+
+### Cards section (below hero)
+
+```css
+padding: 24px 40px 80px;
 ```
 
 ---
@@ -89,58 +222,31 @@ Wrap card in an outer shell with gradient border instead of flat stroke:
 
 Base unit: **12px**
 
-| Token | Value |
-|---|---|
-| `--space-xs` | 4px |
-| `--space-sm` | 12px |
-| `--space-md` | 16px |
-| `--space-lg` | 24px |
-| `--space-xl` | 32px |
-| `--space-2xl` | 48px |
-| `--gap-card` | 16px |
-| `--gap-section` | 32px |
-
----
-
-## Border Radius
-
-```css
---radius-sm:   4px;    /* inputs, tags */
---radius-md:   20px;   /* cards */
---radius-lg:   32px;   /* large panels */
---radius-pill: 9999px; /* badges, chips */
-```
+| Token | Value | Usage |
+|---|---|---|
+| xs | 4px | tight gaps, icon margins |
+| sm | 12px | base rhythm unit |
+| md | 16px | card internal spacing |
+| lg | 24px | section top padding |
+| xl | 32px | card padding, section gaps |
+| 2xl | 48px | page bottom padding |
+| hero-gap | 56px | home page: hero to cards |
+| card-gap | 32px | home page: between cards |
+| landing-card-gap | 16px–20px | exercise/flashcard grids |
 
 ---
 
 ## Elevation & Shadows
 
 ```css
-/* Card */
-box-shadow:
-  0px 20px 25px -5px rgba(0,0,0,0.10),
-  0px 8px 10px -6px rgba(0,0,0,0.10);
+/* Card hover */
+box-shadow: 0 24px 52px -8px rgba(0,0,0,0.2);
 
-/* Subtle */
+/* Flashcard deck hover */
+box-shadow: 0 20px 40px rgba(0,0,0,0.16);
+
+/* Subtle panel */
 box-shadow: 0px 8px 30px 0px rgba(0,0,0,0.04);
-
-/* Minimal */
-box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.05);
-```
-
----
-
-## Borders
-
-```css
-/* Hard border — used on cards, panels */
-border: 1px solid #171714;
-
-/* Dim border — used on dark surfaces */
-border: 1px solid rgba(255,255,255,0.2);
-
-/* Rule — dividers */
-border-top: 1px solid rgba(23,23,20,0.12);
 ```
 
 ---
@@ -149,73 +255,27 @@ border-top: 1px solid rgba(23,23,20,0.12);
 
 | Property | Value |
 |---|---|
-| Default duration | 300ms |
-| Emphasis duration | 700ms |
-| Easing | `ease` |
-| Hover transform | `translateY(-2px)` |
-| Transition shorthand | `all 300ms ease` |
-
----
-
-## Component Patterns
-
-### Tab bar
-- Active tab: `--color-primary` (`#FF7657`) underline or background
-- Inactive: `--color-muted` text, no underline
-- Border bottom on bar: `1px solid #171714`
-
-### Exercise topic card (index page)
-- Surface: `#1E1E1A` dark
-- Title: white, 18px, weight 600
-- Description: `#77766F`, 14px
-- Hover: `translateY(-2px)`, shadow increase
-- Border: `1px solid rgba(255,255,255,0.2)`
-- Radius: 20px
-
-### Code block
-- Background: `#1E1E1A` (same as card surface)
-- Text: `#c9d1e3`
-- Font: "SF Mono", "Fira Code", monospace, 13px
-- Radius: 12px
-- Padding: 20px
-
-### Active exercise button (sub-nav)
-- Active: `#FF7657` background, white text
-- Inactive: `#1E1E1A` surface, `#77766F` text
-- Radius: `--radius-pill` (9999px)
-
----
-
-## Flashcard Deck Colors
-
-Flashcard shell: `#F2F5F7` (hint-of-blue-white — not pure white, not dark).
-
-Five deck colors cycle in order for front panels. Each has a pale back variant.
-
-| Deck | Name | Front gradient | Back gradient |
-|---|---|---|---|
-| 01 | Lime | `135deg, #A8D92F 0%, #C5E94E 34%, #DAF06F 68%, #EFF8A7 100%` | `135deg, #DCF5A8 0%, #EDFCCB 100%` |
-| 02 | Orange | `135deg, #FF7657 0%, #F97316 50%, #E85D04 100%` | `135deg, #FFE8E0 0%, #FFF5F0 100%` |
-| 03 | Cyan | `135deg, #14A6C8 0%, #35BFDA 40%, #A8EDF0 100%` | `135deg, #D0F3FA 0%, #EDFBFD 100%` |
-| 04 | Pink | `135deg, #DE4775 0%, #EA6689 40%, #F6A56F 100%` | `135deg, #FAD5E0 0%, #FDF0F5 100%` |
-| 05 | Yellow | `135deg, #E8C800 0%, #F5DC3A 40%, #FFFD74 100%` | `135deg, #FFFACC 0%, #FFFDE8 100%` |
-
-Colors repeat from Lime for decks 06–13. Deck 5 is Yellow — not Gold.
+| Duration | 200ms |
+| Easing | ease |
+| Card hover | `translateY(-4px)` |
+| Transition | `transform 200ms ease, filter 200ms ease` |
 
 ---
 
 ## Do's and Don'ts
 
 ### Do
-- Use `#FF7657` orange as the single primary accent — active states, links, highlights
-- Keep all spacing on the 12px base rhythm
-- Use hard `1px #171714` borders on light surfaces
-- Use `rgba(255,255,255,0.2)` borders on dark surfaces
-- Keep card radius at 20px
+- Logo "Rust Buddy" is always orange (#FF7657), never black
+- Nav links are always lime pills (#C5E94E) with black text
+- Landing page hero labels are always lime pills — same style as nav
+- Home cards are always 300×480px fixed — do not flex-stretch them
+- Use the notch clip-path for any new card that matches the home card design
+- Keep hero title on one line — use clamp(36px, 4vw, 58px) for sub-pages
 
 ### Don't
-- Don't use the flashcard gradients (purple, blue) on the website UI
-- Don't use `#F1EFEA` as any background — old design, retired
-- Don't use Space Grotesk — Inter only across the whole site
-- Don't introduce extra accent colors outside the palette
-- Don't mix shadow recipes
+- Don't add border-bottom to the nav header
+- Don't add border-bottom between the hero and content on landing pages
+- Don't use `<br>` tags in hero titles
+- Don't use Space Grotesk — Inter only
+- Don't use the old #F1EFEA background — retired
+- Don't add numbered labels to home cards in ALL CAPS (use "01 / Exercises" not "01 / EXERCISES")

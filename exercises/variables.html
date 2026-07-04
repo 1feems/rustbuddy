@@ -631,13 +631,13 @@
     {
       num: 6,
       title: 'Build: Subscription Variables',
-      explainer: '<p>Before a Solana payment contract can do anything, it needs to know four things: who is subscribing, how much they owe, what plan they are on, and whether their subscription is active.</p><p>Each piece of information has a type. Getting the types right is the first step in any contract.</p>',
+      explainer: '<p>Before a payment contract can do anything, it needs to know four things: who is subscribing, how much they owe, what plan they are on, and whether their subscription is active.</p><p>Each piece of information has a type. Getting the types right is the first step in any contract.</p>',
       task: '<p>Declare four variables for a subscription contract:</p><ol><li><code>wallet</code> - type <code>&amp;str</code>, value <code>"ABC123"</code></li><li><code>amount</code> - type <code>u64</code>, value <code>1_000_000</code></li><li><code>plan</code> - type <code>&amp;str</code>, value <code>"pro"</code></li><li><code>is_active</code> - type <code>bool</code>, value <code>true</code></li></ol>',
       starterCode: 'fn main() {\n    // Your code here\n}',
       instruction: 'Write the four variables then print them all on one line to match the expected output',
       expectedOutput: 'Wallet: ABC123, Amount: 1000000, Plan: pro, Active: true',
       answerCode: 'fn main() {\n    let wallet: &str = "ABC123";\n    let amount: u64 = 1_000_000;\n    let plan: &str = "pro";\n    let is_active: bool = true;\n    println!("Wallet: {}, Amount: {}, Plan: {}, Active: {}", wallet, amount, plan, is_active);\n}',
-      why: 'Each variable gets the type that matches what it holds: <code>&amp;str</code> for text, <code>u64</code> for a positive whole number, <code>bool</code> for true/false. These are the core types a Solana contract uses to track a subscriber.'
+      why: 'Each variable gets the type that matches what it holds: <code>&amp;str</code> for text, <code>u64</code> for a positive whole number, <code>bool</code> for true/false. These are the core types a payment contract uses to track a subscriber.'
     }
   ];
 

@@ -10,7 +10,7 @@ Status: Locked. Do not change without user approval.
 Collectible-card style. White (hint-of-blue-white) card shell with a gradient front panel cut by a clip-path notch shape. Bold and clean — not a software vocabulary card.
 
 **What a card looks like:**
-- Shell: `#F5F8FA` (hint of blue, not pure white)
+- Shell: `#F2F5F7` (hint of blue, not pure white)
 - Front: gradient panel (clip-path notch) centered — Rust logo SVG white inside — RUST label in the notch tab pocket — term name + sublabel in white footer strip
 - Back: same shell, same clip-path shape (taller panel, full card height), pale gradient, term title + Meaning / When to use / Example sections
 
