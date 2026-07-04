@@ -1,7 +1,7 @@
 # Rust Bud — Game Context
 
 > Read this at the start of every session before touching anything in `game/`.
-> For full session state and what to build next, read `GAME-HANDOFF.md`.
+> For full session state and what to build next, read `_docs/GAME-HANDOFF.md`.
 
 Last updated: 2026-06-29
 
@@ -25,10 +25,10 @@ Four products:
 ## Read Order Every Session
 
 1. **This file** — you're reading it
-2. `GAME-HANDOFF.md` — session state: what's built, what's next, decisions made
-3. `AGENT-ARCHITECTURE.md` — platform map, source assets, agent routing, starter prompts
+2. `_docs/GAME-HANDOFF.md` — session state: what's built, what's next, decisions made
+3. `_docs/AGENT-ARCHITECTURE.md` — platform map, source assets, agent routing, starter prompts
 4. `_design/DESIGN_SYSTEM.md` — all UI tokens. Never invent styles outside this file.
-5. The relevant product doc for what you're building (see `AGENT-ARCHITECTURE.md` section 4)
+5. The relevant product doc for what you're building (see `_docs/AGENT-ARCHITECTURE.md` section 4)
 
 ---
 
@@ -36,20 +36,21 @@ Four products:
 
 ```
 game/
-├── GAME-CONTEXT.md              ← this file — read first
-├── GAME-HANDOFF.md              ← session state: what's built, what's next
-├── AGENT-ARCHITECTURE.md        ← platform map, source assets, agent routing
+├── README.md                    ← public-facing product description
+│
+├── _docs/                       ← all project docs
+│   ├── GAME-CONTEXT.md          ← this file — read first
+│   ├── GAME-HANDOFF.md          ← session state: what's built, what's next
+│   ├── AGENT-ARCHITECTURE.md    ← platform map, source assets, agent routing
+│   ├── COPY.md                  ← all page-level copy
+│   ├── STYLE-GUIDE.md           ← voice, tone, writing rules
+│   ├── EXERCISE-PAGE-DESIGN.md  ← exercise page layout spec
+│   └── agent-cards/             ← agent cards for all game agents
 │
 ├── _design/                     ← all design files
 │   ├── DESIGN_SYSTEM.md         ← master design tokens — all agents read this first
 │   ├── rust-flashcards-visual-design.md  ← flashcard card design spec
 │   └── assets/                  ← design reference images
-│       ├── rust.png             ← Ferris crab logo
-│       ├── landing page.png     ← landing page layout reference
-│       ├── icons.jpg            ← Bauhaus geometric icon style reference
-│       └── ChatGPT Image Jun 10, 2026, 04_27_38 PM.png
-│
-├── _docs/                       ← internal spec and context docs (not pushed to GitHub)
 │
 ├── _refs/                       ← reference files and prototypes (not pushed to GitHub)
 │
@@ -88,7 +89,7 @@ All styling lives in `_design/DESIGN_SYSTEM.md`. Never invent values outside it.
 | Page background | `#FFFFFF` |
 | Dark surface | `#1E1E1A` |
 | Primary accent | `#FF7657` orange |
-| Secondary accent | `#DFFF65` lime |
+| Secondary accent | `#C5E94E` lime |
 | Ink | `#171714` |
 | Muted text | `#77766F` |
 | Font | Inter |

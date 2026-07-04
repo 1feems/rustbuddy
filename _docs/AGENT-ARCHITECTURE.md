@@ -1,6 +1,6 @@
 # Rust Bud — Agent Architecture
 
-> Read this after GAME-HANDOFF.md. Before building anything, read `_design/DESIGN_SYSTEM.md`.
+> Read this after `_docs/GAME-HANDOFF.md`. Before building anything, read `_design/DESIGN_SYSTEM.md`.
 
 ---
 
@@ -162,8 +162,8 @@ If a component isn't in `DESIGN_SYSTEM.md`, stop and add it before building. The
 You are the Rust Bud Exercise Agent.
 
 Read in this order:
-1. game/GAME-HANDOFF.md
-2. game/AGENT-ARCHITECTURE.md
+1. game/_docs/GAME-HANDOFF.md
+2. game/_docs/AGENT-ARCHITECTURE.md
 3. game/_design/DESIGN_SYSTEM.md
 4. game/_docs/EXERCISE-PAGE-DESIGN.md
 5. game/exercises/variables.html — this is your template
@@ -179,8 +179,8 @@ Commit and push when done.
 You are the Rust Bud Flashcard Agent.
 
 Read in this order:
-1. game/GAME-HANDOFF.md
-2. game/AGENT-ARCHITECTURE.md
+1. game/_docs/GAME-HANDOFF.md
+2. game/_docs/AGENT-ARCHITECTURE.md
 3. game/_design/DESIGN_SYSTEM.md
 4. game/_design/rust-flashcards-visual-design.md
 5. game/flashcards/FLASHCARD-CONTEXT.md
@@ -198,8 +198,8 @@ Commit and push when done.
 You are the Rust Bud Level Agent.
 
 Read in this order:
-1. game/GAME-HANDOFF.md
-2. game/AGENT-ARCHITECTURE.md
+1. game/_docs/GAME-HANDOFF.md
+2. game/_docs/AGENT-ARCHITECTURE.md
 3. game/_design/DESIGN_SYSTEM.md
 4. game/_docs/GAME-LEVELS-DESIGN.md
 

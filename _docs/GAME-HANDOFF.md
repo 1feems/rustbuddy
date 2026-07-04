@@ -66,7 +66,7 @@ After each file is built: update `flashcards/index.html` to flip that deck card 
 | `_docs/EXERCISE-PAGE-DESIGN.md` | Exercise page layout spec — tabs, 6-exercise pattern, content source paths |
 | `_docs/GAME-LEVELS-DESIGN.md` | Game levels design |
 | `flashcards/FLASHCARD-CONTEXT.md` | Flashcard structural context and build rules |
-| `AGENT-ARCHITECTURE.md` | Platform map, agent routing, pipeline visual |
+| `_docs/AGENT-ARCHITECTURE.md` | Platform map, agent routing, pipeline visual |
 | `_docs/agent-cards/practice-exercise-agent.md` | Exercise agent — full build workflow |
 | `_docs/agent-cards/flashcard-agent.md` | Flashcard agent — full build workflow |
 | `_docs/agent-cards/rust-game-agent.md` | Game coordinator — routes requests to sub-agents |
