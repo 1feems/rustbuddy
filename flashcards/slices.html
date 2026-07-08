@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slices | Rust Flashcards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_design/styles.css">
+  <style>
+    :root {
+      --color-bg:      #FFFFFF;
+      --color-ink:     #171714;
+      --color-muted:   #77766F;
+      --color-border:  #171714;
+      --color-primary: #FF7657;
+      --card-shell:    #F2F5F7;
+      --card-w:        260px;
+      --card-h:        360px;
+      --shell-pad:     14px;
+      --footer-h:      62px;
+      --radius-card:   8px;
+      --label-color:   #FF7657;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--color-bg); color: var(--color-ink); min-height: 100vh; }
+
+    /* ── Nav ── */
+    .site-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid var(--color-border); }
+    .site-header-left { display: flex; align-items: center; gap: 10px; }
+    .site-name { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; text-decoration: none; color: var(--color-ink); }
+    .header-sep { color: var(--color-muted); font-size: 14px; }
+    .header-title { font-size: 14px; font-weight: 500; color: var(--color-muted); }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-link { font-size: 13px; font-weight: 600; color: var(--color-muted); text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase; }
+    .nav-link.active { color: var(--color-primary); }
+
+    /* ── Page header ── */
+    .page-header { padding: 40px 32px 48px; border-bottom: 1px solid var(--color-border); display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; }
+    .page-header-left { display: flex; flex-direction: column; gap: 8px; }
+    .page-title { font-size: clamp(32px, 4vw, 52px); font-weight: 900; letter-spacing: -0.04em; line-height: 1; }
+    .page-hint { font-size: 13px; color: var(--color-muted); }
+    .page-header-right { max-width: 340px; padding-bottom: 4px; }
+    .page-description { font-size: 14px; font-weight: 400; line-height: 1.5; color: var(--color-muted); }
+
+    /* ── Cards ── */
+    .cards-section { padding: 40px 32px 80px; }
+    .cards-grid { display: flex; flex-wrap: wrap; gap: 24px; }
+
+    /* ── Flip card ── */
+    .flashcard { width: var(--card-w); height: var(--card-h); perspective: 1000px; cursor: pointer; border: none; background: transparent; padding: 0; display: block; }
+    .flashcard-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1); }
+    .flashcard.is-flipped .flashcard-inner { transform: rotateY(180deg); }
+    .flashcard-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; background: var(--card-shell); border-radius: var(--radius-card); padding: var(--shell-pad); overflow: hidden; box-shadow: 0 12px 28px rgba(0,0,0,0.14); }
+    .flashcard-back { transform: rotateY(180deg); }
+
+    /* ── RUST label ── */
+    .card-label { position: absolute; top: 8px; left: 4px; z-index: 10; font-size: 9px; font-weight: 800; color: rgba(11,13,18,0.5); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* ── Front panel 232×280 ── */
+    .card-panel {
+      width: 232px; height: 280px;
+      background: linear-gradient(135deg, #FF7657 0%, #FF9070 34%, #FFAB90 68%, #FFC8B0 100%);
+      clip-path: path('M 41 0 L 218 0 a 14 14 0 0 1 14 14 L 232 236 Q 232 252 225 259 L 205 274 Q 204 280 196 280 L 14 280 a 14 14 0 0 1 -14 -14 L 0 35 L 12 35 Q 18 35 21 29 L 32 6 Q 36 0 41 0 Z');
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card-icon { width: 108px; height: 108px; position: relative; z-index: 1; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12)); }
+    .card-icon svg { width: 100%; height: 100%; display: block; }
+
+    /* ── Front footer ── */
+    .card-footer { position: absolute; bottom: 0; left: 0; right: 0; height: var(--footer-h); padding: 0 14px; display: flex; align-items: center; background: var(--card-shell); }
+    .card-title { font-size: 28px; font-weight: 900; line-height: 1; letter-spacing: -0.04em; text-transform: uppercase; color: #0B0D12; }
+    .card-title.long { font-size: 18px; }
+    .card-title.medium { font-size: 22px; }
+
+    /* ── Back panel 232×332 ── */
+    .back-panel {
+      width: 232px; height: 332px;
+      background: linear-gradient(135deg, #FFD4C8 0%, #FFE8E0 100%);
+      clip-path: path('M 41 0 L 218 0 a 14 14 0 0 1 14 14 L 232 286 Q 232 302 225 309 L 205 326 Q 204 332 196 332 L 14 332 a 14 14 0 0 1 -14 -14 L 0 35 L 12 35 Q 18 35 21 29 L 32 6 Q 36 0 41 0 Z');
+      padding: 42px 18px 18px;
+      display: flex; flex-direction: column;
+    }
+    .back-title { font-size: 26px; font-weight: 900; letter-spacing: -0.04em; text-transform: uppercase; color: #0B0D12; line-height: 0.95; text-align: right; margin-bottom: 16px; }
+    .back-title.long { font-size: 16px; }
+    .back-title.medium { font-size: 20px; }
+    .back-sections { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; }
+    .back-section { padding-top: 14px; margin-top: 14px; border-top: 1px solid rgba(11,13,18,0.18); }
+    .back-section:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+    .section-label { display: block; font-size: 11px; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; color: var(--label-color); margin-bottom: 4px; }
+    .section-body { font-size: 11.5px; font-weight: 400; line-height: 1.35; color: #0B0D12; }
+    code { font-family: "SF Mono","Fira Code",monospace; font-size: 11px; color: #0B0D12; }
+
+    /* ── Progress bar ── */
+    .progress-bar-wrap { position: fixed; bottom: 0; left: 0; right: 0; height: 4px; background: rgba(0,0,0,0.08); z-index: 100; }
+    .progress-bar { height: 100%; background: var(--color-primary); transition: width 300ms ease; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header-left">
+      <a href="../index.html" class="site-name">Rust Buddy</a>
+      <span class="header-sep">/</span>
+      <a href="index.html" class="header-title" style="text-decoration:none;color:var(--color-muted);">Flashcards</a>
+      <span class="header-sep">/</span>
+      <span class="header-title">Slices</span>
+    </div>
+    <nav class="nav-links">
+      <a href="../exercises/index.html" class="nav-link">Exercises</a>
+      <a href="index.html" class="nav-link active">Flashcards</a>
+      <a href="../resources/index.html" class="nav-link">Resources</a>
+    </nav>
+  </header>
+
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1 class="page-title">Slices</h1>
+      <p class="page-hint">Click a card to flip it · 8 terms</p>
+    </div>
+    <div class="page-header-right">
+      <p class="page-description">A slice is a borrowed view into part of a collection. This deck covers array slices, string slices, and how slices let you work with data without copying it.</p>
+    </div>
+  </div>
+
+  <section class="cards-section">
+    <div class="cards-grid">
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="10" y="28" width="60" height="24" rx="4" stroke="rgba(255,255,255,0.7)" stroke-width="3.5" fill="none"/><line x1="26" y1="28" x2="26" y2="52" stroke="rgba(255,255,255,0.5)" stroke-width="2.5"/><line x1="42" y1="28" x2="42" y2="52" stroke="rgba(255,255,255,0.5)" stroke-width="2.5"/><line x1="58" y1="28" x2="58" y2="52" stroke="rgba(255,255,255,0.5)" stroke-width="2.5"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title">ARRAY</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">ARRAY</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A fixed-size collection where every element is the same type. Length is part of the type.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Storing a fixed number of values of identical type.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let scores: [i32; 5] = [10, 20, 30, 40, 50];</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="10" y="28" width="60" height="24" rx="4" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" fill="rgba(255,255,255,0.1)"/><rect x="28" y="28" width="22" height="24" fill="rgba(255,255,255,0.3)" rx="2"/><line x1="28" y1="28" x2="28" y2="52" stroke="rgba(255,255,255,0.8)" stroke-width="2.5"/><line x1="50" y1="28" x2="50" y2="52" stroke="rgba(255,255,255,0.8)" stroke-width="2.5"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title">SLICE</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">SLICE</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A borrowed view into part of a collection. Does not take ownership.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Working with part of an array or string without copying data.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let part = &amp;scores[1..4];<br>// elements at index 1, 2, 3</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="14" y="26" width="52" height="28" rx="4" stroke="rgba(255,255,255,0.7)" stroke-width="3" fill="none"/><text x="22" y="44" font-family="monospace" font-size="13" fill="rgba(255,255,255,0.7)">[T; N]</text></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">[T; N]</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">[T; N]</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">The type of an array: T is the element type, N is the fixed length.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Declaring array types explicitly in function signatures.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let addr: [u8; 32] = [0; 32];<br>// 32 bytes, all zeroes</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="10" y="32" width="60" height="16" rx="3" fill="rgba(255,255,255,0.3)"/><path d="M10 54 L70 54" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/><path d="M10 54 L10 48" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/><path d="M70 54 L70 48" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">.LEN()</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">.LEN()</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Returns the number of elements in a slice or array.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When you need the size to loop, check bounds, or compute positions.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let n = scores.len(); // 5<br>for i in 0..scores.len() { }</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="8" y="28" width="64" height="24" rx="4" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" fill="none"/><rect x="24" y="28" width="28" height="24" fill="rgba(255,255,255,0.3)"/><line x1="24" y1="28" x2="24" y2="52" stroke="rgba(255,255,255,0.9)" stroke-width="2.5"/><line x1="52" y1="28" x2="52" y2="52" stroke="rgba(255,255,255,0.9)" stroke-width="2.5"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">STRING SLICE</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">STRING SLICE</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A borrowed view into part of a String. Returns &amp;str. The end index is excluded.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Getting a substring without owning or copying it.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let hello = &amp;s[0..5];<br>// end is excluded</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="10" y="28" width="60" height="24" rx="4" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" fill="none"/><line x1="26" y1="28" x2="26" y2="52" stroke="rgba(255,255,255,0.3)" stroke-width="2"/><line x1="42" y1="28" x2="42" y2="52" stroke="rgba(255,255,255,0.3)" stroke-width="2"/><line x1="58" y1="28" x2="58" y2="52" stroke="rgba(255,255,255,0.3)" stroke-width="2"/><circle cx="34" cy="40" r="5" fill="rgba(255,255,255,0.6)"/><path d="M34 58 L34 54" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">.GET(I)</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">.GET(I)</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Returns Option&lt;&amp;T&gt; for an index. Safe access that returns None instead of panicking.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When the index might be out of bounds.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>arr.get(10) // → None<br>arr.get(0)  // → Some(&amp;val)</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="8" y="28" width="28" height="24" rx="3" fill="rgba(255,255,255,0.35)"/><rect x="44" y="28" width="28" height="24" rx="3" fill="rgba(255,255,255,0.25)"/><text x="12" y="44" font-family="monospace" font-size="9" fill="rgba(255,255,255,0.8)">ptr</text><text x="48" y="44" font-family="monospace" font-size="9" fill="rgba(255,255,255,0.7)">len</text></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">TWO-WORD OBJECT</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">TWO-WORD OBJECT</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A slice reference holds two things: a pointer to the start, and the length.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Why slices must always be references &amp;[T]. The compiler needs to know the size.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>std::mem::size_of_val(&amp;slice)<br>// always 16 bytes (ptr + len)</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="8" y="28" width="64" height="24" rx="4" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" fill="none"/><rect x="8" y="28" width="32" height="24" fill="rgba(255,255,255,0.25)" rx="4"/><path d="M40 20 L40 60" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 2"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">BYTE SLICING</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">BYTE SLICING</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Slicing strings uses byte offsets, not character positions. The end is excluded.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">You cannot index Rust strings by character. Always slice by bytes.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>&amp;s[0..5] // first 5 bytes<br>// panics if mid-character</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+    </div>
+  </section>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+  </div>
+
+  <script>
+    const cards = document.querySelectorAll('.flashcard');
+    const bar = document.getElementById('progress-bar');
+    const seen = new Set();
+    cards.forEach((card, i) => {
+      card.addEventListener('click', () => {
+        seen.add(i);
+        bar.style.width = (seen.size / cards.length * 100) + '%';
+      });
+    });
+  </script>
+
+  <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Strings | Rust Flashcards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_design/styles.css">
+  <style>
+    :root {
+      --color-bg:      #FFFFFF;
+      --color-ink:     #171714;
+      --color-muted:   #77766F;
+      --color-border:  #171714;
+      --color-primary: #FF7657;
+      --card-shell:    #F2F5F7;
+      --card-w:        260px;
+      --card-h:        360px;
+      --shell-pad:     14px;
+      --footer-h:      62px;
+      --radius-card:   8px;
+      --label-color:   #A8D92F;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--color-bg); color: var(--color-ink); min-height: 100vh; }
+
+    /* ── Nav ── */
+    .site-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid var(--color-border); }
+    .site-header-left { display: flex; align-items: center; gap: 10px; }
+    .site-name { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; text-decoration: none; color: var(--color-ink); }
+    .header-sep { color: var(--color-muted); font-size: 14px; }
+    .header-title { font-size: 14px; font-weight: 500; color: var(--color-muted); }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-link { font-size: 13px; font-weight: 600; color: var(--color-muted); text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase; }
+    .nav-link.active { color: var(--color-primary); }
+
+    /* ── Page header ── */
+    .page-header { padding: 40px 32px 48px; border-bottom: 1px solid var(--color-border); display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; }
+    .page-header-left { display: flex; flex-direction: column; gap: 8px; }
+    .page-title { font-size: clamp(32px, 4vw, 52px); font-weight: 900; letter-spacing: -0.04em; line-height: 1; }
+    .page-hint { font-size: 13px; color: var(--color-muted); }
+    .page-header-right { max-width: 340px; padding-bottom: 4px; }
+    .page-description { font-size: 14px; font-weight: 400; line-height: 1.5; color: var(--color-muted); }
+
+    /* ── Cards ── */
+    .cards-section { padding: 40px 32px 80px; }
+    .cards-grid { display: flex; flex-wrap: wrap; gap: 24px; }
+
+    /* ── Flip card ── */
+    .flashcard { width: var(--card-w); height: var(--card-h); perspective: 1000px; cursor: pointer; border: none; background: transparent; padding: 0; display: block; }
+    .flashcard-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1); }
+    .flashcard.is-flipped .flashcard-inner { transform: rotateY(180deg); }
+    .flashcard-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; background: var(--card-shell); border-radius: var(--radius-card); padding: var(--shell-pad); overflow: hidden; box-shadow: 0 12px 28px rgba(0,0,0,0.14); }
+    .flashcard-back { transform: rotateY(180deg); }
+
+    /* ── RUST label ── */
+    .card-label { position: absolute; top: 8px; left: 4px; z-index: 10; font-size: 9px; font-weight: 800; color: rgba(11,13,18,0.5); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* ── Front panel 232×280 ── */
+    .card-panel {
+      width: 232px; height: 280px;
+      background: linear-gradient(135deg, #A8D92F 0%, #C5E94E 34%, #DAF06F 68%, #EFF8A7 100%);
+      clip-path: path('M 41 0 L 218 0 a 14 14 0 0 1 14 14 L 232 236 Q 232 252 225 259 L 205 274 Q 204 280 196 280 L 14 280 a 14 14 0 0 1 -14 -14 L 0 35 L 12 35 Q 18 35 21 29 L 32 6 Q 36 0 41 0 Z');
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card-icon { width: 108px; height: 108px; position: relative; z-index: 1; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12)); }
+    .card-icon svg { width: 100%; height: 100%; display: block; }
+
+    /* ── Front footer ── */
+    .card-footer { position: absolute; bottom: 0; left: 0; right: 0; height: var(--footer-h); padding: 0 14px; display: flex; align-items: center; background: var(--card-shell); }
+    .card-title { font-size: 28px; font-weight: 900; line-height: 1; letter-spacing: -0.04em; text-transform: uppercase; color: #0B0D12; }
+    .card-title.long { font-size: 18px; }
+    .card-title.medium { font-size: 22px; }
+
+    /* ── Back panel 232×332 ── */
+    .back-panel {
+      width: 232px; height: 332px;
+      background: linear-gradient(135deg, #DCF5A8 0%, #EDFCCB 100%);
+      clip-path: path('M 41 0 L 218 0 a 14 14 0 0 1 14 14 L 232 286 Q 232 302 225 309 L 205 326 Q 204 332 196 332 L 14 332 a 14 14 0 0 1 -14 -14 L 0 35 L 12 35 Q 18 35 21 29 L 32 6 Q 36 0 41 0 Z');
+      padding: 42px 18px 18px;
+      display: flex; flex-direction: column;
+    }
+    .back-title { font-size: 26px; font-weight: 900; letter-spacing: -0.04em; text-transform: uppercase; color: #0B0D12; line-height: 0.95; text-align: right; margin-bottom: 16px; }
+    .back-title.long { font-size: 16px; }
+    .back-title.medium { font-size: 20px; }
+    .back-sections { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; }
+    .back-section { padding-top: 14px; margin-top: 14px; border-top: 1px solid rgba(11,13,18,0.18); }
+    .back-section:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+    .section-label { display: block; font-size: 11px; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; color: var(--label-color); margin-bottom: 4px; }
+    .section-body { font-size: 11.5px; font-weight: 400; line-height: 1.35; color: #0B0D12; }
+    code { font-family: "SF Mono","Fira Code",monospace; font-size: 11px; color: #0B0D12; }
+
+    /* ── Progress bar ── */
+    .progress-bar-wrap { position: fixed; bottom: 0; left: 0; right: 0; height: 4px; background: rgba(0,0,0,0.08); z-index: 100; }
+    .progress-bar { height: 100%; background: var(--color-primary); transition: width 300ms ease; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header-left">
+      <a href="../index.html" class="site-name">Rust Buddy</a>
+      <span class="header-sep">/</span>
+      <a href="index.html" class="header-title" style="text-decoration:none;color:var(--color-muted);">Flashcards</a>
+      <span class="header-sep">/</span>
+      <span class="header-title">Strings</span>
+    </div>
+    <nav class="nav-links">
+      <a href="../exercises/index.html" class="nav-link">Exercises</a>
+      <a href="index.html" class="nav-link active">Flashcards</a>
+      <a href="../resources/index.html" class="nav-link">Resources</a>
+    </nav>
+  </header>
+
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1 class="page-title">Strings</h1>
+      <p class="page-hint">Click a card to flip it · 16 terms</p>
+    </div>
+    <div class="page-header-right">
+      <p class="page-description">Rust has two main string types. This deck covers String, which owns its data and can grow, and &amp;str, a borrowed string slice used for reading text.</p>
+    </div>
+  </div>
+
+  <section class="cards-section">
+    <div class="cards-grid">
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="10" y="26" width="60" height="28" rx="4" stroke="rgba(0,0,0,0.3)" stroke-width="4" fill="none"/><text x="20" y="46" font-family="monospace" font-size="18" fill="rgba(0,0,0,0.4)">&amp;str</text></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">&STR</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">&STR</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A borrowed string slice, a read-only view into text.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When you only need to read text, not own or change it.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let name: &amp;str = "Alice";</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="8" y="22" width="64" height="36" rx="4" fill="rgba(0,0,0,0.25)"/><rect x="8" y="22" width="40" height="36" rx="4" fill="rgba(0,0,0,0.15)"/><path d="M52 40 L64 40" stroke="rgba(0,0,0,0.3)" stroke-width="3" stroke-linecap="round"/><path d="M60 34 L64 40 L60 46" stroke="rgba(0,0,0,0.3)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title">STRING</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">STRING</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">An owned, growable text type stored on the heap.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When you need to build, modify, or own text.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let s = String::from("hello");</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="8" y="28" width="28" height="24" rx="3" fill="rgba(0,0,0,0.28)"/><rect x="44" y="28" width="28" height="24" rx="3" fill="rgba(0,0,0,0.16)" stroke="rgba(0,0,0,0.25)" stroke-width="2"/><text x="12" y="44" font-family="monospace" font-size="9" fill="rgba(0,0,0,0.5)">own</text><text x="47" y="44" font-family="monospace" font-size="9" fill="rgba(0,0,0,0.4)">borrow</text></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">STRING VS &STR</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">STRING VS &STR</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">String owns heap data and can grow. &amp;str is a borrowed read-only view.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">String when building or changing text. &amp;str when only reading.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>fn greet(name: &amp;str) {}<br>greet(&amp;my_string); // both work</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="8" y="30" width="40" height="20" rx="3" fill="rgba(0,0,0,0.22)"/><rect x="48" y="30" width="24" height="20" rx="3" fill="rgba(0,0,0,0.14)"/><path d="M47 40 L49 40" stroke="rgba(0,0,0,0.4)" stroke-width="3" stroke-linecap="round"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">PUSH_STR()</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">PUSH_STR()</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Appends a &amp;str to a mutable String.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Adding multiple characters to a string you own.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let mut s = String::from("plan");<br>s.push_str("_pro");</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="14" y="30" width="40" height="20" rx="3" fill="rgba(0,0,0,0.22)"/><circle cx="62" cy="40" r="8" fill="rgba(0,0,0,0.25)"/><path d="M53 40 L55 40" stroke="rgba(0,0,0,0.4)" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">PUSH()</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">PUSH()</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Appends a single char to a mutable String.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Adding exactly one character.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>s.push('!');</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="8" y="26" width="38" height="28" rx="4" fill="rgba(0,0,0,0.25)"/><rect x="34" y="30" width="38" height="20" rx="4" fill="rgba(0,0,0,0.14)" stroke="rgba(0,0,0,0.2)" stroke-width="2"/><path d="M44 40 L46 40" stroke="rgba(0,0,0,0.4)" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">AS_STR()</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">AS_STR()</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Converts a String to a &amp;str, borrows without moving.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When a function expects &amp;str but you have a String.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>s.as_str()<br>// or just: &amp;s</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="34" y="26" width="38" height="28" rx="4" fill="rgba(0,0,0,0.25)"/><rect x="8" y="30" width="30" height="20" rx="4" fill="rgba(0,0,0,0.14)" stroke="rgba(0,0,0,0.2)" stroke-width="2"/><path d="M36 40 L34 40" stroke="rgba(0,0,0,0.4)" stroke-width="2.5" stroke-linecap="round"/><path d="M30 35 L34 40 L30 45" stroke="rgba(0,0,0,0.3)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">TO_STRING()</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">TO_STRING()</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Converts a &amp;str to an owned String.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When you need to own a copy of a string literal.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>"basic".to_string()</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="16" y="22" width="48" height="36" rx="4" fill="rgba(0,0,0,0.2)"/><rect x="24" y="30" width="10" height="20" rx="2" fill="rgba(0,0,0,0.25)"/><rect x="38" y="30" width="10" height="20" rx="2" fill="rgba(0,0,0,0.2)"/><rect x="52" y="30" width="10" height="20" rx="2" fill="rgba(0,0,0,0.15)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">CHARS()</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">CHARS()</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Returns an iterator over the Unicode characters in a string.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Safe way to loop over characters, do not index strings directly.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>for c in s.chars() {<br>  println!("{}", c);<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="8" y="26" width="30" height="28" rx="4" fill="rgba(0,0,0,0.25)"/><rect x="42" y="30" width="30" height="20" rx="3" fill="rgba(0,0,0,0.14)" stroke="rgba(0,0,0,0.2)" stroke-width="2"/><path d="M37 40 L43 40" stroke="rgba(0,0,0,0.35)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="3 2"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">COERCION</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">COERCION</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A reference to a String is automatically converted to &amp;str by the compiler.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Functions taking &amp;str also accept &amp;String. Rust handles it silently.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>fn greet(s: &amp;str) {}<br>greet(&amp;my_string); // auto-coerced</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="10" y="26" width="42" height="28" rx="4" fill="rgba(0,0,0,0.22)"/><rect x="28" y="34" width="8" height="12" rx="2" fill="rgba(0,0,0,0.28)"/><rect x="40" y="34" width="8" height="12" rx="2" fill="rgba(0,0,0,0.22)"/><rect x="52" y="34" width="18" height="12" rx="2" fill="rgba(0,0,0,0.12)" stroke="rgba(0,0,0,0.18)" stroke-width="1.5"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">AS_BYTES()</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">AS_BYTES()</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Borrows a String as a byte slice. The original string stays valid.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When you need to inspect bytes without consuming the string.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let bytes = s.as_bytes();<br>// s is still valid</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="8" y="26" width="36" height="28" rx="4" fill="rgba(0,0,0,0.25)"/><path d="M42 40 L50 40" stroke="rgba(0,0,0,0.4)" stroke-width="3" stroke-linecap="round"/><path d="M46 34 L52 40 L46 46" stroke="rgba(0,0,0,0.35)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/><rect x="50" y="30" width="22" height="20" rx="3" fill="rgba(0,0,0,0.14)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">INTO_BYTES()</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">INTO_BYTES()</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Consumes a String and converts it to a Vec&lt;u8&gt;. The original is gone.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When you need raw bytes and will no longer use the string.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let bytes = s.into_bytes();<br>// s is gone now</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="10" y="28" width="60" height="24" rx="4" fill="rgba(0,0,0,0.2)"/><path d="M14 58 L66 58" stroke="rgba(0,0,0,0.28)" stroke-width="3" stroke-linecap="round"/><path d="M14 64 L66 64" stroke="rgba(0,0,0,0.16)" stroke-width="3" stroke-linecap="round"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">&'STATIC STR</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">&'STATIC STR</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A string slice that lives for the entire program lifetime. String literals are this type.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">The default type of any string literal in your code.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let s: &amp;'static str = "hello";<br>// baked into the binary</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="26" stroke="rgba(0,0,0,0.25)" stroke-width="3.5" fill="none"/><path d="M26 40 Q33 28 40 40 Q47 52 54 40" stroke="rgba(0,0,0,0.3)" stroke-width="3" stroke-linecap="round" fill="none"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">UTF-8</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">UTF-8</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">The encoding Rust uses to store all strings. Each character can take 1 to 4 bytes.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Why you cannot index strings by position. Use .chars() to get characters safely.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>// s[2] won't compile<br>s.chars().nth(2); // correct</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="10" y="28" width="60" height="26" rx="3" stroke="rgba(0,0,0,0.3)" stroke-width="3" fill="none"/><line x1="30" y1="28" x2="30" y2="54" stroke="rgba(0,0,0,0.22)" stroke-width="2.5"/><line x1="50" y1="28" x2="50" y2="54" stroke="rgba(0,0,0,0.22)" stroke-width="2.5"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">STRING INTERNALS</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">STRING INTERNALS</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A String holds three parts: a pointer to heap data, a length, and a capacity.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Explains why String can grow. If capacity fills up, Rust reallocates a larger block.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body">ptr | len | cap</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="8" y="28" width="26" height="24" rx="3" fill="rgba(0,0,0,0.18)"/><rect x="46" y="26" width="26" height="28" rx="4" fill="rgba(0,0,0,0.25)"/><path d="M33 40 L47 40" stroke="rgba(0,0,0,0.35)" stroke-width="3" stroke-linecap="round"/><path d="M42 34 L47 40 L42 46" stroke="rgba(0,0,0,0.3)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">FROM_UTF8()</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">FROM_UTF8()</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Converts a Vec&lt;u8&gt; to a String. Returns a Result because bytes might not be valid UTF-8.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When you have raw bytes and need a string.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>String::from_utf8(bytes)<br>  .unwrap()</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="10" y="28" width="60" height="24" rx="4" stroke="rgba(0,0,0,0.3)" stroke-width="3.5" fill="none"/><rect x="28" y="28" width="22" height="24" fill="rgba(0,0,0,0.18)"/><line x1="28" y1="28" x2="28" y2="52" stroke="rgba(0,0,0,0.35)" stroke-width="2.5"/><line x1="50" y1="28" x2="50" y2="52" stroke="rgba(0,0,0,0.35)" stroke-width="2.5"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">STRING SLICE</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">STRING SLICE</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A borrowed view into part of a String. Does not copy the data.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When you need a substring without taking ownership.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let hello = &amp;s[0..5];<br>// end index is excluded</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+    </div>
+  </section>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+  </div>
+
+  <script>
+    const cards = document.querySelectorAll('.flashcard');
+    const bar = document.getElementById('progress-bar');
+    const seen = new Set();
+    cards.forEach((card, i) => {
+      card.addEventListener('click', () => {
+        seen.add(i);
+        bar.style.width = (seen.size / cards.length * 100) + '%';
+      });
+    });
+  </script>
+
+  <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

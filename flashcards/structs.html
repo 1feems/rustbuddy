@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Structs | Rust Flashcards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_design/styles.css">
+  <style>
+    :root {
+      --color-bg:      #FFFFFF;
+      --color-ink:     #171714;
+      --color-muted:   #77766F;
+      --color-border:  #171714;
+      --color-primary: #FF7657;
+      --card-shell:    #F2F5F7;
+      --card-w:        260px;
+      --card-h:        360px;
+      --shell-pad:     14px;
+      --footer-h:      62px;
+      --radius-card:   8px;
+      --label-color:   #DE4775;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--color-bg); color: var(--color-ink); min-height: 100vh; }
+
+    /* ── Nav ── */
+    .site-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid var(--color-border); }
+    .site-header-left { display: flex; align-items: center; gap: 10px; }
+    .site-name { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; text-decoration: none; color: var(--color-ink); }
+    .header-sep { color: var(--color-muted); font-size: 14px; }
+    .header-title { font-size: 14px; font-weight: 500; color: var(--color-muted); }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-link { font-size: 13px; font-weight: 600; color: var(--color-muted); text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase; }
+    .nav-link.active { color: var(--color-primary); }
+
+    /* ── Page header ── */
+    .page-header { padding: 40px 32px 48px; border-bottom: 1px solid var(--color-border); display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; }
+    .page-header-left { display: flex; flex-direction: column; gap: 8px; }
+    .page-title { font-size: clamp(32px, 4vw, 52px); font-weight: 900; letter-spacing: -0.04em; line-height: 1; }
+    .page-hint { font-size: 13px; color: var(--color-muted); }
+    .page-header-right { max-width: 340px; padding-bottom: 4px; }
+    .page-description { font-size: 14px; font-weight: 400; line-height: 1.5; color: var(--color-muted); }
+
+    /* ── Cards ── */
+    .cards-section { padding: 40px 32px 80px; }
+    .cards-grid { display: flex; flex-wrap: wrap; gap: 24px; }
+
+    /* ── Flip card ── */
+    .flashcard { width: var(--card-w); height: var(--card-h); perspective: 1000px; cursor: pointer; border: none; background: transparent; padding: 0; display: block; }
+    .flashcard-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1); }
+    .flashcard.is-flipped .flashcard-inner { transform: rotateY(180deg); }
+    .flashcard-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; background: var(--card-shell); border-radius: var(--radius-card); padding: var(--shell-pad); overflow: hidden; box-shadow: 0 12px 28px rgba(0,0,0,0.14); }
+    .flashcard-back { transform: rotateY(180deg); }
+
+    /* ── RUST label ── */
+    .card-label { position: absolute; top: 8px; left: 4px; z-index: 10; font-size: 9px; font-weight: 800; color: rgba(11,13,18,0.5); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* ── Front panel 232×280 ── */
+    .card-panel {
+      width: 232px; height: 280px;
+      background: linear-gradient(135deg, #DE4775 0%, #E87099 34%, #F0A0BC 68%, #F8C8D8 100%);
+      clip-path: path('M 41 0 L 218 0 a 14 14 0 0 1 14 14 L 232 236 Q 232 252 225 259 L 205 274 Q 204 280 196 280 L 14 280 a 14 14 0 0 1 -14 -14 L 0 35 L 12 35 Q 18 35 21 29 L 32 6 Q 36 0 41 0 Z');
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card-icon { width: 108px; height: 108px; position: relative; z-index: 1; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12)); }
+    .card-icon svg { width: 100%; height: 100%; display: block; }
+
+    /* ── Front footer ── */
+    .card-footer { position: absolute; bottom: 0; left: 0; right: 0; height: var(--footer-h); padding: 0 14px; display: flex; align-items: center; background: var(--card-shell); }
+    .card-title { font-size: 28px; font-weight: 900; line-height: 1; letter-spacing: -0.04em; text-transform: uppercase; color: #0B0D12; }
+    .card-title.long { font-size: 18px; }
+    .card-title.medium { font-size: 22px; }
+
+    /* ── Back panel 232×332 ── */
+    .back-panel {
+      width: 232px; height: 332px;
+      background: linear-gradient(135deg, #FCCDD8 0%, #FEE8EE 100%);
+      clip-path: path('M 41 0 L 218 0 a 14 14 0 0 1 14 14 L 232 286 Q 232 302 225 309 L 205 326 Q 204 332 196 332 L 14 332 a 14 14 0 0 1 -14 -14 L 0 35 L 12 35 Q 18 35 21 29 L 32 6 Q 36 0 41 0 Z');
+      padding: 42px 18px 18px;
+      display: flex; flex-direction: column;
+    }
+    .back-title { font-size: 26px; font-weight: 900; letter-spacing: -0.04em; text-transform: uppercase; color: #0B0D12; line-height: 0.95; text-align: right; margin-bottom: 16px; }
+    .back-title.long { font-size: 16px; }
+    .back-title.medium { font-size: 20px; }
+    .back-sections { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; }
+    .back-section { padding-top: 14px; margin-top: 14px; border-top: 1px solid rgba(11,13,18,0.18); }
+    .back-section:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+    .section-label { display: block; font-size: 11px; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; color: var(--label-color); margin-bottom: 4px; }
+    .section-body { font-size: 11.5px; font-weight: 400; line-height: 1.35; color: #0B0D12; }
+    code { font-family: "SF Mono","Fira Code",monospace; font-size: 11px; color: #0B0D12; }
+
+    /* ── Progress bar ── */
+    .progress-bar-wrap { position: fixed; bottom: 0; left: 0; right: 0; height: 4px; background: rgba(0,0,0,0.08); z-index: 100; }
+    .progress-bar { height: 100%; background: var(--color-primary); transition: width 300ms ease; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header-left">
+      <a href="../index.html" class="site-name">Rust Buddy</a>
+      <span class="header-sep">/</span>
+      <a href="index.html" class="header-title" style="text-decoration:none;color:var(--color-muted);">Flashcards</a>
+      <span class="header-sep">/</span>
+      <span class="header-title">Structs</span>
+    </div>
+    <nav class="nav-links">
+      <a href="../exercises/index.html" class="nav-link">Exercises</a>
+      <a href="index.html" class="nav-link active">Flashcards</a>
+      <a href="../resources/index.html" class="nav-link">Resources</a>
+    </nav>
+  </header>
+
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1 class="page-title">Structs</h1>
+      <p class="page-hint">Click a card to flip it · 19 terms</p>
+    </div>
+    <div class="page-header-right">
+      <p class="page-description">A struct is a custom type that groups named fields together. This deck covers how to define structs, attach methods with impl, and use patterns like field shorthand and struct update syntax.</p>
+    </div>
+  </div>
+
+  <section class="cards-section">
+    <div class="cards-grid">
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="12" y="18" width="56" height="44" rx="4" stroke="rgba(255,255,255,0.8)" stroke-width="3.5" fill="none"/><line x1="12" y1="32" x2="68" y2="32" stroke="rgba(255,255,255,0.5)" stroke-width="2.5"/><line x1="12" y1="46" x2="68" y2="46" stroke="rgba(255,255,255,0.5)" stroke-width="2.5"/><line x1="30" y1="32" x2="30" y2="62" stroke="rgba(255,255,255,0.3)" stroke-width="2"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title">STRUCT</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">STRUCT</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A custom type that groups named fields of different types together.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Defining account data, payment plans, or any object with multiple properties.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>struct Wallet {<br>  address: String,<br>  balance: u64,<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="12" y="22" width="56" height="36" rx="4" fill="rgba(255,255,255,0.2)"/><rect x="20" y="30" width="22" height="8" rx="2" fill="rgba(255,255,255,0.5)"/><rect x="20" y="42" width="32" height="8" rx="2" fill="rgba(255,255,255,0.35)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title">FIELD</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">FIELD</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">One named value inside a struct with an explicit type.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Every piece of data in a struct. Each field has a name and a type.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>struct User {<br>  username: String, // field<br>  balance: u64,    // field<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="18" y="20" width="44" height="40" rx="4" stroke="rgba(255,255,255,0.6)" stroke-width="3" fill="rgba(255,255,255,0.15)"/><circle cx="40" cy="40" r="8" fill="rgba(255,255,255,0.5)"/><path d="M36 38 L39 41 L45 35" stroke="rgba(255,255,255,0.9)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">INSTANCE</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">INSTANCE</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A specific struct with actual values filled in for each field.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Every time you create a real object from a struct definition.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let user = User {<br>  username: "Alice".to_string(),<br>  balance: 1_000_000,<br>};</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="12" y="20" width="56" height="40" rx="4" fill="rgba(255,255,255,0.2)"/><rect x="20" y="30" width="40" height="8" rx="3" fill="rgba(255,255,255,0.4)"/><rect x="20" y="42" width="28" height="8" rx="3" fill="rgba(255,255,255,0.25)"/><circle cx="60" cy="22" r="6" fill="rgba(255,255,255,0.5)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title">IMPL</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">IMPL</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">The block where you attach functions and methods to a struct.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Every time you want a struct to have its own behavior.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>impl Wallet {<br>  fn balance(&amp;self) -> u64 {<br>    self.balance<br>  }<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="20" stroke="rgba(255,255,255,0.7)" stroke-width="3.5" fill="none"/><circle cx="40" cy="40" r="8" fill="rgba(255,255,255,0.5)"/><path d="M40 20 L40 16" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" stroke-linecap="round"/><path d="M40 64 L40 60" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title">SELF</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">SELF</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">The current instance inside an impl block. &amp;self reads, &amp;mut self modifies.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Inside any method. Gives the method access to the struct's fields.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>impl Wallet {<br>  fn show(&amp;self) {<br>    println!("{}", self.balance);<br>  }<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="12" y="26" width="56" height="28" rx="4" fill="rgba(255,255,255,0.2)"/><line x1="12" y1="40" x2="68" y2="40" stroke="rgba(255,255,255,0.35)" stroke-width="2"/><circle cx="24" cy="33" r="4" fill="rgba(255,255,255,0.45)"/><rect x="30" y="29" width="30" height="8" rx="2" fill="rgba(255,255,255,0.25)"/><rect x="20" y="44" width="22" height="6" rx="2" fill="rgba(255,255,255,0.3)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title">METHOD</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">METHOD</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A function inside an impl block that takes &amp;self or &amp;mut self. Called with dot notation.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Any behavior that belongs to the struct and uses its data.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>wallet.deposit(amount);<br>wallet.balance();</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="18" stroke="rgba(255,255,255,0.7)" stroke-width="3.5" fill="none"/><path d="M22 40 L14 40" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" stroke-linecap="round"/><path d="M14 34 L14 40 L20 40" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">&SELF</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">&SELF</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A read-only reference to the instance. Borrows without taking ownership.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When a method only needs to read the struct's fields.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>fn balance(&amp;self) -> u64 {<br>  self.balance // just reading<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="18" stroke="rgba(255,255,255,0.7)" stroke-width="3.5" fill="none"/><path d="M22 40 L14 40" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" stroke-linecap="round"/><path d="M14 34 L14 40 L20 40" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M44 32 L52 40 L44 48 M52 40 L36 40" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">&MUT SELF</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">&MUT SELF</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A mutable reference to the instance. Lets the method change the struct's fields.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When a method needs to modify data. The variable must also be declared mut.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>fn deposit(&amp;mut self, amt: u64) {<br>  self.balance += amt;<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="14" y="24" width="52" height="32" rx="4" fill="rgba(255,255,255,0.2)"/><text x="24" y="44" font-family="monospace" font-size="12" fill="rgba(255,255,255,0.7)">Type::</text><path d="M14" y1="40" /><line x1="14" y1="56" x2="66" y2="56" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-dasharray="4 3"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">ASSOCIATED FUNCTION</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">ASSOCIATED FUNCTION</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A function in impl that has no self parameter. Called with :: on the type name, not a dot.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Constructors and factory functions that create new instances.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let w = Wallet::new("abc", 0);<br>// :: not .</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="14" y="22" width="52" height="36" rx="4" stroke="rgba(255,255,255,0.6)" stroke-width="3" fill="none"/><line x1="14" y1="36" x2="66" y2="36" stroke="rgba(255,255,255,0.35)" stroke-width="2"/><line x1="14" y1="48" x2="66" y2="48" stroke="rgba(255,255,255,0.35)" stroke-width="2"/><circle cx="24" cy="29" r="3" fill="rgba(255,255,255,0.6)"/><circle cx="24" cy="42" r="3" fill="rgba(255,255,255,0.5)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">FIELD INIT SHORTHAND</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">FIELD INIT SHORTHAND</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">When a variable name matches a field name, you can write it once instead of field: field.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Clean up struct initialization when your variable names already match the fields.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>User { email, username }<br>// instead of:<br>// User { email: email, username: username }</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="8" y="22" width="28" height="36" rx="4" fill="rgba(255,255,255,0.25)"/><rect x="44" y="22" width="28" height="36" rx="4" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" fill="rgba(255,255,255,0.1)"/><path d="M34 40 L46 40" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" stroke-linecap="round"/><path d="M42 35 L47 40 L42 45" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">STRUCT UPDATE SYNTAX</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">STRUCT UPDATE SYNTAX</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">..other copies all remaining fields from an existing struct instance.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Creating a variant of an existing instance, change a few fields, copy the rest.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let user2 = User {<br>  email: new_email,<br>  ..user1<br>};</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="22" stroke="rgba(255,255,255,0.7)" stroke-width="3" fill="none"/><circle cx="40" cy="40" r="10" fill="rgba(255,255,255,0.4)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">SELF (UPPERCASE)</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">SELF (UPPERCASE)</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Inside an impl block, Self (capital S) is a shorthand for the type being implemented.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Cleaner constructors: write Self instead of repeating the type name.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>fn new() -> Self {<br>  Self { balance: 0 }<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="14" y="22" width="52" height="36" rx="4" fill="rgba(255,255,255,0.2)"/><path d="M40 22 L40 14" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" stroke-linecap="round"/><circle cx="40" cy="12" r="4" fill="rgba(255,255,255,0.55)"/><line x1="22" y1="38" x2="58" y2="38" stroke="rgba(255,255,255,0.3)" stroke-width="2"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">CONSTRUCTOR PATTERN</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">CONSTRUCTOR PATTERN</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">The convention of writing an associated function called new that creates a new instance.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Rust has no built-in new keyword. new() is just a naming convention.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>impl Wallet {<br>  fn new(addr: String) -> Self {<br>    Self { address: addr, balance: 0 }<br>  }<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="10" y="28" width="24" height="24" rx="3" fill="rgba(255,255,255,0.3)"/><rect x="46" y="28" width="24" height="24" rx="3" fill="rgba(255,255,255,0.22)"/><circle cx="36" cy="36" r="2.5" fill="rgba(255,255,255,0.6)"/><circle cx="36" cy="44" r="2.5" fill="rgba(255,255,255,0.6)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">:: SYNTAX</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">:: SYNTAX</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">How you call an associated function. Written as TypeName::function_name.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Any time you call a function that belongs to the type itself, not an instance.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>String::new()<br>Vec::new()<br>Wallet::new("abc", 0)</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="10" y="16" width="60" height="48" rx="4" stroke="rgba(255,255,255,0.6)" stroke-width="3" fill="none"/><rect x="18" y="26" width="44" height="10" rx="2" fill="rgba(255,255,255,0.3)"/><rect x="18" y="40" width="32" height="10" rx="2" fill="rgba(255,255,255,0.2)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">IMPL BLOCK</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">IMPL BLOCK</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">The block where you write all methods and associated functions for a type.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Every struct that needs behavior gets one (or more) impl blocks.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>impl Rectangle {<br>  fn area(&amp;self) -> u32 {<br>    self.width * self.height<br>  }<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="10" y="22" width="60" height="16" rx="3" fill="rgba(255,255,255,0.3)"/><rect x="10" y="44" width="24" height="14" rx="2" fill="rgba(255,255,255,0.25)"/><rect x="46" y="44" width="24" height="14" rx="2" fill="rgba(255,255,255,0.18)"/><line x1="22" y1="38" x2="22" y2="44" stroke="rgba(255,255,255,0.3)" stroke-width="2.5" stroke-linecap="round"/><line x1="58" y1="38" x2="58" y2="44" stroke="rgba(255,255,255,0.3)" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">TUPLE STRUCT</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">TUPLE STRUCT</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A struct with unnamed positional fields, like a named tuple.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When you want a distinct type but don't need field names.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>struct Color(u8, u8, u8);<br>let red = Color(255, 0, 0);</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="22" y="28" width="36" height="24" rx="4" stroke="rgba(255,255,255,0.7)" stroke-width="3" fill="none"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">UNIT-LIKE STRUCT</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">UNIT-LIKE STRUCT</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A struct with no fields at all.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When you need a type marker or want to implement a trait without storing data.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>struct AlwaysEqual;<br>let x = AlwaysEqual;</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="14" y="14" width="52" height="16" rx="3" fill="rgba(255,255,255,0.3)"/><rect x="14" y="36" width="52" height="30" rx="3" fill="rgba(255,255,255,0.18)"/><line x1="14" y1="52" x2="66" y2="52" stroke="rgba(255,255,255,0.25)" stroke-width="2"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">DERIVE ATTRIBUTE</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">DERIVE ATTRIBUTE</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A macro placed above a struct that automatically implements common traits.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Generating Debug printing, Clone, Copy, and PartialEq without writing the code yourself.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>#[derive(Debug, Clone)]<br>struct Wallet {<br>  balance: u64,<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="14" y="22" width="52" height="36" rx="4" fill="rgba(255,255,255,0.2)"/><line x1="14" y1="38" x2="66" y2="38" stroke="rgba(255,255,255,0.3)" stroke-width="2"/><line x1="14" y1="50" x2="66" y2="50" stroke="rgba(255,255,255,0.2)" stroke-width="2"/><circle cx="64" cy="66" r="3" fill="rgba(255,255,255,0.5)"/><path d="M30" y1="30" /><text x="22" y="33" font-family="monospace" font-size="8" fill="rgba(255,255,255,0.6)">field</text><path d="M40 58 L56 66" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-linecap="round"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">FIELD ACCESS</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">FIELD ACCESS</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Reading a field from a struct instance using dot notation.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Any time you need a value stored inside a struct.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let bal = wallet.balance;<br>let addr = &amp;wallet.address;</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+    </div>
+  </section>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+  </div>
+
+  <script>
+    const cards = document.querySelectorAll('.flashcard');
+    const bar = document.getElementById('progress-bar');
+    const seen = new Set();
+    cards.forEach((card, i) => {
+      card.addEventListener('click', () => {
+        seen.add(i);
+        bar.style.width = (seen.size / cards.length * 100) + '%';
+      });
+    });
+  </script>
+
+  <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

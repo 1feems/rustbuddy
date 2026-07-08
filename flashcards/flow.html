@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flow Control | Rust Flashcards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_design/styles.css">
+  <style>
+    :root {
+      --color-bg:      #FFFFFF;
+      --color-ink:     #171714;
+      --color-muted:   #77766F;
+      --color-border:  #171714;
+      --color-primary: #FF7657;
+      --card-shell:    #F2F5F7;
+      --card-w:        260px;
+      --card-h:        360px;
+      --shell-pad:     14px;
+      --footer-h:      62px;
+      --radius-card:   8px;
+      --label-color:   #FF7657;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--color-bg); color: var(--color-ink); min-height: 100vh; }
+
+    /* ── Nav ── */
+    .site-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid var(--color-border); }
+    .site-header-left { display: flex; align-items: center; gap: 10px; }
+    .site-name { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; text-decoration: none; color: var(--color-ink); }
+    .header-sep { color: var(--color-muted); font-size: 14px; }
+    .header-title { font-size: 14px; font-weight: 500; color: var(--color-muted); }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-link { font-size: 13px; font-weight: 600; color: var(--color-muted); text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase; }
+    .nav-link.active { color: var(--color-primary); }
+
+    /* ── Page header ── */
+    .page-header { padding: 40px 32px 48px; border-bottom: 1px solid var(--color-border); display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; }
+    .page-header-left { display: flex; flex-direction: column; gap: 8px; }
+    .page-title { font-size: clamp(32px, 4vw, 52px); font-weight: 900; letter-spacing: -0.04em; line-height: 1; }
+    .page-hint { font-size: 13px; color: var(--color-muted); }
+    .page-header-right { max-width: 340px; padding-bottom: 4px; }
+    .page-description { font-size: 14px; font-weight: 400; line-height: 1.5; color: var(--color-muted); }
+
+    /* ── Cards ── */
+    .cards-section { padding: 40px 32px 80px; }
+    .cards-grid { display: flex; flex-wrap: wrap; gap: 24px; }
+
+    /* ── Flip card ── */
+    .flashcard { width: var(--card-w); height: var(--card-h); perspective: 1000px; cursor: pointer; border: none; background: transparent; padding: 0; display: block; }
+    .flashcard-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1); }
+    .flashcard.is-flipped .flashcard-inner { transform: rotateY(180deg); }
+    .flashcard-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; background: var(--card-shell); border-radius: var(--radius-card); padding: var(--shell-pad); overflow: hidden; box-shadow: 0 12px 28px rgba(0,0,0,0.14); }
+    .flashcard-back { transform: rotateY(180deg); }
+
+    /* ── RUST label ── */
+    .card-label { position: absolute; top: 8px; left: 4px; z-index: 10; font-size: 9px; font-weight: 800; color: rgba(11,13,18,0.5); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* ── Front panel 232×280 ── */
+    .card-panel {
+      width: 232px; height: 280px;
+      background: linear-gradient(135deg, #FF7657 0%, #FF9070 34%, #FFAB90 68%, #FFC8B0 100%);
+      clip-path: path('M 41 0 L 218 0 a 14 14 0 0 1 14 14 L 232 236 Q 232 252 225 259 L 205 274 Q 204 280 196 280 L 14 280 a 14 14 0 0 1 -14 -14 L 0 35 L 12 35 Q 18 35 21 29 L 32 6 Q 36 0 41 0 Z');
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card-icon { width: 108px; height: 108px; position: relative; z-index: 1; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12)); }
+    .card-icon svg { width: 100%; height: 100%; display: block; }
+
+    /* ── Front footer ── */
+    .card-footer { position: absolute; bottom: 0; left: 0; right: 0; height: var(--footer-h); padding: 0 14px; display: flex; align-items: center; background: var(--card-shell); }
+    .card-title { font-size: 28px; font-weight: 900; line-height: 1; letter-spacing: -0.04em; text-transform: uppercase; color: #0B0D12; }
+    .card-title.long { font-size: 18px; }
+    .card-title.medium { font-size: 22px; }
+
+    /* ── Back panel 232×332 ── */
+    .back-panel {
+      width: 232px; height: 332px;
+      background: linear-gradient(135deg, #FFD4C8 0%, #FFE8E0 100%);
+      clip-path: path('M 41 0 L 218 0 a 14 14 0 0 1 14 14 L 232 286 Q 232 302 225 309 L 205 326 Q 204 332 196 332 L 14 332 a 14 14 0 0 1 -14 -14 L 0 35 L 12 35 Q 18 35 21 29 L 32 6 Q 36 0 41 0 Z');
+      padding: 42px 18px 18px;
+      display: flex; flex-direction: column;
+    }
+    .back-title { font-size: 26px; font-weight: 900; letter-spacing: -0.04em; text-transform: uppercase; color: #0B0D12; line-height: 0.95; text-align: right; margin-bottom: 16px; }
+    .back-title.long { font-size: 16px; }
+    .back-title.medium { font-size: 20px; }
+    .back-sections { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; }
+    .back-section { padding-top: 14px; margin-top: 14px; border-top: 1px solid rgba(11,13,18,0.18); }
+    .back-section:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+    .section-label { display: block; font-size: 11px; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; color: var(--label-color); margin-bottom: 4px; }
+    .section-body { font-size: 11.5px; font-weight: 400; line-height: 1.35; color: #0B0D12; }
+    code { font-family: "SF Mono","Fira Code",monospace; font-size: 11px; color: #0B0D12; }
+
+    /* ── Progress bar ── */
+    .progress-bar-wrap { position: fixed; bottom: 0; left: 0; right: 0; height: 4px; background: rgba(0,0,0,0.08); z-index: 100; }
+    .progress-bar { height: 100%; background: var(--color-primary); transition: width 300ms ease; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header-left">
+      <a href="../index.html" class="site-name">Rust Buddy</a>
+      <span class="header-sep">/</span>
+      <a href="index.html" class="header-title" style="text-decoration:none;color:var(--color-muted);">Flashcards</a>
+      <span class="header-sep">/</span>
+      <span class="header-title">Flow Control</span>
+    </div>
+    <nav class="nav-links">
+      <a href="../exercises/index.html" class="nav-link">Exercises</a>
+      <a href="index.html" class="nav-link active">Flashcards</a>
+      <a href="../resources/index.html" class="nav-link">Resources</a>
+    </nav>
+  </header>
+
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1 class="page-title">Flow Control</h1>
+      <p class="page-hint">Click a card to flip it · 16 terms</p>
+    </div>
+    <div class="page-header-right">
+      <p class="page-description">Control flow determines which code runs and when. This deck covers if, all three loop types, match for pattern matching, and if let for simpler one-pattern matches.</p>
+    </div>
+  </div>
+
+  <section class="cards-section">
+    <div class="cards-grid">
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="24" r="8" stroke="rgba(255,255,255,0.8)" stroke-width="3" fill="none"/><line x1="40" y1="32" x2="40" y2="42" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="42" x2="22" y2="56" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="42" x2="58" y2="56" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" stroke-linecap="round"/><rect x="14" y="56" width="16" height="12" rx="2" fill="rgba(255,255,255,0.4)"/><rect x="50" y="56" width="16" height="12" rx="2" fill="rgba(255,255,255,0.25)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">IF / ELSE</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">IF / ELSE</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A conditional expression. In Rust, if returns a value, so both branches must have the same type.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Choosing between two paths based on a condition.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let label = if score &gt; 90 {<br>  "A"<br>} else {<br>  "B"<br>};</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="14" y="22" width="52" height="14" rx="3" fill="rgba(255,255,255,0.4)"/><path d="M14 44 L14 62 L66 62 L66 44" stroke="rgba(255,255,255,0.6)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M54 36 L66 44 L54 52" stroke="rgba(255,255,255,0.5)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">FOR LOOP</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">FOR LOOP</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Repeats code for each item in an iterator or range.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Visiting every element in a collection. The standard loop in Rust.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>for name in &amp;names {<br>  println!("{}", name);<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="22" stroke="rgba(255,255,255,0.7)" stroke-width="3" fill="none"/><path d="M40 18 L40 14 M40 66 L40 62" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" stroke-linecap="round"/><path d="M50 30 L48 38 L56 36" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">WHILE LOOP</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">WHILE LOOP</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Repeats code as long as a condition stays true.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When you don't know how many times to loop. Runs until the condition becomes false.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>while count &lt; 10 {<br>  count += 1;<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><path d="M60 40 A20 20 0 1 1 59 30" stroke="rgba(255,255,255,0.75)" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M54 24 L59 30 L65 26" stroke="rgba(255,255,255,0.6)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title">LOOP</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">LOOP</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">An intentional infinite loop that runs until a break statement exits it.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When you need full control over when to stop. Break can also return a value.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let result = loop {<br>  if done { break 42; }<br>};</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><path d="M60 40 A20 20 0 1 1 59 30" stroke="rgba(255,255,255,0.4)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M20 40 L52 40" stroke="rgba(255,255,255,0.75)" stroke-width="3.5" stroke-linecap="round"/><path d="M44 32 L52 40 L44 48" stroke="rgba(255,255,255,0.65)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title">BREAK</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">BREAK</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Immediately exits the current loop.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When a condition is met and you want to stop all remaining iterations.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>if amount == 0 {<br>  break;<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><path d="M20 40 L60 40" stroke="rgba(255,255,255,0.4)" stroke-width="3" stroke-linecap="round" stroke-dasharray="4 3"/><path d="M40 20 L40 36" stroke="rgba(255,255,255,0.7)" stroke-width="3.5" stroke-linecap="round"/><path d="M32 28 L40 20 L48 28" stroke="rgba(255,255,255,0.6)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">CONTINUE</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">CONTINUE</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Skips the rest of the current iteration and jumps back to the top of the loop.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Skipping bad or empty entries without stopping the whole loop.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>if amount == 0 {<br>  continue; // skip this one<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><path d="M54 40 A14 14 0 1 1 53 33" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M40 54 A26 26 0 1 1 38 28" stroke="rgba(255,255,255,0.75)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M32 22 L38 28 L44 22" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">LOOP LABELS</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">LOOP LABELS</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A name given to a loop ('outer:) so break 'outer can exit that specific loop.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Required when nested loops exist and you need to exit an outer one from inside.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>'outer: for x in 0..10 {<br>  for y in 0..10 {<br>    if x == y { break 'outer; }<br>  }<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><line x1="12" y1="40" x2="68" y2="40" stroke="rgba(255,255,255,0.6)" stroke-width="3.5" stroke-linecap="round"/><circle cx="12" cy="40" r="4" fill="rgba(255,255,255,0.7)"/><circle cx="68" cy="40" r="4" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" fill="none"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">RANGE ..</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">RANGE ..</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Generates a sequence from the start up to but NOT including the end.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When the boundary itself should not be included in the loop.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>for i in 1..10 {<br>  // 1 through 9, not 10<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><line x1="12" y1="40" x2="68" y2="40" stroke="rgba(255,255,255,0.6)" stroke-width="3.5" stroke-linecap="round"/><circle cx="12" cy="40" r="4" fill="rgba(255,255,255,0.7)"/><circle cx="68" cy="40" r="4" fill="rgba(255,255,255,0.7)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">INCLUSIVE RANGE ..=</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">INCLUSIVE RANGE ..=</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Like .. but the end number IS included.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When the boundary itself must be covered.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>for i in 1..=10 {<br>  // 1 through 10, included<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="22" r="8" stroke="rgba(255,255,255,0.8)" stroke-width="3" fill="none"/><line x1="40" y1="30" x2="40" y2="40" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="40" x2="18" y2="58" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"/><line x1="40" y1="40" x2="40" y2="58" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linecap="round"/><line x1="40" y1="40" x2="62" y2="58" stroke="rgba(255,255,255,0.35)" stroke-width="2" stroke-linecap="round"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title">MATCH</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">MATCH</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Compares a value against multiple patterns. Compiler enforces completeness.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Cleaner than long if/else chains. Required for enums and Option.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>match coin {<br>  Coin::Penny => 1,<br>  Coin::Quarter => 25,<br>  _ => 0,<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="12" y="22" width="56" height="36" rx="4" fill="rgba(255,255,255,0.2)"/><line x1="12" y1="38" x2="68" y2="38" stroke="rgba(255,255,255,0.3)" stroke-width="2"/><line x1="12" y1="50" x2="68" y2="50" stroke="rgba(255,255,255,0.22)" stroke-width="2"/><rect x="18" y="27" width="20" height="8" rx="2" fill="rgba(255,255,255,0.35)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">PATTERN</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">PATTERN</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A description of what a value should look like. Written on the left side of => in a match arm.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Matching on literals, variables, enum variants, structs, or wildcards.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>match x {<br>  1 => "one",    // pattern<br>  _ => "other",  // wildcard<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><circle cx="30" cy="32" r="10" stroke="rgba(255,255,255,0.75)" stroke-width="3" fill="none"/><circle cx="30" cy="32" r="4" fill="rgba(255,255,255,0.5)"/><path d="M38 32 L48 32" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" stroke-linecap="round"/><rect x="48" y="22" width="20" height="20" rx="3" fill="rgba(255,255,255,0.3)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">IF LET</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">IF LET</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A one-pattern shortcut for match. Handles one case and ignores everything else.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When only one variant matters and a full match would be verbose.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>if let Some(val) = result {<br>  println!("{}", val);<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="14" y="38" width="52" height="8" rx="4" fill="rgba(255,255,255,0.6)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">WILDCARD _</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">WILDCARD _</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A catch-all arm in match that matches anything not covered by earlier arms.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Always include this to make a match exhaustive when not all cases are listed.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>match direction {<br>  North => go_up(),<br>  _ => println!("other"),<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="24" r="8" stroke="rgba(255,255,255,0.8)" stroke-width="3" fill="none"/><line x1="40" y1="32" x2="20" y2="54" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"/><line x1="40" y1="32" x2="40" y2="54" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linecap="round"/><line x1="40" y1="32" x2="60" y2="54" stroke="rgba(255,255,255,0.35)" stroke-width="2" stroke-linecap="round"/><path d="M14 56 L26 56 M34 56 L46 56 M54 56 L66 56" stroke="rgba(255,255,255,0.6)" stroke-width="3" stroke-linecap="round"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">EXHAUSTIVE MATCHING</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">EXHAUSTIVE MATCHING</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Every possible value must be covered in a match. The compiler enforces this.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">If you forget a variant, your code won't compile. Rust catches this for you.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>// forgetting a variant<br>// = compile error<br>// add _ => {} to catch the rest</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="18" r="6" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" fill="none"/><line x1="40" y1="24" x2="40" y2="32" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"/><circle cx="40" cy="36" r="6" stroke="rgba(255,255,255,0.55)" stroke-width="2.5" fill="none"/><line x1="40" y1="42" x2="24" y2="56" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linecap="round"/><line x1="40" y1="42" x2="56" y2="56" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-linecap="round"/><rect x="16" y="56" width="16" height="10" rx="2" fill="rgba(255,255,255,0.3)"/><rect x="48" y="56" width="16" height="10" rx="2" fill="rgba(255,255,255,0.2)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">ELSE IF</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">ELSE IF</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A second (or third) condition to check when the first if was false.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When there are more than two possible paths.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>if x &gt; 90 { "A" }<br>else if x &gt; 75 { "B" }<br>else { "C" }</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="10" y="24" width="60" height="14" rx="3" fill="rgba(255,255,255,0.3)"/><rect x="10" y="44" width="60" height="14" rx="3" fill="rgba(255,255,255,0.2)"/><text x="14" y="35" font-family="monospace" font-size="9" fill="rgba(255,255,255,0.7)">(0, item)</text><text x="14" y="55" font-family="monospace" font-size="9" fill="rgba(255,255,255,0.55)">(1, item)</text></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">.ENUMERATE()</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">.ENUMERATE()</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Wraps each element with its index, returning (index, value) tuples.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When you need both the position and the value in a for loop.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>for (i, name) in<br>  names.iter().enumerate() {<br>  println!("{}: {}", i, name);<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+    </div>
+  </section>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+  </div>
+
+  <script>
+    const cards = document.querySelectorAll('.flashcard');
+    const bar = document.getElementById('progress-bar');
+    const seen = new Set();
+    cards.forEach((card, i) => {
+      card.addEventListener('click', () => {
+        seen.add(i);
+        bar.style.width = (seen.size / cards.length * 100) + '%';
+      });
+    });
+  </script>
+
+  <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

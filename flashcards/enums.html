@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enums | Rust Flashcards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_design/styles.css">
+  <style>
+    :root {
+      --color-bg:      #FFFFFF;
+      --color-ink:     #171714;
+      --color-muted:   #77766F;
+      --color-border:  #171714;
+      --color-primary: #FF7657;
+      --card-shell:    #F2F5F7;
+      --card-w:        260px;
+      --card-h:        360px;
+      --shell-pad:     14px;
+      --footer-h:      62px;
+      --radius-card:   8px;
+      --label-color:   #C8A800;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--color-bg); color: var(--color-ink); min-height: 100vh; }
+
+    /* ── Nav ── */
+    .site-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid var(--color-border); }
+    .site-header-left { display: flex; align-items: center; gap: 10px; }
+    .site-name { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; text-decoration: none; color: var(--color-ink); }
+    .header-sep { color: var(--color-muted); font-size: 14px; }
+    .header-title { font-size: 14px; font-weight: 500; color: var(--color-muted); }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-link { font-size: 13px; font-weight: 600; color: var(--color-muted); text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase; }
+    .nav-link.active { color: var(--color-primary); }
+
+    /* ── Page header ── */
+    .page-header { padding: 40px 32px 48px; border-bottom: 1px solid var(--color-border); display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; }
+    .page-header-left { display: flex; flex-direction: column; gap: 8px; }
+    .page-title { font-size: clamp(32px, 4vw, 52px); font-weight: 900; letter-spacing: -0.04em; line-height: 1; }
+    .page-hint { font-size: 13px; color: var(--color-muted); }
+    .page-header-right { max-width: 340px; padding-bottom: 4px; }
+    .page-description { font-size: 14px; font-weight: 400; line-height: 1.5; color: var(--color-muted); }
+
+    /* ── Cards ── */
+    .cards-section { padding: 40px 32px 80px; }
+    .cards-grid { display: flex; flex-wrap: wrap; gap: 24px; }
+
+    /* ── Flip card ── */
+    .flashcard { width: var(--card-w); height: var(--card-h); perspective: 1000px; cursor: pointer; border: none; background: transparent; padding: 0; display: block; }
+    .flashcard-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1); }
+    .flashcard.is-flipped .flashcard-inner { transform: rotateY(180deg); }
+    .flashcard-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; background: var(--card-shell); border-radius: var(--radius-card); padding: var(--shell-pad); overflow: hidden; box-shadow: 0 12px 28px rgba(0,0,0,0.14); }
+    .flashcard-back { transform: rotateY(180deg); }
+
+    /* ── RUST label ── */
+    .card-label { position: absolute; top: 8px; left: 4px; z-index: 10; font-size: 9px; font-weight: 800; color: rgba(11,13,18,0.5); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* ── Front panel 232×280 ── */
+    .card-panel {
+      width: 232px; height: 280px;
+      background: linear-gradient(135deg, #C8A800 0%, #DCC030 34%, #EDDA60 68%, #F8F0A0 100%);
+      clip-path: path('M 41 0 L 218 0 a 14 14 0 0 1 14 14 L 232 236 Q 232 252 225 259 L 205 274 Q 204 280 196 280 L 14 280 a 14 14 0 0 1 -14 -14 L 0 35 L 12 35 Q 18 35 21 29 L 32 6 Q 36 0 41 0 Z');
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card-icon { width: 108px; height: 108px; position: relative; z-index: 1; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12)); }
+    .card-icon svg { width: 100%; height: 100%; display: block; }
+
+    /* ── Front footer ── */
+    .card-footer { position: absolute; bottom: 0; left: 0; right: 0; height: var(--footer-h); padding: 0 14px; display: flex; align-items: center; background: var(--card-shell); }
+    .card-title { font-size: 28px; font-weight: 900; line-height: 1; letter-spacing: -0.04em; text-transform: uppercase; color: #0B0D12; }
+    .card-title.long { font-size: 18px; }
+    .card-title.medium { font-size: 22px; }
+
+    /* ── Back panel 232×332 ── */
+    .back-panel {
+      width: 232px; height: 332px;
+      background: linear-gradient(135deg, #F5ECA8 0%, #FAF5CC 100%);
+      clip-path: path('M 41 0 L 218 0 a 14 14 0 0 1 14 14 L 232 286 Q 232 302 225 309 L 205 326 Q 204 332 196 332 L 14 332 a 14 14 0 0 1 -14 -14 L 0 35 L 12 35 Q 18 35 21 29 L 32 6 Q 36 0 41 0 Z');
+      padding: 42px 18px 18px;
+      display: flex; flex-direction: column;
+    }
+    .back-title { font-size: 26px; font-weight: 900; letter-spacing: -0.04em; text-transform: uppercase; color: #0B0D12; line-height: 0.95; text-align: right; margin-bottom: 16px; }
+    .back-title.long { font-size: 16px; }
+    .back-title.medium { font-size: 20px; }
+    .back-sections { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; }
+    .back-section { padding-top: 14px; margin-top: 14px; border-top: 1px solid rgba(11,13,18,0.18); }
+    .back-section:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+    .section-label { display: block; font-size: 11px; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; color: var(--label-color); margin-bottom: 4px; }
+    .section-body { font-size: 11.5px; font-weight: 400; line-height: 1.35; color: #0B0D12; }
+    code { font-family: "SF Mono","Fira Code",monospace; font-size: 11px; color: #0B0D12; }
+
+    /* ── Progress bar ── */
+    .progress-bar-wrap { position: fixed; bottom: 0; left: 0; right: 0; height: 4px; background: rgba(0,0,0,0.08); z-index: 100; }
+    .progress-bar { height: 100%; background: var(--color-primary); transition: width 300ms ease; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header-left">
+      <a href="../index.html" class="site-name">Rust Buddy</a>
+      <span class="header-sep">/</span>
+      <a href="index.html" class="header-title" style="text-decoration:none;color:var(--color-muted);">Flashcards</a>
+      <span class="header-sep">/</span>
+      <span class="header-title">Enums</span>
+    </div>
+    <nav class="nav-links">
+      <a href="../exercises/index.html" class="nav-link">Exercises</a>
+      <a href="index.html" class="nav-link active">Flashcards</a>
+      <a href="../resources/index.html" class="nav-link">Resources</a>
+    </nav>
+  </header>
+
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1 class="page-title">Enums</h1>
+      <p class="page-hint">Click a card to flip it · 8 terms</p>
+    </div>
+    <div class="page-header-right">
+      <p class="page-description">An enum is a type that can represent one of several named variants. This deck covers creating enums, storing data inside variants, and using them to model different states safely.</p>
+    </div>
+  </div>
+
+  <section class="cards-section">
+    <div class="cards-grid">
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="22" r="8" stroke="rgba(0,0,0,0.35)" stroke-width="3" fill="none"/><circle cx="20" cy="58" r="8" stroke="rgba(0,0,0,0.25)" stroke-width="3" fill="none"/><circle cx="60" cy="58" r="8" stroke="rgba(0,0,0,0.25)" stroke-width="3" fill="none"/><line x1="40" y1="30" x2="24" y2="50" stroke="rgba(0,0,0,0.22)" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="30" x2="56" y2="50" stroke="rgba(0,0,0,0.22)" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title">ENUM</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title">ENUM</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">A type that can be exactly one of several named options.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Subscription status, payment state, instruction types, any fixed set of possibilities.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>enum Status {<br>  Active,<br>  Expired,<br>  Pending,<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="28" r="8" stroke="rgba(0,0,0,0.3)" stroke-width="3" fill="none"/><rect x="16" y="50" width="16" height="12" rx="3" fill="rgba(0,0,0,0.22)"/><rect x="32" y="50" width="16" height="12" rx="3" fill="rgba(0,0,0,0.16)"/><rect x="48" y="50" width="16" height="12" rx="3" fill="rgba(0,0,0,0.12)"/><line x1="40" y1="36" x2="24" y2="50" stroke="rgba(0,0,0,0.2)" stroke-width="2" stroke-linecap="round"/><line x1="40" y1="36" x2="40" y2="50" stroke="rgba(0,0,0,0.2)" stroke-width="2" stroke-linecap="round"/><line x1="40" y1="36" x2="56" y2="50" stroke="rgba(0,0,0,0.2)" stroke-width="2" stroke-linecap="round"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title medium">VARIANT</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title medium">VARIANT</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">One of the named options inside an enum.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Creating or matching on an enum value. Each variant is one possibility.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>Status::Active<br>Status::Expired</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="8" y="28" width="28" height="24" rx="3" fill="rgba(0,0,0,0.22)"/><rect x="44" y="28" width="28" height="24" rx="3" fill="rgba(0,0,0,0.16)"/><circle cx="36" cy="36" r="2.5" fill="rgba(0,0,0,0.35)"/><circle cx="36" cy="44" r="2.5" fill="rgba(0,0,0,0.35)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">ENUMNAME::VARIANT</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">ENUMNAME::VARIANT</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">How you refer to a specific enum variant. Type name, then ::, then the variant name.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Every time you create or compare an enum value.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>let s = Status::Active;<br>let d = Direction::North;</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><circle cx="24" cy="40" r="10" stroke="rgba(0,0,0,0.3)" stroke-width="3" fill="none"/><circle cx="50" cy="40" r="10" stroke="rgba(0,0,0,0.22)" stroke-width="3" fill="none"/><text x="20" y="44" font-family="monospace" font-size="12" fill="rgba(0,0,0,0.4)">0</text><text x="46" y="44" font-family="monospace" font-size="12" fill="rgba(0,0,0,0.3)">1</text></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">DISCRIMINATOR</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">DISCRIMINATOR</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">An integer Rust assigns to each variant automatically, starting at 0.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">Lets you convert a variant to a number with as.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>Direction::North as u8 // 0<br>Direction::South as u8 // 1</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="18" stroke="rgba(0,0,0,0.3)" stroke-width="3.5" fill="none"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">UNIT VARIANT</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">UNIT VARIANT</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">An enum variant with no data. Just a named state.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When one option simply means 'this happened' with no extra information.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>enum Command {<br>  Quit, // unit variant, no data<br>  Pause,<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="14" y="24" width="52" height="16" rx="3" fill="rgba(0,0,0,0.22)"/><path d="M18 38 L18 48" stroke="rgba(0,0,0,0.2)" stroke-width="2.5" stroke-linecap="round"/><path d="M40 38 L40 48" stroke="rgba(0,0,0,0.2)" stroke-width="2.5" stroke-linecap="round"/><rect x="8" y="48" width="24" height="12" rx="2" fill="rgba(0,0,0,0.16)"/><rect x="28" y="48" width="24" height="12" rx="2" fill="rgba(0,0,0,0.13)"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">TUPLE VARIANT</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">TUPLE VARIANT</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">An enum variant that holds unnamed values in parentheses.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When a variant needs to carry data but named fields are unnecessary.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>enum Message {<br>  Write(String),<br>  Move(i32, i32),<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><rect x="14" y="22" width="52" height="36" rx="4" stroke="rgba(0,0,0,0.3)" stroke-width="3" fill="none"/><line x1="14" y1="36" x2="66" y2="36" stroke="rgba(0,0,0,0.22)" stroke-width="2"/><line x1="14" y1="48" x2="66" y2="48" stroke="rgba(0,0,0,0.18)" stroke-width="2"/><line x1="34" y1="36" x2="34" y2="58" stroke="rgba(0,0,0,0.15)" stroke-width="2"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">STRUCT VARIANT</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">STRUCT VARIANT</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">An enum variant with named fields in curly braces.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When the data inside a variant is complex enough to benefit from names.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>enum Message {<br>  Move { x: i32, y: i32 },<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="flashcard" onclick="this.classList.toggle('is-flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-face">
+            <span class="card-label">Rust</span>
+            <div class="card-panel">
+              <div class="card-icon"><svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="24" r="8" stroke="rgba(0,0,0,0.3)" stroke-width="3" fill="none"/><path d="M40 32 L40 42" stroke="rgba(0,0,0,0.22)" stroke-width="2.5" stroke-linecap="round"/><rect x="14" y="44" width="52" height="22" rx="4" fill="rgba(0,0,0,0.16)"/><line x1="40" y1="44" x2="40" y2="66" stroke="rgba(0,0,0,0.18)" stroke-width="2"/></svg></div>
+            </div>
+            <div class="card-footer"><p class="card-title long">DESTRUCTURING IN MATCH</p></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="card-label">Rust</span>
+            <div class="back-panel">
+              <h2 class="back-title long">DESTRUCTURING IN MATCH</h2>
+              <div class="back-sections">
+                <div class="back-section"><span class="section-label">Meaning</span><p class="section-body">Pulling data out of an enum variant right inside a match arm.</p></div>
+                <div class="back-section"><span class="section-label">When to use it</span><p class="section-body">When your enum variants carry data you need to use.</p></div>
+                <div class="back-section"><span class="section-label">Example</span><p class="section-body"><code>match msg {<br>  Message::Move { x, y } =><br>    println!("{} {}", x, y),<br>}</code></p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+    </div>
+  </section>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+  </div>
+
+  <script>
+    const cards = document.querySelectorAll('.flashcard');
+    const bar = document.getElementById('progress-bar');
+    const seen = new Set();
+    cards.forEach((card, i) => {
+      card.addEventListener('click', () => {
+        seen.add(i);
+        bar.style.width = (seen.size / cards.length * 100) + '%';
+      });
+    });
+  </script>
+
+  <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
