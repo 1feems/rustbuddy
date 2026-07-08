@@ -3,21 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rust: Ownership - Rust Bud</title>
+  <title>Rust: String vs &str - Rust Bud</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../_design/styles.css">
   <style>
-    :root {
-      --color-bg:        #FFFFFF;
-      --color-surface:   #1E1E1A;
-      --color-primary:   #FF7657;
-      --color-secondary: #DFFF65;
-      --color-ink:       #171714;
-      --color-muted:     #77766F;
-      --color-border:    #171714;
-    }
+    :root { --color-bg: #FFFFFF; --color-surface: #1E1E1A; --color-primary: #FF7657; --color-secondary: #DFFF65; --color-ink: #171714; --color-muted: #77766F; --color-border: #171714; }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Inter', system-ui, sans-serif; background: var(--color-bg); color: var(--color-ink); min-height: 100vh; }
     .site-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid var(--color-border); }
@@ -90,7 +82,7 @@
     .terms-table th { text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); border-bottom: 1px solid var(--color-border); }
     .terms-table td { padding: 14px 16px; border-bottom: 1px solid rgba(23,23,20,0.12); vertical-align: top; line-height: 1.55; }
     .terms-table tr:last-child td { border-bottom: none; }
-    .terms-table td:first-child { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; font-weight: 600; white-space: nowrap; width: 160px; }
+    .terms-table td:first-child { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; font-weight: 600; white-space: nowrap; width: 200px; }
     .terms-table td:last-child { color: var(--color-muted); }
   </style>
 </head>
@@ -102,7 +94,7 @@
     <span class="header-sep">/</span>
     <a href="index.html" class="back-link">Exercises</a>
     <span class="header-sep">/</span>
-    <span class="header-title">Ownership</span>
+    <span class="header-title">String vs &amp;str</span>
   </div>
   <nav class="nav-links">
     <a href="index.html" class="nav-link active">Exercises</a>
@@ -123,8 +115,8 @@
     <div class="tab-panel" id="panel-overview">
       <div class="overview-wrap">
         <div class="overview-topic">Topic</div>
-        <div class="overview-headline">Ownership</div>
-        <div class="overview-desc">Ownership is how Rust manages memory without a garbage collector. Every value has exactly one owner. When you assign a heap value to a new variable, ownership moves and the old variable becomes invalid. This prevents two parts of your code from trying to free the same memory.</div>
+        <div class="overview-headline">String vs &amp;str</div>
+        <div class="overview-desc">Rust has two string types. <code>String</code> owns its data on the heap and can grow. <code>&amp;str</code> is a borrowed slice — a read-only view into existing text. Knowing which one to use and how to convert between them is one of the most common early Rust questions.</div>
         <div class="overview-divider"></div>
         <div class="overview-ref-label">Quick Reference</div>
         <table class="terms-table">
@@ -132,12 +124,13 @@
             <tr><th>Concept</th><th>What it means</th></tr>
           </thead>
           <tbody>
-            <tr><td>Owner</td><td>The variable that holds a value. Only one owner at a time.</td></tr>
-            <tr><td>Move</td><td>Transferring ownership to a new variable. The old one becomes invalid.</td></tr>
-            <tr><td>.clone()</td><td>Deep copy — duplicates heap data so both variables stay valid.</td></tr>
-            <tr><td>Copy trait</td><td>Stack-only types like i32 and bool copy automatically. No move.</td></tr>
-            <tr><td>into_bytes()</td><td>Consumes a String — the original is gone afterward.</td></tr>
-            <tr><td>as_bytes()</td><td>Borrows a String — the original stays valid.</td></tr>
+            <tr><td>String</td><td>Heap-allocated, owns its data, can grow and shrink, mutable with mut</td></tr>
+            <tr><td>&amp;str</td><td>String slice — an immutable borrowed view into a string. Read-only.</td></tr>
+            <tr><td>String literal</td><td>Text in double quotes, type &amp;str, stored in read-only memory at compile time</td></tr>
+            <tr><td>push_str</td><td>Appends a string slice (&amp;str) to a String</td></tr>
+            <tr><td>push</td><td>Appends a single character to a String</td></tr>
+            <tr><td>to_string() / String::from()</td><td>Convert &amp;str to String — copies text into new heap memory</td></tr>
+            <tr><td>&amp;s on a String</td><td>Converts String to &amp;str automatically when a function expects it</td></tr>
           </tbody>
         </table>
       </div>
@@ -162,12 +155,14 @@
             <tr><th>Term</th><th>What it means</th><th>When you use it</th></tr>
           </thead>
           <tbody>
-            <tr><td>Owner</td><td>The variable that holds a value, only one at a time</td><td>Every heap value in Rust has exactly one owner</td></tr>
-            <tr><td>Move</td><td>Transferring ownership to a new variable, the old one becomes invalid</td><td>Assigning a String or Vec to another variable</td></tr>
-            <tr><td>.clone()</td><td>Deep copies heap data so both variables stay valid</td><td>When you need a separate copy of a String or Vec</td></tr>
-            <tr><td>Copy trait</td><td>Stack-only types copy automatically on assignment, no move</td><td>i32, u64, bool, char and other fixed-size stack types</td></tr>
-            <tr><td>into_bytes()</td><td>Consumes a String and returns its bytes as Vec&lt;u8&gt;</td><td>When you only need the bytes and are done with the original</td></tr>
-            <tr><td>as_bytes()</td><td>Borrows a String and returns its bytes as &amp;[u8]</td><td>When you need to read the bytes but keep the String usable</td></tr>
+            <tr><td>String</td><td>Heap-allocated, owns its data, can grow and shrink</td><td>When you need to build or modify text at runtime</td></tr>
+            <tr><td>&amp;str</td><td>Immutable borrowed view into a string</td><td>When you only need to read text, not own it</td></tr>
+            <tr><td>String literal</td><td>Text in double quotes, type &amp;str, baked into the binary</td><td>When writing fixed text directly in your code</td></tr>
+            <tr><td>push_str</td><td>Appends a string slice to a String</td><td>Adding multiple characters at once to a String</td></tr>
+            <tr><td>push</td><td>Appends a single character to a String</td><td>Adding one character at a time</td></tr>
+            <tr><td>to_string() / String::from()</td><td>Convert &amp;str to owned String</td><td>When you need to own the text data</td></tr>
+            <tr><td>&amp;s / as_str()</td><td>Convert String to &amp;str</td><td>Passing a String to a function that expects &amp;str</td></tr>
+            <tr><td>+</td><td>Concatenates String with &amp;str — the left String is consumed</td><td>Joining two strings into one new value</td></tr>
           </tbody>
         </table>
       </div>
@@ -181,69 +176,69 @@
   const exercises = [
     {
       num: 1,
-      title: "Move Semantics",
-      explainer: "<p>In Rust, every value has exactly one owner. When you assign a heap value like <code>String</code> to a new variable, ownership moves - the old variable becomes invalid. Rust does this to prevent double-free errors.</p><p>Think of it as handing over the keys to a car - only one person can own it at a time.</p>",
-      task: "<p>A string is assigned to a new variable, which moves ownership. Right now it fails because <code>s1</code> is no longer valid after the move.</p><ol><li>Create a string <code>s1</code></li><li>Keep both <code>s1</code> and <code>s2</code> usable after the assignment</li><li>Print both</li></ol>",
-      starterCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1;\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
-      instruction: "Fix this so both variables can be printed",
-      expectedOutput: "s1 = hello\ns2 = hello",
-      answerCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1.clone();\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
-      why: ""
+      title: 'Annotating a String Literal Type',
+      explainer: '<p>A string literal is text in double quotes, like <code>"hello"</code>. Rust stores it in read-only memory at compile time and gives it the type <code>&amp;str</code> — a borrowed slice of text.</p><p>Think of it like a street sign: the text is fixed in place and you only get a pointer to it, not a copy you can edit.</p>',
+      task: '<p>A variable tries to hold text using the wrong type annotation. Right now it fails because a text literal in double quotes is not a <code>String</code> — it is a string slice (<code>&amp;str</code>).</p>',
+      starterCode: 'fn main() {\n    let s: String = "hello, world";\n    println!("{}", s);\n}',
+      instruction: 'Fix the type annotation. Do not add or remove any lines.',
+      expectedOutput: 'hello, world',
+      answerCode: 'fn main() {\n    let s: &str = "hello, world";\n    println!("{}", s);\n}',
+      why: 'A text literal in quotes is already a <code>&amp;str</code>. Changing the annotation from <code>String</code> to <code>&amp;str</code> matches what Rust actually gives you.'
     },
     {
       num: 2,
-      title: "Clone",
-      explainer: "<p><code>.clone()</code> duplicates the entire heap allocation so both variables get independent copies. Stack types like <code>i32</code> don't need it - they copy automatically. Heap types like <code>String</code> do not copy automatically.</p>",
-      task: "<p>A string is moved to a new variable, invalidating the original. Right now <code>s1</code> is invalidated by the move to <code>s2</code>.</p><ol><li>Keep both <code>s1</code> and <code>s2</code> usable after the assignment</li><li>Print both</li></ol>",
-      starterCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1;\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
-      instruction: "Add one method call so both variables stay valid",
-      expectedOutput: "s1 = hello\ns2 = hello",
-      answerCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1.clone();\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
-      why: ""
+      title: 'Getting a Slice from a Box',
+      explainer: '<p>A <code>Box</code> is a pointer that puts data on the heap. When you write <code>"hello".into()</code>, Rust converts the literal into a <code>Box&lt;str&gt;</code>.</p><p>Passing a reference to the Box (<code>&amp;s</code>) lets Rust automatically reach through the pointer and hand the function a string slice. This automatic conversion is called deref coercion.</p>',
+      task: '<p>The code heap-allocates a string literal inside a <code>Box</code> and tries to pass it to a function that expects <code>&amp;str</code>. Right now the blank needs to be filled in so the argument matches the parameter type.</p>',
+      starterCode: 'fn print_it(s: &str) {\n    println!("{}", s);\n}\n\nfn main() {\n    let s: Box<str> = "hello, world".into();\n    print_it(___);\n}',
+      instruction: 'Fill in the blank to make the print_it call work',
+      expectedOutput: 'hello, world',
+      answerCode: 'fn print_it(s: &str) {\n    println!("{}", s);\n}\n\nfn main() {\n    let s: Box<str> = "hello, world".into();\n    print_it(&s);\n}',
+      why: 'A reference to a <code>Box&lt;str&gt;</code> automatically derefs to <code>&amp;str</code> when passed to a function that expects it. The compiler follows the chain of references for you.'
     },
     {
       num: 3,
-      title: "Copy Trait",
-      explainer: "<p>Some types implement the <code>Copy</code> trait - meaning assignment duplicates the value instead of moving it. These are stack-only types with a fixed size: <code>i32</code>, <code>u64</code>, <code>bool</code>, etc.</p><p>Heap types like <code>String</code> do NOT implement <code>Copy</code>. That's why they move instead of copy.</p>",
-      task: "<p>This code already compiles. Run it in the Playground and make sure you understand why both variables are valid.</p>",
-      starterCode: "fn main() {\n    let x1: i32 = 10;\n    let x2 = x1;\n\n    println!(\"x1 = {}, x2 = {}\", x1, x2);\n}",
-      instruction: "",
-      expectedOutput: "x1 = 10, x2 = 10",
-      answerCode: "",
-      why: ""
+      title: 'Building a String with push and push_str',
+      explainer: '<p><code>push_str</code> appends a whole string slice — multiple characters in double quotes. <code>push</code> appends exactly one character in single quotes.</p><p>A <code>String</code> must be declared with <code>mut</code> before you can append to it. Without it, the <code>String</code> is sealed shut and refuses to grow.</p>',
+      task: '<p>A function builds text by adding pieces to a <code>String</code>. Right now it fails because the <code>String</code> is not declared mutable and two method calls are swapped.</p>',
+      starterCode: "fn main() {\n    let s = String::new();\n    s.push(\"monthly \");\n    s.push_str('p');\n    s.push_str(\"lan\");\n    println!(\"{}\", s);\n}",
+      instruction: 'Fix all errors without adding a new line',
+      expectedOutput: 'monthly plan',
+      answerCode: "fn main() {\n    let mut s = String::new();\n    s.push_str(\"monthly \");\n    s.push('p');\n    s.push_str(\"lan\");\n    println!(\"{}\", s);\n}",
+      why: '<code>mut</code> unlocks the <code>String</code> so it can grow. <code>push_str</code> takes a string slice in double quotes. <code>push</code> takes a single char in single quotes. The original code had them swapped.'
     },
     {
       num: 4,
-      title: "Ownership into Function",
-      explainer: "<p>Passing a <code>String</code> to a function moves ownership to the function parameter. When the function ends, the parameter is dropped. The caller's variable is now invalid.</p><p>Two ways to fix: clone the value before passing it, or have the function return ownership back.</p>",
-      task: "<p>A string is passed into a function, moving ownership. Right now it fails because <code>s</code> was moved into the function and is no longer valid in <code>main</code>.</p><ol><li>Pass <code>s</code> to <code>take_ownership()</code></li><li>Print the string inside the function</li><li>Print it again in <code>main</code> after the call</li></ol>",
-      starterCode: "fn take_ownership(s: String) {\n    println!(\"Got: {}\", s);\n}\n\nfn main() {\n    let s = String::from(\"hello\");\n    take_ownership(s);\n    println!(\"Still have: {}\", s);\n}",
-      instruction: "Fix this in two ways so <code>s</code> can still be printed after the call",
-      expectedOutput: "Got: hello\nStill have: hello",
-      answerCode: "fn take_ownership(s: String) {\n    println!(\"Got: {}\", s);\n}\n\nfn main() {\n    let s = String::from(\"hello\");\n    take_ownership(s.clone());\n    println!(\"Still have: {}\", s);\n}\n\n// Answer - Way 2 (return ownership):\n// fn take_ownership(s: String) -> String {\n//     println!(\"Got: {}\", s);\n//     s\n// }\n// \n// fn main() {\n//     let s = String::from(\"hello\");\n//     let s = take_ownership(s);\n//     println!(\"Still have: {}\", s);\n// }",
-      why: ""
+      title: 'Concatenating Strings with +',
+      explainer: '<p>The <code>+</code> operator takes a <code>String</code> on the left and a <code>&amp;str</code> on the right. It reuses the left <code>String</code>\'s memory and appends the right side to it.</p><p>After the operation, the left <code>String</code> is no longer valid — its data was moved into the result.</p>',
+      task: '<p>A program joins two strings into one. Right now it fails because the second argument is a <code>String</code>, but <code>+</code> requires a <code>&amp;str</code> on the right side.</p>',
+      starterCode: 'fn main() {\n    let s1 = String::from("hello,");\n    let s2 = String::from(" world");\n    let s3 = s1 + s2;\n    println!("{}", s3);\n}',
+      instruction: 'Fix the concatenation so it compiles and prints correctly',
+      expectedOutput: 'hello, world',
+      answerCode: 'fn main() {\n    let s1 = String::from("hello,");\n    let s2 = String::from(" world");\n    let s3 = s1 + &s2;\n    println!("{}", s3);\n}',
+      why: 'Passing <code>&amp;s2</code> instead of <code>s2</code> gives the <code>+</code> operator the <code>&amp;str</code> it requires on the right side. <code>s1</code> is consumed by the operation, so only <code>s3</code> is valid afterward.'
     },
     {
       num: 5,
-      title: "Returning Ownership",
-      explainer: "<p>If a function takes ownership of a <code>String</code>, it can give it back by returning it. Add <code>-&gt; String</code> as the return type and put the variable as the last expression in the function body - no semicolon.</p><p>In smart contracts, a helper that processes a wallet string and hands it back lets the caller keep using it.</p>",
-      task: "<p>The code below wants to:</p><ol><li>Pass a string into <code>process()</code></li><li>Print it inside the function</li><li>Use the returned string in <code>main</code></li></ol><p>Right now <code>process()</code> takes the string but doesn't return it, so <code>main</code> can't use it.</p>",
-      starterCode: "fn process(s: String) {\n    println!(\"Processing: {}\", s);\n}\n\nfn main() {\n    let s = String::from(\"hello\");\n    let s = process(s);\n    println!(\"Done: {}\", s);\n}",
-      instruction: "Fix the function so it returns the String",
-      expectedOutput: "Processing: hello\nDone: hello",
-      answerCode: "fn process(s: String) -> String {\n    println!(\"Processing: {}\", s);\n    s\n}\n\nfn main() {\n    let s = String::from(\"hello\");\n    let s = process(s);\n    println!(\"Done: {}\", s);\n}",
-      why: ""
+      title: 'Converting &str to String',
+      explainer: '<p>A <code>&amp;str</code> is a borrowed view — it points to text that lives somewhere else. A <code>String</code> owns its own heap memory. To convert, you ask Rust to copy the text into a new heap buffer.</p><p>Two common ways: <code>.to_string()</code> and <code>String::from()</code>. Both do the same thing.</p>',
+      task: '<p>The code declares <code>name</code> as a <code>&amp;str</code> and tries to assign it directly to a <code>String</code> variable. Right now the types do not match and it fails to compile.</p>',
+      starterCode: 'fn main() {\n    let name: &str = "premium";\n    let stored: String = name;\n    println!("{}", stored);\n}',
+      instruction: 'Convert name so it can be stored as a String. Do not add or remove any lines.',
+      expectedOutput: 'premium',
+      answerCode: 'fn main() {\n    let name: &str = "premium";\n    let stored: String = name.to_string();\n    println!("{}", stored);\n}',
+      why: '<code>.to_string()</code> copies the slice\'s text into new heap memory, creating an owned <code>String</code>. <code>String::from(name)</code> does the same thing and is equally correct.'
     },
     {
       num: 6,
-      title: "into_bytes vs as_bytes",
-      explainer: "<p><code>into_bytes()</code> converts a <code>String</code> into a <code>Vec&lt;u8&gt;</code> and destroys the original - ownership is consumed. <code>as_bytes()</code> returns a slice reference (<code>&amp;[u8]</code>) and leaves the original <code>String</code> intact.</p><p>If you need the string afterward, use <code>as_bytes()</code>.</p><p>In smart contracts, inspecting a wallet string's bytes for validation should not consume the string if you still need it afterward.</p>",
-      task: "<p>The code below wants to:</p><ol><li>Get the bytes of the string</li><li>Print the bytes</li><li>Print the original string</li></ol><p>Right now <code>into_bytes()</code> consumes <code>s</code>, so the final print fails.</p>",
-      starterCode: "fn main() {\n    let s = String::from(\"hello\");\n    let bytes = s.into_bytes();\n    println!(\"Bytes: {:?}\", bytes);\n    println!(\"String: {}\", s);\n}",
-      instruction: "Change one method so the original string stays usable",
-      expectedOutput: "Bytes: [104, 101, 108, 108, 111]\nString: hello",
-      answerCode: "fn main() {\n    let s = String::from(\"hello\");\n    let bytes = s.as_bytes();\n    println!(\"Bytes: {:?}\", bytes);\n    println!(\"String: {}\", s);\n}",
-      why: ""
+      title: 'Passing a String as a Slice',
+      explainer: '<p>A reference to a <code>String</code> (<code>&amp;s</code>) can be automatically treated as a <code>&amp;str</code>. This is called deref coercion. The compiler reaches through the reference and produces a slice pointing to the same heap data.</p><p>In a contract, a helper that reads a wallet address expects <code>&amp;str</code> for read-only access, but the caller holds a <code>String</code>.</p>',
+      task: '<p>A function expects <code>&amp;str</code> but the caller passes a <code>String</code> directly. Right now the types do not match and it fails to compile.</p>',
+      starterCode: 'fn print_it(s: &str) {\n    println!("{}", s);\n}\n\nfn main() {\n    let s = String::from("hello, world");\n    print_it(s);\n}',
+      instruction: 'Fix this without adding a new line',
+      expectedOutput: 'hello, world',
+      answerCode: 'fn print_it(s: &str) {\n    println!("{}", s);\n}\n\nfn main() {\n    let s = String::from("hello, world");\n    print_it(&s);\n}',
+      why: 'Passing <code>&amp;s</code> instead of <code>s</code> gives the function a reference. Rust automatically coerces <code>&amp;String</code> to <code>&amp;str</code> when the function expects it.'
     }
   ];
 
@@ -274,7 +269,6 @@
     hint.className = 'starter-hint';
     hint.textContent = 'Clear the Playground on the right and paste this code to begin.';
     left.appendChild(hint);
-
     const starterWrap = document.createElement('div');
     starterWrap.className = 'starter-block';
     const starterPre = document.createElement('pre');
@@ -329,7 +323,7 @@
       card.className = 'answer-card';
       const head = document.createElement('div');
       head.className = 'answer-card-head';
-      head.textContent = 'Exercise ' + ex.num + ' — ' + ex.title;
+      head.textContent = 'Exercise ' + ex.num + ' - ' + ex.title;
       const body = document.createElement('div');
       body.className = 'answer-card-body';
       const codeWrap = document.createElement('div');

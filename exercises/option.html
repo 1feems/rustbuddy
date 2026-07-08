@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rust: Ownership - Rust Bud</title>
+  <title>Rust: Option - Rust Bud</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -102,7 +102,7 @@
     <span class="header-sep">/</span>
     <a href="index.html" class="back-link">Exercises</a>
     <span class="header-sep">/</span>
-    <span class="header-title">Ownership</span>
+    <span class="header-title">Option</span>
   </div>
   <nav class="nav-links">
     <a href="index.html" class="nav-link active">Exercises</a>
@@ -123,8 +123,8 @@
     <div class="tab-panel" id="panel-overview">
       <div class="overview-wrap">
         <div class="overview-topic">Topic</div>
-        <div class="overview-headline">Ownership</div>
-        <div class="overview-desc">Ownership is how Rust manages memory without a garbage collector. Every value has exactly one owner. When you assign a heap value to a new variable, ownership moves and the old variable becomes invalid. This prevents two parts of your code from trying to free the same memory.</div>
+        <div class="overview-headline">Option</div>
+        <div class="overview-desc">Option is a built-in Rust enum that replaces null. Instead of letting a missing value crash your program, Option forces you to handle both possibilities: Some(value) when data exists, None when it doesn't. Every function that might not find what it's looking for returns Option, and match or if let makes it safe to unwrap.</div>
         <div class="overview-divider"></div>
         <div class="overview-ref-label">Quick Reference</div>
         <table class="terms-table">
@@ -132,12 +132,12 @@
             <tr><th>Concept</th><th>What it means</th></tr>
           </thead>
           <tbody>
-            <tr><td>Owner</td><td>The variable that holds a value. Only one owner at a time.</td></tr>
-            <tr><td>Move</td><td>Transferring ownership to a new variable. The old one becomes invalid.</td></tr>
-            <tr><td>.clone()</td><td>Deep copy — duplicates heap data so both variables stay valid.</td></tr>
-            <tr><td>Copy trait</td><td>Stack-only types like i32 and bool copy automatically. No move.</td></tr>
-            <tr><td>into_bytes()</td><td>Consumes a String — the original is gone afterward.</td></tr>
-            <tr><td>as_bytes()</td><td>Borrows a String — the original stays valid.</td></tr>
+            <tr><td>Option</td><td>A built-in enum that replaces "null" in Rust. It says "this might have a value, or it might not."</td></tr>
+            <tr><td>Some(T)</td><td>One variant of <code>Option</code> that wraps an actual value. <code>Some(5)</code> means "there is a value, and it's 5."</td></tr>
+            <tr><td>None</td><td>The other variant of <code>Option</code>. <code>None</code> means "there is no value."</td></tr>
+            <tr><td>match on Option</td><td>The standard way to handle both possibilities - check for Some and None.</td></tr>
+            <tr><td>if let</td><td>A shorter way to unwrap Some when you only care about the value-carrying case.</td></tr>
+            <tr><td>Prelude</td><td>Rust's built-in types (like Option) that you can use without importing anything.</td></tr>
           </tbody>
         </table>
       </div>
@@ -162,12 +162,12 @@
             <tr><th>Term</th><th>What it means</th><th>When you use it</th></tr>
           </thead>
           <tbody>
-            <tr><td>Owner</td><td>The variable that holds a value, only one at a time</td><td>Every heap value in Rust has exactly one owner</td></tr>
-            <tr><td>Move</td><td>Transferring ownership to a new variable, the old one becomes invalid</td><td>Assigning a String or Vec to another variable</td></tr>
-            <tr><td>.clone()</td><td>Deep copies heap data so both variables stay valid</td><td>When you need a separate copy of a String or Vec</td></tr>
-            <tr><td>Copy trait</td><td>Stack-only types copy automatically on assignment, no move</td><td>i32, u64, bool, char and other fixed-size stack types</td></tr>
-            <tr><td>into_bytes()</td><td>Consumes a String and returns its bytes as Vec&lt;u8&gt;</td><td>When you only need the bytes and are done with the original</td></tr>
-            <tr><td>as_bytes()</td><td>Borrows a String and returns its bytes as &amp;[u8]</td><td>When you need to read the bytes but keep the String usable</td></tr>
+            <tr><td>Option</td><td>A built-in enum that replaces null in Rust</td><td>When a value might or might not exist</td></tr>
+            <tr><td>Some(T)</td><td>The variant that wraps an actual value</td><td>When you have a value and want to signal it exists</td></tr>
+            <tr><td>None</td><td>The variant that means there is no value</td><td>When indicating the absence of a value</td></tr>
+            <tr><td>match on Option</td><td>The standard way to handle both Some and None cases</td><td>When you need to handle both the present and absent cases explicitly</td></tr>
+            <tr><td>if let</td><td>A shorter way to unwrap Some when you only care about the value case</td><td>When you only need to act if a value is present</td></tr>
+            <tr><td>Prelude</td><td>Rust built-in types available without any import statement</td><td>Option, String, Vec - always available, no <code>use</code> needed</td></tr>
           </tbody>
         </table>
       </div>
@@ -181,69 +181,69 @@
   const exercises = [
     {
       num: 1,
-      title: "Move Semantics",
-      explainer: "<p>In Rust, every value has exactly one owner. When you assign a heap value like <code>String</code> to a new variable, ownership moves - the old variable becomes invalid. Rust does this to prevent double-free errors.</p><p>Think of it as handing over the keys to a car - only one person can own it at a time.</p>",
-      task: "<p>A string is assigned to a new variable, which moves ownership. Right now it fails because <code>s1</code> is no longer valid after the move.</p><ol><li>Create a string <code>s1</code></li><li>Keep both <code>s1</code> and <code>s2</code> usable after the assignment</li><li>Print both</li></ol>",
-      starterCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1;\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
-      instruction: "Fix this so both variables can be printed",
-      expectedOutput: "s1 = hello\ns2 = hello",
-      answerCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1.clone();\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
-      why: ""
+      title: "Wrapping a Value in Some",
+      explainer: "<p><code>Option</code> is an enum with two variants: <code>Some(value)</code> and <code>None</code>. <code>Some(value)</code> wraps an actual value so you can pass it around as a single type. <code>None</code> says nothing is here.</p><p>Think of it like a package notification: either the package is at your door (<code>Some</code>) or there was no delivery today (<code>None</code>).</p>",
+      task: "<p>A variable holds the number 5 as a plain integer. Right now it has the type <code>i32</code>, not <code>Option&lt;i32&gt;</code>.</p><p>Wrap the value <code>5</code> inside <code>Some()</code> so <code>five</code> has the type <code>Option&lt;i32&gt;</code>.</p>",
+      starterCode: "fn main() {\n    let five = 5;\n    println!(\"{:?}\", five);\n}",
+      instruction: "Wrap the value in <code>Some()</code>",
+      expectedOutput: "Some(5)",
+      answerCode: "fn main() {\n    let five = Some(5);\n    println!(\"{:?}\", five);\n}",
+      why: "<code>Some(5)</code> wraps the number 5 inside the <code>Option&lt;i32&gt;</code> type. The compiler infers <code>i32</code> from the literal. <code>Option</code> is in the prelude so no import is needed."
     },
     {
       num: 2,
-      title: "Clone",
-      explainer: "<p><code>.clone()</code> duplicates the entire heap allocation so both variables get independent copies. Stack types like <code>i32</code> don't need it - they copy automatically. Heap types like <code>String</code> do not copy automatically.</p>",
-      task: "<p>A string is moved to a new variable, invalidating the original. Right now <code>s1</code> is invalidated by the move to <code>s2</code>.</p><ol><li>Keep both <code>s1</code> and <code>s2</code> usable after the assignment</li><li>Print both</li></ol>",
-      starterCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1;\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
-      instruction: "Add one method call so both variables stay valid",
-      expectedOutput: "s1 = hello\ns2 = hello",
-      answerCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1.clone();\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
-      why: ""
+      title: "Handling None",
+      explainer: "<p>When you <code>match</code> on an <code>Option</code>, you must handle both <code>Some(value)</code> and <code>None</code>. If you leave one out, the compiler complains.</p><p>Think of it like a checkbox on a form: the program forces you to say what happens if the box is checked AND what happens if it isn't.</p>",
+      task: "<p>A <code>match</code> handles the case where a value is present but is missing the case where no value exists. Right now it does not compile.</p><p>Add a <code>None</code> arm to the <code>match</code> so it handles both cases. For <code>None</code>, print <code>Nothing here</code>.</p>",
+      starterCode: "fn main() {\n    let maybe = Some(10);\n\n    match maybe {\n        Some(n) => println!(\"Got: {}\", n),\n    }\n}",
+      instruction: "Add a <code>None</code> arm to the match",
+      expectedOutput: "Got: 10",
+      answerCode: "fn main() {\n    let maybe = Some(10);\n\n    match maybe {\n        Some(n) => println!(\"Got: {}\", n),\n        None => println!(\"Nothing here\"),\n    }\n}",
+      why: "Every <code>match</code> on <code>Option</code> must be exhaustive - all variants must have an arm. The <code>None =&gt;</code> arm handles the absence case. Without it, the compiler will not let the code compile."
     },
     {
       num: 3,
-      title: "Copy Trait",
-      explainer: "<p>Some types implement the <code>Copy</code> trait - meaning assignment duplicates the value instead of moving it. These are stack-only types with a fixed size: <code>i32</code>, <code>u64</code>, <code>bool</code>, etc.</p><p>Heap types like <code>String</code> do NOT implement <code>Copy</code>. That's why they move instead of copy.</p>",
-      task: "<p>This code already compiles. Run it in the Playground and make sure you understand why both variables are valid.</p>",
-      starterCode: "fn main() {\n    let x1: i32 = 10;\n    let x2 = x1;\n\n    println!(\"x1 = {}, x2 = {}\", x1, x2);\n}",
-      instruction: "",
-      expectedOutput: "x1 = 10, x2 = 10",
-      answerCode: "",
-      why: ""
+      title: "The plus_one Pattern",
+      explainer: "<p>A function that takes <code>Option</code> and returns <code>Option</code> follows a simple rule: <code>None</code> in means <code>None</code> out. For <code>Some(i)</code>, unwrap the value, do the work, then wrap the result back in <code>Some</code>.</p><p>This pattern is common for safe transforms - it passes nothing through unchanged.</p>",
+      task: "<p>A function increments an <code>Option&lt;i32&gt;</code> by one. Right now the <code>match</code> only handles <code>Some</code> and does not compile.</p><p>Add the <code>None</code> case to the <code>match</code> so the function compiles. When <code>x</code> is <code>None</code>, return <code>None</code>.</p>",
+      starterCode: "fn plus_one(x: Option<i32>) -> Option<i32> {\n    match x {\n        Some(i) => Some(i + 1),\n    }\n}\n\nfn main() {\n    println!(\"{:?}\", plus_one(Some(5)));\n    println!(\"{:?}\", plus_one(None));\n}",
+      instruction: "Add the <code>None</code> arm that returns <code>None</code>",
+      expectedOutput: "Some(6)\nNone",
+      answerCode: "fn plus_one(x: Option<i32>) -> Option<i32> {\n    match x {\n        None => None,\n        Some(i) => Some(i + 1),\n    }\n}\n\nfn main() {\n    println!(\"{:?}\", plus_one(Some(5)));\n    println!(\"{:?}\", plus_one(None));\n}",
+      why: "<code>None =&gt; None</code> is the identity path: if there's no value, there's nothing to increment, so return no value. This lets the function safely handle both cases without crashing."
     },
     {
       num: 4,
-      title: "Ownership into Function",
-      explainer: "<p>Passing a <code>String</code> to a function moves ownership to the function parameter. When the function ends, the parameter is dropped. The caller's variable is now invalid.</p><p>Two ways to fix: clone the value before passing it, or have the function return ownership back.</p>",
-      task: "<p>A string is passed into a function, moving ownership. Right now it fails because <code>s</code> was moved into the function and is no longer valid in <code>main</code>.</p><ol><li>Pass <code>s</code> to <code>take_ownership()</code></li><li>Print the string inside the function</li><li>Print it again in <code>main</code> after the call</li></ol>",
-      starterCode: "fn take_ownership(s: String) {\n    println!(\"Got: {}\", s);\n}\n\nfn main() {\n    let s = String::from(\"hello\");\n    take_ownership(s);\n    println!(\"Still have: {}\", s);\n}",
-      instruction: "Fix this in two ways so <code>s</code> can still be printed after the call",
-      expectedOutput: "Got: hello\nStill have: hello",
-      answerCode: "fn take_ownership(s: String) {\n    println!(\"Got: {}\", s);\n}\n\nfn main() {\n    let s = String::from(\"hello\");\n    take_ownership(s.clone());\n    println!(\"Still have: {}\", s);\n}\n\n// Answer - Way 2 (return ownership):\n// fn take_ownership(s: String) -> String {\n//     println!(\"Got: {}\", s);\n//     s\n// }\n// \n// fn main() {\n//     let s = String::from(\"hello\");\n//     let s = take_ownership(s);\n//     println!(\"Still have: {}\", s);\n// }",
-      why: ""
+      title: "Unwrapping with if let",
+      explainer: "<p><code>if let Some(n) = value</code> is a shorter way to say: if <code>value</code> is <code>Some</code>, grab the inner value as <code>n</code> and run this block. It skips the block entirely if the value is <code>None</code>.</p><p>Think of it like a conditional mailbox check: if a package is there, open it; if not, move on.</p>",
+      task: "<p>A program prints the value inside an <code>Option</code> only if it is <code>Some</code>. Right now it works for <code>Some(6)</code> but has no <code>else</code> case.</p><p>Change <code>six</code> to <code>None</code> and add an <code>else</code> block that prints <code>No value</code>. Run both versions and compare.</p>",
+      starterCode: "fn main() {\n    let six = Some(6);\n\n    if let Some(n) = six {\n        println!(\"{}\", n);\n    }\n}",
+      instruction: "Change <code>six</code> to <code>None</code> and add an <code>else</code> block",
+      expectedOutput: "No value",
+      answerCode: "fn main() {\n    let six = None;\n\n    if let Some(n) = six {\n        println!(\"{}\", n);\n    } else {\n        println!(\"No value\");\n    }\n}",
+      why: "<code>if let Some(n)</code> destructures the <code>Option</code>: <code>n</code> holds the inner value if it exists. When <code>six</code> is <code>None</code>, the <code>if</code> block is skipped and the <code>else</code> block runs."
     },
     {
       num: 5,
-      title: "Returning Ownership",
-      explainer: "<p>If a function takes ownership of a <code>String</code>, it can give it back by returning it. Add <code>-&gt; String</code> as the return type and put the variable as the last expression in the function body - no semicolon.</p><p>In smart contracts, a helper that processes a wallet string and hands it back lets the caller keep using it.</p>",
-      task: "<p>The code below wants to:</p><ol><li>Pass a string into <code>process()</code></li><li>Print it inside the function</li><li>Use the returned string in <code>main</code></li></ol><p>Right now <code>process()</code> takes the string but doesn't return it, so <code>main</code> can't use it.</p>",
-      starterCode: "fn process(s: String) {\n    println!(\"Processing: {}\", s);\n}\n\nfn main() {\n    let s = String::from(\"hello\");\n    let s = process(s);\n    println!(\"Done: {}\", s);\n}",
-      instruction: "Fix the function so it returns the String",
-      expectedOutput: "Processing: hello\nDone: hello",
-      answerCode: "fn process(s: String) -> String {\n    println!(\"Processing: {}\", s);\n    s\n}\n\nfn main() {\n    let s = String::from(\"hello\");\n    let s = process(s);\n    println!(\"Done: {}\", s);\n}",
-      why: ""
+      title: "Type Inference on Option",
+      explainer: "<p><code>Option</code> is in Rust's prelude - the compiler already knows what it is. In many cases, you can omit the type annotation and let Rust figure it out from how you use the value.</p>",
+      task: "<p>A variable has an explicit type annotation <code>Option&lt;i32&gt;</code>. The function signature already gives the compiler enough information to infer it.</p><p>Remove the <code>: Option&lt;i32&gt;</code> type annotation from <code>bonus</code> and confirm the code still compiles and produces the same output.</p>",
+      starterCode: "fn reward(x: Option<i32>) -> Option<i32> {\n    match x {\n        None => None,\n        Some(i) => Some(i * 2),\n    }\n}\n\nfn main() {\n    let bonus: Option<i32> = Some(5);\n    println!(\"{:?}\", reward(bonus));\n}",
+      instruction: "Remove the type annotation from <code>bonus</code> and confirm it still works",
+      expectedOutput: "Some(10)",
+      answerCode: "fn reward(x: Option<i32>) -> Option<i32> {\n    match x {\n        None => None,\n        Some(i) => Some(i * 2),\n    }\n}\n\nfn main() {\n    let bonus = Some(5);\n    println!(\"{:?}\", reward(bonus));\n}",
+      why: "The compiler infers <code>Option&lt;i32&gt;</code> from the function signature <code>reward(x: Option&lt;i32&gt;)</code>. Explicit annotations are optional when the compiler has enough context from how the value is used."
     },
     {
       num: 6,
-      title: "into_bytes vs as_bytes",
-      explainer: "<p><code>into_bytes()</code> converts a <code>String</code> into a <code>Vec&lt;u8&gt;</code> and destroys the original - ownership is consumed. <code>as_bytes()</code> returns a slice reference (<code>&amp;[u8]</code>) and leaves the original <code>String</code> intact.</p><p>If you need the string afterward, use <code>as_bytes()</code>.</p><p>In smart contracts, inspecting a wallet string's bytes for validation should not consume the string if you still need it afterward.</p>",
-      task: "<p>The code below wants to:</p><ol><li>Get the bytes of the string</li><li>Print the bytes</li><li>Print the original string</li></ol><p>Right now <code>into_bytes()</code> consumes <code>s</code>, so the final print fails.</p>",
-      starterCode: "fn main() {\n    let s = String::from(\"hello\");\n    let bytes = s.into_bytes();\n    println!(\"Bytes: {:?}\", bytes);\n    println!(\"String: {}\", s);\n}",
-      instruction: "Change one method so the original string stays usable",
-      expectedOutput: "Bytes: [104, 101, 108, 108, 111]\nString: hello",
-      answerCode: "fn main() {\n    let s = String::from(\"hello\");\n    let bytes = s.as_bytes();\n    println!(\"Bytes: {:?}\", bytes);\n    println!(\"String: {}\", s);\n}",
-      why: ""
+      title: "Safe Array Access",
+      explainer: "<p>Direct indexing with <code>[index]</code> panics when the index is too large. The <code>get()</code> method returns <code>Option</code> instead: <code>Some(value)</code> if the index exists, <code>None</code> if it doesn't. The caller then matches on the <code>Option</code> to handle both cases gracefully.</p>",
+      task: "<p>A program reads an element that might be out of range. Right now it uses direct indexing, which will panic because index 3 does not exist in a 3-element array.</p><p>Replace the direct index with <code>get()</code> and add a <code>match</code> to handle both <code>Some</code> and <code>None</code>. For <code>None</code>, print <code>No such name</code>.</p>",
+      starterCode: "fn main() {\n    let names = [\"alice\", \"bob\", \"carol\"];\n    let third = names[3];\n    println!(\"{}\", third);\n}",
+      instruction: "Replace direct indexing with <code>get()</code> and handle both cases",
+      expectedOutput: "No such name",
+      answerCode: "fn main() {\n    let names = [\"alice\", \"bob\", \"carol\"];\n\n    match names.get(3) {\n        Some(name) => println!(\"{}\", name),\n        None => println!(\"No such name\"),\n    }\n}",
+      why: "<code>names.get(3)</code> returns <code>None</code> because the array has only 3 elements (indices 0, 1, 2). The program prints <code>No such name</code> instead of crashing. This pattern is important any time you're reading from a position that might not exist."
     }
   ];
 
@@ -329,7 +329,7 @@
       card.className = 'answer-card';
       const head = document.createElement('div');
       head.className = 'answer-card-head';
-      head.textContent = 'Exercise ' + ex.num + ' — ' + ex.title;
+      head.textContent = 'Exercise ' + ex.num + ' - ' + ex.title;
       const body = document.createElement('div');
       body.className = 'answer-card-body';
       const codeWrap = document.createElement('div');

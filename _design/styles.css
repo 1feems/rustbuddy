@@ -1,0 +1,121 @@
+/* ============================================================
+   Rust Buddy — Design Tokens
+   All site-wide CSS custom properties live here.
+   Every HTML page should link to this file.
+   To change a value: update it here, commit, push — done.
+   ============================================================ */
+
+:root {
+
+  /* ----------------------------------------------------------
+     Colors
+  ---------------------------------------------------------- */
+
+  --color-bg:        #FFFFFF;   /* page background */
+  --color-surface:   #1E1E1A;   /* dark panel surface */
+  --color-primary:   #FF7657;   /* orange — logo, accents, active states */
+  --color-secondary: #C5E94E;   /* lime — nav pills, hero labels */
+  --color-ink:       #171714;   /* primary text */
+  --color-muted:     #77766F;   /* secondary text, breadcrumbs */
+  --color-border:    #171714;   /* hard 1px borders */
+
+  /* Flashcard shell */
+  --color-card-shell: #F2F5F7;
+
+  /* ----------------------------------------------------------
+     Home Page Card Gradients
+  ---------------------------------------------------------- */
+
+  --grad-card-exercises:  linear-gradient(135deg, #FFB49A 0%, #FFC282 50%, #FFD9B8 100%);
+  --grad-card-flashcards: linear-gradient(135deg, #CCF25F 0%, #DCFA8A 40%, #F3FFCA 100%);
+  --grad-card-resources:  linear-gradient(135deg, #F07898 0%, #F59DB8 40%, #FAC8B4 100%);
+
+  /* ----------------------------------------------------------
+     Flashcard Deck Gradients
+     Repeats after Yellow (deck 06+)
+  ---------------------------------------------------------- */
+
+  --grad-deck-lime:   linear-gradient(135deg, #A8D92F 0%, #C5E94E 34%, #DAF06F 68%, #EFF8A7 100%);
+  --grad-deck-orange: linear-gradient(135deg, #FF7657 0%, #F97316 50%, #E85D04 100%);
+  --grad-deck-cyan:   linear-gradient(135deg, #14A6C8 0%, #35BFDA 40%, #A8EDF0 100%);
+  --grad-deck-pink:   linear-gradient(135deg, #DE4775 0%, #EA6689 40%, #F6A56F 100%);
+  --grad-deck-yellow: linear-gradient(135deg, #E8C800 0%, #F5DC3A 40%, #FFFD74 100%);
+  --grad-deck-purple: linear-gradient(135deg, #7B5EA7 0%, #9B7EC8 50%, #BDA8E0 100%);
+
+  /* ----------------------------------------------------------
+     Typography
+  ---------------------------------------------------------- */
+
+  --font-family: "Inter", system-ui, sans-serif;
+
+  --font-size-logo:          16px;
+  --font-size-nav:           11px;
+  --font-size-hero-home:     68px;
+  --font-size-hero-landing:  clamp(36px, 4vw, 58px);
+  --font-size-card-title:    26px;
+  --font-size-card-label:    10px;
+  --font-size-card-desc:     12px;
+  --font-size-body:          14px;
+  --font-size-code:          13px;
+
+  --font-weight-regular: 400;
+  --font-weight-medium:  500;
+  --font-weight-bold:    700;
+  --font-weight-heavy:   800;
+
+  /* ----------------------------------------------------------
+     Spacing
+     Base unit: 12px
+  ---------------------------------------------------------- */
+
+  --space-xs:          4px;
+  --space-sm:          12px;
+  --space-md:          16px;
+  --space-lg:          24px;
+  --space-xl:          32px;
+  --space-2xl:         48px;
+  --space-hero-gap:    56px;
+  --space-card-gap:    32px;
+
+  /* ----------------------------------------------------------
+     Shadows
+  ---------------------------------------------------------- */
+
+  --shadow-card-hover:    0 24px 52px -8px rgba(0,0,0,0.2);
+  --shadow-deck-hover:    0 20px 40px rgba(0,0,0,0.16);
+  --shadow-panel-subtle:  0px 8px 30px 0px rgba(0,0,0,0.04);
+
+  /* ----------------------------------------------------------
+     Motion
+  ---------------------------------------------------------- */
+
+  --transition-duration: 200ms;
+  --transition-easing:   ease;
+  --transition-default:  transform 200ms ease, filter 200ms ease;
+  --hover-lift:          translateY(-4px);
+
+  /* ----------------------------------------------------------
+     Layout
+  ---------------------------------------------------------- */
+
+  --nav-padding:          16px 40px;
+  --hero-padding:         24px 40px 28px;
+  --cards-padding:        24px 40px 80px;
+  --hero-max-width:       1400px;
+  --hero-desc-max-width:  360px;
+
+  /* Home cards */
+  --card-width:   300px;
+  --card-height:  480px;
+  --card-padding: 32px;
+
+  /* Nav pills */
+  --pill-bg:             var(--color-secondary);
+  --pill-color:          var(--color-ink);
+  --pill-padding:        5px 14px;
+  --pill-border-radius:  20px;
+  --pill-font-size:      11px;
+  --pill-font-weight:    700;
+  --pill-gap:            8px;
+
+}

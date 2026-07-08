@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rust: Ownership - Rust Bud</title>
+  <title>Rust: Enums - Rust Bud</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -102,7 +102,7 @@
     <span class="header-sep">/</span>
     <a href="index.html" class="back-link">Exercises</a>
     <span class="header-sep">/</span>
-    <span class="header-title">Ownership</span>
+    <span class="header-title">Enums</span>
   </div>
   <nav class="nav-links">
     <a href="index.html" class="nav-link active">Exercises</a>
@@ -123,8 +123,8 @@
     <div class="tab-panel" id="panel-overview">
       <div class="overview-wrap">
         <div class="overview-topic">Topic</div>
-        <div class="overview-headline">Ownership</div>
-        <div class="overview-desc">Ownership is how Rust manages memory without a garbage collector. Every value has exactly one owner. When you assign a heap value to a new variable, ownership moves and the old variable becomes invalid. This prevents two parts of your code from trying to free the same memory.</div>
+        <div class="overview-headline">Enums</div>
+        <div class="overview-desc">An enum defines a type that can be exactly one of a fixed set of values. Each option is called a variant. Variants can hold no data, tuple-like data, or struct-like named fields - all in the same enum. This makes enums more powerful than simple flags. You use match to run different code depending on which variant is active.</div>
         <div class="overview-divider"></div>
         <div class="overview-ref-label">Quick Reference</div>
         <table class="terms-table">
@@ -132,12 +132,12 @@
             <tr><th>Concept</th><th>What it means</th></tr>
           </thead>
           <tbody>
-            <tr><td>Owner</td><td>The variable that holds a value. Only one owner at a time.</td></tr>
-            <tr><td>Move</td><td>Transferring ownership to a new variable. The old one becomes invalid.</td></tr>
-            <tr><td>.clone()</td><td>Deep copy — duplicates heap data so both variables stay valid.</td></tr>
-            <tr><td>Copy trait</td><td>Stack-only types like i32 and bool copy automatically. No move.</td></tr>
-            <tr><td>into_bytes()</td><td>Consumes a String — the original is gone afterward.</td></tr>
-            <tr><td>as_bytes()</td><td>Borrows a String — the original stays valid.</td></tr>
+            <tr><td>enum</td><td>A custom type where only ONE value is active at a time.</td></tr>
+            <tr><td>Variant</td><td>One of the possible values inside an enum.</td></tr>
+            <tr><td>EnumName::Variant</td><td>Two colons (<code>::</code>) connect the enum name to the variant you picked.</td></tr>
+            <tr><td>Discriminator</td><td>A number Rust assigns to each variant (starting at 0). You can set your own.</td></tr>
+            <tr><td>match</td><td>A way to say "if this variant, do this; if that variant, do that."</td></tr>
+            <tr><td>_ catch-all</td><td>An underscore arm in <code>match</code> that handles every variant not named explicitly.</td></tr>
           </tbody>
         </table>
       </div>
@@ -162,12 +162,12 @@
             <tr><th>Term</th><th>What it means</th><th>When you use it</th></tr>
           </thead>
           <tbody>
-            <tr><td>Owner</td><td>The variable that holds a value, only one at a time</td><td>Every heap value in Rust has exactly one owner</td></tr>
-            <tr><td>Move</td><td>Transferring ownership to a new variable, the old one becomes invalid</td><td>Assigning a String or Vec to another variable</td></tr>
-            <tr><td>.clone()</td><td>Deep copies heap data so both variables stay valid</td><td>When you need a separate copy of a String or Vec</td></tr>
-            <tr><td>Copy trait</td><td>Stack-only types copy automatically on assignment, no move</td><td>i32, u64, bool, char and other fixed-size stack types</td></tr>
-            <tr><td>into_bytes()</td><td>Consumes a String and returns its bytes as Vec&lt;u8&gt;</td><td>When you only need the bytes and are done with the original</td></tr>
-            <tr><td>as_bytes()</td><td>Borrows a String and returns its bytes as &amp;[u8]</td><td>When you need to read the bytes but keep the String usable</td></tr>
+            <tr><td>enum</td><td>A custom type where only ONE value is active at a time</td><td>When a value can only be one of a fixed set of states</td></tr>
+            <tr><td>Variant</td><td>One of the possible values inside an enum</td><td>The specific state an enum instance holds right now</td></tr>
+            <tr><td>EnumName::Variant</td><td>Two colons (<code>::</code>) connect the enum name to the variant you picked</td><td>Every time you create or match against an enum value</td></tr>
+            <tr><td>Discriminator</td><td>A number Rust assigns to each variant, starting at 0</td><td>When storing an enum value as a number, like saving state on-chain</td></tr>
+            <tr><td>match</td><td>A way to run different code for each variant</td><td>When your code must respond differently depending on which variant is active</td></tr>
+            <tr><td>_ catch-all</td><td>An underscore arm that handles every variant not named explicitly</td><td>When you only care about a few variants and want to ignore the rest</td></tr>
           </tbody>
         </table>
       </div>
@@ -181,69 +181,69 @@
   const exercises = [
     {
       num: 1,
-      title: "Move Semantics",
-      explainer: "<p>In Rust, every value has exactly one owner. When you assign a heap value like <code>String</code> to a new variable, ownership moves - the old variable becomes invalid. Rust does this to prevent double-free errors.</p><p>Think of it as handing over the keys to a car - only one person can own it at a time.</p>",
-      task: "<p>A string is assigned to a new variable, which moves ownership. Right now it fails because <code>s1</code> is no longer valid after the move.</p><ol><li>Create a string <code>s1</code></li><li>Keep both <code>s1</code> and <code>s2</code> usable after the assignment</li><li>Print both</li></ol>",
-      starterCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1;\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
-      instruction: "Fix this so both variables can be printed",
-      expectedOutput: "s1 = hello\ns2 = hello",
-      answerCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1.clone();\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
-      why: ""
+      title: "Declaring an Enum",
+      explainer: "<p>An <code>enum</code> is a list of possible values where only one can be active at a time. Each value is called a variant. Variants can hold extra data using tuple-like parentheses.</p><p>To print an enum with <code>{:?}</code>, you need to add <code>#[derive(Debug)]</code> above the definition. This tells Rust how to format it for display.</p>",
+      task: "<p>A program models an IP address as either version 4 or version 6. Right now the enum definition is missing and the code does not compile.</p><p>Define the <code>IpAddr</code> enum above <code>main</code> so it has two variants: <code>V4</code> holding four <code>u8</code> values, and <code>V6</code> holding one <code>String</code>. Add <code>#[derive(Debug)]</code> so the <code>{:?}</code> format works.</p>",
+      starterCode: "fn main() {\n    let home = IpAddr::V4(127, 0, 0, 1);\n    let loopback = IpAddr::V6(String::from(\"::1\"));\n    println!(\"{:?}, {:?}\", home, loopback);\n}",
+      instruction: "Define the <code>IpAddr</code> enum with <code>#[derive(Debug)]</code> above <code>main</code>",
+      expectedOutput: "V4(127, 0, 0, 1), V6(\"::1\")",
+      answerCode: "#[derive(Debug)]\nenum IpAddr {\n    V4(u8, u8, u8, u8),\n    V6(String),\n}\n\nfn main() {\n    let home = IpAddr::V4(127, 0, 0, 1);\n    let loopback = IpAddr::V6(String::from(\"::1\"));\n    println!(\"{:?}, {:?}\", home, loopback);\n}",
+      why: "The enum has two variants: <code>V4</code> holds four <code>u8</code> values, <code>V6</code> holds one <code>String</code>. <code>#[derive(Debug)]</code> is required for <code>{:?}</code> to work - without it, Rust does not know how to format the enum."
     },
     {
       num: 2,
-      title: "Clone",
-      explainer: "<p><code>.clone()</code> duplicates the entire heap allocation so both variables get independent copies. Stack types like <code>i32</code> don't need it - they copy automatically. Heap types like <code>String</code> do not copy automatically.</p>",
-      task: "<p>A string is moved to a new variable, invalidating the original. Right now <code>s1</code> is invalidated by the move to <code>s2</code>.</p><ol><li>Keep both <code>s1</code> and <code>s2</code> usable after the assignment</li><li>Print both</li></ol>",
-      starterCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1;\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
-      instruction: "Add one method call so both variables stay valid",
-      expectedOutput: "s1 = hello\ns2 = hello",
-      answerCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1.clone();\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
-      why: ""
+      title: "Only One Variant at a Time",
+      explainer: "<p>In an enum, you pick ONE variant when you create the instance. That is the only value the instance holds. You cannot have two variants active at the same time.</p><p>Think of it like picking a lane on a highway: you can only be in one lane at a time.</p>",
+      task: "<p>Run this code as-is and observe the output. Then change <code>North</code> to <code>South</code> and run again. Notice that only one variant is ever active at a time.</p>",
+      starterCode: "#[derive(Debug)]\nenum Direction {\n    North,\n    South,\n    East,\n    West,\n}\n\nfn main() {\n    let way = Direction::North;\n    println!(\"{:?}\", way);\n}",
+      instruction: "",
+      expectedOutput: "North",
+      answerCode: "#[derive(Debug)]\nenum Direction {\n    North,\n    South,\n    East,\n    West,\n}\n\nfn main() {\n    let way = Direction::South;\n    println!(\"{:?}\", way);\n}",
+      why: "An enum instance stores exactly one variant. Changing from <code>North</code> to <code>South</code> replaces the entire value. This is why enums are great for states that are mutually exclusive."
     },
     {
       num: 3,
-      title: "Copy Trait",
-      explainer: "<p>Some types implement the <code>Copy</code> trait - meaning assignment duplicates the value instead of moving it. These are stack-only types with a fixed size: <code>i32</code>, <code>u64</code>, <code>bool</code>, etc.</p><p>Heap types like <code>String</code> do NOT implement <code>Copy</code>. That's why they move instead of copy.</p>",
-      task: "<p>This code already compiles. Run it in the Playground and make sure you understand why both variables are valid.</p>",
-      starterCode: "fn main() {\n    let x1: i32 = 10;\n    let x2 = x1;\n\n    println!(\"x1 = {}, x2 = {}\", x1, x2);\n}",
-      instruction: "",
-      expectedOutput: "x1 = 10, x2 = 10",
-      answerCode: "",
-      why: ""
+      title: "C-like Enums with Discriminators",
+      explainer: "<p>Discriminators are numbers Rust gives each variant. By default they start at 0. You can set a custom number on any variant - the rest auto-increment from there.</p><p>You can cast a variant to its discriminator number with <code>as u8</code>.</p>",
+      task: "<p>An enum needs explicit discriminators so <code>Basic</code> equals 5 and the rest follow automatically. Right now the variants have no numbers assigned, so <code>Basic</code> defaults to 1.</p><p>Add explicit discriminators so <code>Basic</code> equals 5 and <code>Premium</code> equals 6. Confirm the output changes.</p>",
+      starterCode: "enum Plan {\n    Free,\n    Basic,\n    Premium,\n}\n\nfn main() {\n    println!(\"Basic is {}\", Plan::Basic as u8);\n}",
+      instruction: "Add explicit discriminators so Basic equals 5",
+      expectedOutput: "Basic is 5",
+      answerCode: "enum Plan {\n    Free,\n    Basic = 5,\n    Premium,\n}\n\nfn main() {\n    println!(\"Basic is {}\", Plan::Basic as u8);\n    println!(\"Premium is {}\", Plan::Premium as u8);\n}",
+      why: "Setting <code>Basic = 5</code> makes <code>Premium</code> automatically 6. <code>Free</code> stays 0 because it comes before the custom start. The <code>as u8</code> cast reads the discriminator as a number."
     },
     {
       num: 4,
-      title: "Ownership into Function",
-      explainer: "<p>Passing a <code>String</code> to a function moves ownership to the function parameter. When the function ends, the parameter is dropped. The caller's variable is now invalid.</p><p>Two ways to fix: clone the value before passing it, or have the function return ownership back.</p>",
-      task: "<p>A string is passed into a function, moving ownership. Right now it fails because <code>s</code> was moved into the function and is no longer valid in <code>main</code>.</p><ol><li>Pass <code>s</code> to <code>take_ownership()</code></li><li>Print the string inside the function</li><li>Print it again in <code>main</code> after the call</li></ol>",
-      starterCode: "fn take_ownership(s: String) {\n    println!(\"Got: {}\", s);\n}\n\nfn main() {\n    let s = String::from(\"hello\");\n    take_ownership(s);\n    println!(\"Still have: {}\", s);\n}",
-      instruction: "Fix this in two ways so <code>s</code> can still be printed after the call",
-      expectedOutput: "Got: hello\nStill have: hello",
-      answerCode: "fn take_ownership(s: String) {\n    println!(\"Got: {}\", s);\n}\n\nfn main() {\n    let s = String::from(\"hello\");\n    take_ownership(s.clone());\n    println!(\"Still have: {}\", s);\n}\n\n// Answer - Way 2 (return ownership):\n// fn take_ownership(s: String) -> String {\n//     println!(\"Got: {}\", s);\n//     s\n// }\n// \n// fn main() {\n//     let s = String::from(\"hello\");\n//     let s = take_ownership(s);\n//     println!(\"Still have: {}\", s);\n// }",
-      why: ""
+      title: "Converting a Variant to an Integer",
+      explainer: "<p>The <code>as</code> keyword casts an enum variant to its discriminator number. You write the full variant path first, then <code>as</code>, then the number type you want.</p><p>Discriminators start at 0 by default: the first variant is 0, the second is 1, and so on.</p>",
+      task: "<p>A program converts an enum variant to its number. Right now the cast type is missing.</p><p>Fill in the blank with the correct type to cast <code>Message::Move</code> to its discriminator number.</p>",
+      starterCode: "enum Message {\n    Quit,\n    Move,\n    Write,\n}\n\nfn main() {\n    let n = Message::Move as ___;\n    println!(\"{}\", n);\n}",
+      instruction: "Fill in the blank with the type to cast to",
+      expectedOutput: "1",
+      answerCode: "enum Message {\n    Quit,\n    Move,\n    Write,\n}\n\nfn main() {\n    let n = Message::Move as u8;\n    println!(\"{}\", n);\n}",
+      why: "<code>Message::Move as u8</code> casts the variant to its discriminator. <code>Quit</code> is 0, <code>Move</code> is 1, <code>Write</code> is 2 - discriminators start at 0 by default."
     },
     {
       num: 5,
-      title: "Returning Ownership",
-      explainer: "<p>If a function takes ownership of a <code>String</code>, it can give it back by returning it. Add <code>-&gt; String</code> as the return type and put the variable as the last expression in the function body - no semicolon.</p><p>In smart contracts, a helper that processes a wallet string and hands it back lets the caller keep using it.</p>",
-      task: "<p>The code below wants to:</p><ol><li>Pass a string into <code>process()</code></li><li>Print it inside the function</li><li>Use the returned string in <code>main</code></li></ol><p>Right now <code>process()</code> takes the string but doesn't return it, so <code>main</code> can't use it.</p>",
-      starterCode: "fn process(s: String) {\n    println!(\"Processing: {}\", s);\n}\n\nfn main() {\n    let s = String::from(\"hello\");\n    let s = process(s);\n    println!(\"Done: {}\", s);\n}",
-      instruction: "Fix the function so it returns the String",
-      expectedOutput: "Processing: hello\nDone: hello",
-      answerCode: "fn process(s: String) -> String {\n    println!(\"Processing: {}\", s);\n    s\n}\n\nfn main() {\n    let s = String::from(\"hello\");\n    let s = process(s);\n    println!(\"Done: {}\", s);\n}",
-      why: ""
+      title: "Variants That Hold Different Data Shapes",
+      explainer: "<p>An enum variant can hold data in different formats: no data at all, named fields like a struct (with curly braces), or unnamed values like a tuple (with parentheses).</p><p>The shape of the data you use when creating the variant must match the shape defined in the enum.</p>",
+      task: "<p>A program creates a <code>Move</code> variant with named <code>x</code> and <code>y</code> values. Right now it uses tuple syntax (<code>Action::Move(1, 2)</code>) but <code>Move</code> is defined with named fields.</p><p>Fix the line that creates <code>msg</code> so it uses struct-like syntax with field names <code>x</code> and <code>y</code>.</p>",
+      starterCode: "#[derive(Debug)]\nenum Action {\n    Quit,\n    Move { x: i32, y: i32 },\n    Write(String),\n    ChangeColor(i32, i32, i32),\n}\n\nfn main() {\n    let msg = Action::Move(1, 2);\n    println!(\"{:?}\", msg);\n}",
+      instruction: "Fix the creation of <code>msg</code> to use struct-like syntax",
+      expectedOutput: "Move { x: 1, y: 2 }",
+      answerCode: "#[derive(Debug)]\nenum Action {\n    Quit,\n    Move { x: i32, y: i32 },\n    Write(String),\n    ChangeColor(i32, i32, i32),\n}\n\nfn main() {\n    let msg = Action::Move { x: 1, y: 2 };\n    println!(\"{:?}\", msg);\n}",
+      why: "<code>Move</code> uses curly braces because it's defined with named fields. <code>Write</code> uses parentheses because it's defined with a tuple. The shape of the data must match the shape defined in the enum."
     },
     {
       num: 6,
-      title: "into_bytes vs as_bytes",
-      explainer: "<p><code>into_bytes()</code> converts a <code>String</code> into a <code>Vec&lt;u8&gt;</code> and destroys the original - ownership is consumed. <code>as_bytes()</code> returns a slice reference (<code>&amp;[u8]</code>) and leaves the original <code>String</code> intact.</p><p>If you need the string afterward, use <code>as_bytes()</code>.</p><p>In smart contracts, inspecting a wallet string's bytes for validation should not consume the string if you still need it afterward.</p>",
-      task: "<p>The code below wants to:</p><ol><li>Get the bytes of the string</li><li>Print the bytes</li><li>Print the original string</li></ol><p>Right now <code>into_bytes()</code> consumes <code>s</code>, so the final print fails.</p>",
-      starterCode: "fn main() {\n    let s = String::from(\"hello\");\n    let bytes = s.into_bytes();\n    println!(\"Bytes: {:?}\", bytes);\n    println!(\"String: {}\", s);\n}",
-      instruction: "Change one method so the original string stays usable",
-      expectedOutput: "Bytes: [104, 101, 108, 108, 111]\nString: hello",
-      answerCode: "fn main() {\n    let s = String::from(\"hello\");\n    let bytes = s.as_bytes();\n    println!(\"Bytes: {:?}\", bytes);\n    println!(\"String: {}\", s);\n}",
-      why: ""
+      title: "Array of Enum Instances",
+      explainer: "<p>Array type annotations look like <code>[Type; count]</code>. Since every variant of an enum belongs to the same type, you can mix different variants in one array - they all share the same enum type.</p>",
+      task: "<p>An array holds three <code>Message</code> instances. Right now the array type annotation is missing and the compiler cannot verify the types.</p><p>Add the type annotation so <code>msgs</code> is declared as an array of exactly three <code>Message</code> values.</p>",
+      starterCode: "enum Message {\n    Quit,\n    Move { x: i32, y: i32 },\n    Write(String),\n}\n\nfn main() {\n    let msgs = [\n        Message::Quit,\n        Message::Move { x: 1, y: 2 },\n        Message::Write(String::from(\"hello\")),\n    ];\n\n    println!(\"Length: {}\", msgs.len());\n}",
+      instruction: "Add the type annotation <code>[Message; 3]</code> to the <code>msgs</code> declaration",
+      expectedOutput: "Length: 3",
+      answerCode: "enum Message {\n    Quit,\n    Move { x: i32, y: i32 },\n    Write(String),\n}\n\nfn main() {\n    let msgs: [Message; 3] = [\n        Message::Quit,\n        Message::Move { x: 1, y: 2 },\n        Message::Write(String::from(\"hello\")),\n    ];\n\n    println!(\"Length: {}\", msgs.len());\n}",
+      why: "<code>[Message; 3]</code> tells Rust: this is an array of 3 elements, and every element is a <code>Message</code>. Different variants are fine because they all share the same <code>Message</code> type."
     }
   ];
 
@@ -329,7 +329,7 @@
       card.className = 'answer-card';
       const head = document.createElement('div');
       head.className = 'answer-card-head';
-      head.textContent = 'Exercise ' + ex.num + ' — ' + ex.title;
+      head.textContent = 'Exercise ' + ex.num + ' - ' + ex.title;
       const body = document.createElement('div');
       body.className = 'answer-card-body';
       const codeWrap = document.createElement('div');

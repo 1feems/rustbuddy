@@ -3,7 +3,7 @@
 > Read this every session before touching anything in `game/`.
 > This is the game's source of truth. Root `HANDOFF.md` points here.
 
-Last updated: 2026-07-04 (session 7)
+Last updated: 2026-07-08 (session 10)
 
 ---
 
@@ -19,13 +19,7 @@ For the full picture of how Rust Buddy fits within Buddy Tech and the client mod
 
 ## What's Next
 
-### 1. Link styles.css to Every HTML Page
-
-Add `<link rel="stylesheet" href="../_design/styles.css">` to the `<head>` of every page in `exercises/`, `flashcards/`, `resources/`, and `index.html`. Until this is done the design tokens have no effect on the live site.
-
-After linking: commit and push.
-
-### 2. Flashcard Decks — Build Remaining 7
+### 1. Flashcard Decks — Build Remaining 7
 
 Build one HTML file per deck. Use `flashcards/values.html` as the template — copy exactly, swap gradient class and card content only.
 
@@ -49,7 +43,6 @@ After each file is built: update `flashcards/index.html` to flip that deck card 
 ### Later
 
 - V2 flashcard study mode: single card centered, flip on click, "Know it" / "Still learning" buttons, progress bar. Build after all decks are done.
-- Exercise pages for remaining topics (Borrowing, String vs &str, Slices, Structs, Enums, etc.) — source `.md` files exist in `game/exercises/`
 - Game levels reskin (`game/levels/`) — old style, low priority
 
 ---
@@ -75,7 +68,7 @@ After each file is built: update `flashcards/index.html` to flip that deck card 
 
 ## Notes for Next Agent
 
-- Exercise page template: `exercises/variables.html` — copy exactly, change only title, exercises, and code snippets
+- Exercise page template: `exercises/ownership.html` — copy exactly, change only title, exercises, and code snippets
 - Flashcard deck template: `flashcards/values.html` — copy exactly, change gradient class and card content
 - No em dashes anywhere on the site
 - Hero titles are always one line — no `<br>` tags

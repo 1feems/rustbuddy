@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rust: Ownership - Rust Bud</title>
+  <title>Rust: Slices &amp; Arrays - Rust Bud</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -102,7 +102,7 @@
     <span class="header-sep">/</span>
     <a href="index.html" class="back-link">Exercises</a>
     <span class="header-sep">/</span>
-    <span class="header-title">Ownership</span>
+    <span class="header-title">Slices &amp; Arrays</span>
   </div>
   <nav class="nav-links">
     <a href="index.html" class="nav-link active">Exercises</a>
@@ -123,8 +123,8 @@
     <div class="tab-panel" id="panel-overview">
       <div class="overview-wrap">
         <div class="overview-topic">Topic</div>
-        <div class="overview-headline">Ownership</div>
-        <div class="overview-desc">Ownership is how Rust manages memory without a garbage collector. Every value has exactly one owner. When you assign a heap value to a new variable, ownership moves and the old variable becomes invalid. This prevents two parts of your code from trying to free the same memory.</div>
+        <div class="overview-headline">Slices &amp; Arrays</div>
+        <div class="overview-desc">Arrays store a fixed number of same-type values with the size baked into the type at compile time. A slice is a borrowed window into part of an array — it has no size in its type, so one function can accept any length. Rust gives you direct indexing when you know a position is valid, and get() when it might not be.</div>
         <div class="overview-divider"></div>
         <div class="overview-ref-label">Quick Reference</div>
         <table class="terms-table">
@@ -132,12 +132,14 @@
             <tr><th>Concept</th><th>What it means</th></tr>
           </thead>
           <tbody>
-            <tr><td>Owner</td><td>The variable that holds a value. Only one owner at a time.</td></tr>
-            <tr><td>Move</td><td>Transferring ownership to a new variable. The old one becomes invalid.</td></tr>
-            <tr><td>.clone()</td><td>Deep copy — duplicates heap data so both variables stay valid.</td></tr>
-            <tr><td>Copy trait</td><td>Stack-only types like i32 and bool copy automatically. No move.</td></tr>
-            <tr><td>into_bytes()</td><td>Consumes a String — the original is gone afterward.</td></tr>
-            <tr><td>as_bytes()</td><td>Borrows a String — the original stays valid.</td></tr>
+            <tr><td>Array</td><td>Fixed-size list where every element has the same type. Stored on the stack.</td></tr>
+            <tr><td>[T; N]</td><td>Array type signature: T is the element type, N is the count (must be known at compile time).</td></tr>
+            <tr><td>[value; count]</td><td>Short init syntax: create an array with count copies of value.</td></tr>
+            <tr><td>len()</td><td>Returns how many elements are in an array or slice.</td></tr>
+            <tr><td>Indexing</td><td>Access an element with [index]. First element is at 0. Out of bounds panics.</td></tr>
+            <tr><td>get()</td><td>Returns Option — safe way to access elements without panicking.</td></tr>
+            <tr><td>Slice (&amp;[T])</td><td>A borrowed view into a chunk of an array or collection. Type is &amp;[T].</td></tr>
+            <tr><td>enumerate()</td><td>Returns tuples of (index, value) when iterating over a collection.</td></tr>
           </tbody>
         </table>
       </div>
@@ -162,12 +164,14 @@
             <tr><th>Term</th><th>What it means</th><th>When you use it</th></tr>
           </thead>
           <tbody>
-            <tr><td>Owner</td><td>The variable that holds a value, only one at a time</td><td>Every heap value in Rust has exactly one owner</td></tr>
-            <tr><td>Move</td><td>Transferring ownership to a new variable, the old one becomes invalid</td><td>Assigning a String or Vec to another variable</td></tr>
-            <tr><td>.clone()</td><td>Deep copies heap data so both variables stay valid</td><td>When you need a separate copy of a String or Vec</td></tr>
-            <tr><td>Copy trait</td><td>Stack-only types copy automatically on assignment, no move</td><td>i32, u64, bool, char and other fixed-size stack types</td></tr>
-            <tr><td>into_bytes()</td><td>Consumes a String and returns its bytes as Vec&lt;u8&gt;</td><td>When you only need the bytes and are done with the original</td></tr>
-            <tr><td>as_bytes()</td><td>Borrows a String and returns its bytes as &amp;[u8]</td><td>When you need to read the bytes but keep the String usable</td></tr>
+            <tr><td>Array</td><td>Fixed-size list where every element has the same type, stored on the stack</td><td>When you need a fixed number of same-type values known at compile time</td></tr>
+            <tr><td>[T; N]</td><td>Array type signature: T is the element type, N is the count</td><td>When declaring or annotating an array variable</td></tr>
+            <tr><td>[value; count]</td><td>Short init syntax: create an array with count copies of value</td><td>When all elements start with the same default value</td></tr>
+            <tr><td>len()</td><td>Returns how many elements are in an array or slice</td><td>When you need to know the size at runtime</td></tr>
+            <tr><td>Indexing</td><td>Access an element with [index]. First element is at 0. Out of bounds panics.</td><td>When you know the position is always valid</td></tr>
+            <tr><td>get()</td><td>Returns Option — safe way to access elements without panicking</td><td>When the position might be out of range</td></tr>
+            <tr><td>Slice &amp;[T]</td><td>A borrowed view into a chunk of an array or collection</td><td>When passing part of a collection to a function</td></tr>
+            <tr><td>enumerate()</td><td>Returns tuples of (index, value) when iterating</td><td>When you need both the index and the value in a loop</td></tr>
           </tbody>
         </table>
       </div>
@@ -181,69 +185,69 @@
   const exercises = [
     {
       num: 1,
-      title: "Move Semantics",
-      explainer: "<p>In Rust, every value has exactly one owner. When you assign a heap value like <code>String</code> to a new variable, ownership moves - the old variable becomes invalid. Rust does this to prevent double-free errors.</p><p>Think of it as handing over the keys to a car - only one person can own it at a time.</p>",
-      task: "<p>A string is assigned to a new variable, which moves ownership. Right now it fails because <code>s1</code> is no longer valid after the move.</p><ol><li>Create a string <code>s1</code></li><li>Keep both <code>s1</code> and <code>s2</code> usable after the assignment</li><li>Print both</li></ol>",
-      starterCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1;\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
-      instruction: "Fix this so both variables can be printed",
-      expectedOutput: "s1 = hello\ns2 = hello",
-      answerCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1.clone();\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
-      why: ""
+      title: "Annotating an Array Type",
+      explainer: "<p>An array is a fixed-size list where every element has the same type. Its type signature is <code>[T; N]</code>: <code>T</code> is the element type, <code>N</code> is the count. Because the size is part of the type, Rust must know <code>N</code> at compile time.</p><p>Think of it like a row of identical lockers - each one holds the same kind of thing, and the total count is fixed when the building is built.</p>",
+      task: "<p>A function expects an array of five whole numbers, but the variable declaration is missing its type label. Right now Rust cannot check that the argument matches the parameter.</p><p>Fill in the type label for <code>arr</code> so it matches the function parameter.</p>",
+      starterCode: "fn print_array(arr: [i32; 5]) {\n    println!(\"{:?}\", arr);\n}\n\nfn main() {\n    let arr = [1, 2, 3, 4, 5];\n    print_array(arr);\n}",
+      instruction: "Add the type label to <code>arr</code> so the declaration matches the function parameter",
+      expectedOutput: "[1, 2, 3, 4, 5]",
+      answerCode: "fn print_array(arr: [i32; 5]) {\n    println!(\"{:?}\", arr);\n}\n\nfn main() {\n    let arr: [i32; 5] = [1, 2, 3, 4, 5];\n    print_array(arr);\n}",
+      why: "The array type is <code>[i32; 5]</code> - five <code>i32</code> values. Add that label after the variable name with a colon."
     },
     {
       num: 2,
-      title: "Clone",
-      explainer: "<p><code>.clone()</code> duplicates the entire heap allocation so both variables get independent copies. Stack types like <code>i32</code> don't need it - they copy automatically. Heap types like <code>String</code> do not copy automatically.</p>",
-      task: "<p>A string is moved to a new variable, invalidating the original. Right now <code>s1</code> is invalidated by the move to <code>s2</code>.</p><ol><li>Keep both <code>s1</code> and <code>s2</code> usable after the assignment</li><li>Print both</li></ol>",
-      starterCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1;\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
-      instruction: "Add one method call so both variables stay valid",
-      expectedOutput: "s1 = hello\ns2 = hello",
-      answerCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1.clone();\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
-      why: ""
+      title: "Short Array Initialization",
+      explainer: "<p>Rust can initialize an array quickly with <code>[value; count]</code>. This creates <code>count</code> copies of <code>value</code>. Then you call <code>.len()</code> (with parentheses) to ask how many elements are inside.</p>",
+      task: "<p>A program creates ten zeros and prints the array length. Right now the short-init syntax is wrong and <code>len</code> is missing its parentheses.</p><p>Fix both lines so the array is created with ten zeros and the length prints correctly. Do not add or remove any lines.</p>",
+      starterCode: "fn main() {\n    let arr: [i32; 10] = 0;\n    println!(\"Length: {}\", arr.len);\n}",
+      instruction: "Fix both lines so the array is created correctly and the length prints",
+      expectedOutput: "Length: 10",
+      answerCode: "fn main() {\n    let arr: [i32; 10] = [0; 10];\n    println!(\"Length: {}\", arr.len());\n}",
+      why: "<code>[0; 10]</code> is the short init syntax: zero repeated ten times. <code>arr.len()</code> needs parentheses because <code>len</code> is a method, not a field."
     },
     {
       num: 3,
-      title: "Copy Trait",
-      explainer: "<p>Some types implement the <code>Copy</code> trait - meaning assignment duplicates the value instead of moving it. These are stack-only types with a fixed size: <code>i32</code>, <code>u64</code>, <code>bool</code>, etc.</p><p>Heap types like <code>String</code> do NOT implement <code>Copy</code>. That's why they move instead of copy.</p>",
-      task: "<p>This code already compiles. Run it in the Playground and make sure you understand why both variables are valid.</p>",
-      starterCode: "fn main() {\n    let x1: i32 = 10;\n    let x2 = x1;\n\n    println!(\"x1 = {}, x2 = {}\", x1, x2);\n}",
-      instruction: "",
-      expectedOutput: "x1 = 10, x2 = 10",
-      answerCode: "",
-      why: ""
+      title: "Array Indexing and Out of Bounds",
+      explainer: "<p>In an array, the first element lives at index 0, the second at 1, and so on. If you use an index equal to or greater than the number of elements, the program panics at runtime.</p><p>Think of it like numbered parking spots - spot 0 is the first one, and asking for spot 5 when only three exist is an error.</p>",
+      task: "<p>A program reads the second element of an array and also tries an out-of-range index. Right now the second-element index is wrong (indexing starts at 0) and the out-of-range access will panic.</p><p>Fix the second-month index and comment out the out-of-range line so the program runs safely.</p>",
+      starterCode: "fn main() {\n    let months = [\"Jan\", \"Feb\", \"Mar\"];\n    println!(\"Second month: {}\", months[2]);\n    println!(\"Out of range: {}\", months[5]);\n}",
+      instruction: "Fix the index and comment out the out-of-range line",
+      expectedOutput: "Second month: Feb",
+      answerCode: "fn main() {\n    let months = [\"Jan\", \"Feb\", \"Mar\"];\n    println!(\"Second month: {}\", months[1]);\n    // println!(\"Out of range: {}\", months[5]);\n}",
+      why: "<code>months[1]</code> is the second element - indexing starts at 0. <code>months[5]</code> does not exist and would panic, so it must be commented out."
     },
     {
       num: 4,
-      title: "Ownership into Function",
-      explainer: "<p>Passing a <code>String</code> to a function moves ownership to the function parameter. When the function ends, the parameter is dropped. The caller's variable is now invalid.</p><p>Two ways to fix: clone the value before passing it, or have the function return ownership back.</p>",
-      task: "<p>A string is passed into a function, moving ownership. Right now it fails because <code>s</code> was moved into the function and is no longer valid in <code>main</code>.</p><ol><li>Pass <code>s</code> to <code>take_ownership()</code></li><li>Print the string inside the function</li><li>Print it again in <code>main</code> after the call</li></ol>",
-      starterCode: "fn take_ownership(s: String) {\n    println!(\"Got: {}\", s);\n}\n\nfn main() {\n    let s = String::from(\"hello\");\n    take_ownership(s);\n    println!(\"Still have: {}\", s);\n}",
-      instruction: "Fix this in two ways so <code>s</code> can still be printed after the call",
-      expectedOutput: "Got: hello\nStill have: hello",
-      answerCode: "fn take_ownership(s: String) {\n    println!(\"Got: {}\", s);\n}\n\nfn main() {\n    let s = String::from(\"hello\");\n    take_ownership(s.clone());\n    println!(\"Still have: {}\", s);\n}\n\n// Answer - Way 2 (return ownership):\n// fn take_ownership(s: String) -> String {\n//     println!(\"Got: {}\", s);\n//     s\n// }\n// \n// fn main() {\n//     let s = String::from(\"hello\");\n//     let s = take_ownership(s);\n//     println!(\"Still have: {}\", s);\n// }",
-      why: ""
+      title: "Safe Lookup with get()",
+      explainer: "<p>Direct indexing with <code>arr[i]</code> panics when the index is out of range. The <code>get()</code> method is safer: it returns <code>Option&lt;&amp;T&gt;</code> — <code>Some(&amp;value)</code> if the index exists, or <code>None</code> if it does not.</p><p>The caller then decides what to do with a missing value instead of the program crashing.</p>",
+      task: "<p>A program reads from an array at a position that might be out of range. Right now it uses direct indexing, which panics. Replace the direct index with <code>get()</code> so the program prints <code>None</code> for an out-of-range index. Do not add or remove any lines.</p>",
+      starterCode: "fn main() {\n    let arr = [10, 20, 30];\n    let item = arr[10];\n    println!(\"Item: {:?}\", item);\n}",
+      instruction: "Replace direct indexing with <code>get()</code>",
+      expectedOutput: "Item: None",
+      answerCode: "fn main() {\n    let arr = [10, 20, 30];\n    let item = arr.get(10);\n    println!(\"Item: {:?}\", item);\n}",
+      why: "<code>arr.get(10)</code> returns <code>None</code> instead of panicking. The type becomes <code>Option&lt;&amp;i32&gt;</code>."
     },
     {
       num: 5,
-      title: "Returning Ownership",
-      explainer: "<p>If a function takes ownership of a <code>String</code>, it can give it back by returning it. Add <code>-&gt; String</code> as the return type and put the variable as the last expression in the function body - no semicolon.</p><p>In smart contracts, a helper that processes a wallet string and hands it back lets the caller keep using it.</p>",
-      task: "<p>The code below wants to:</p><ol><li>Pass a string into <code>process()</code></li><li>Print it inside the function</li><li>Use the returned string in <code>main</code></li></ol><p>Right now <code>process()</code> takes the string but doesn't return it, so <code>main</code> can't use it.</p>",
-      starterCode: "fn process(s: String) {\n    println!(\"Processing: {}\", s);\n}\n\nfn main() {\n    let s = String::from(\"hello\");\n    let s = process(s);\n    println!(\"Done: {}\", s);\n}",
-      instruction: "Fix the function so it returns the String",
-      expectedOutput: "Processing: hello\nDone: hello",
-      answerCode: "fn process(s: String) -> String {\n    println!(\"Processing: {}\", s);\n    s\n}\n\nfn main() {\n    let s = String::from(\"hello\");\n    let s = process(s);\n    println!(\"Done: {}\", s);\n}",
-      why: ""
+      title: "Annotating an Array Slice Type",
+      explainer: "<p>A slice is a borrowed view into a contiguous chunk of a collection. Its type is <code>&amp;[T]</code>, where <code>T</code> is the element type. You do not include the length in a slice type because a slice can have any length - it is just a window.</p><p>A function that accepts <code>&amp;[T]</code> works on any slice of that element type, regardless of how many elements it has.</p>",
+      task: "<p>The code passes an array to a function that expects a slice. Right now the function parameter is typed as an array (<code>[i32; 3]</code>) but the intent is to accept any chunk of <code>i32</code> values - a slice.</p><p>Fix the function parameter type so it accepts a slice. Do not add or remove any lines.</p>",
+      starterCode: "fn print_slice(arr: [i32; 3]) {\n    println!(\"{:?}\", arr);\n}\n\nfn main() {\n    let nums = [1, 2, 3];\n    print_slice(&nums);\n}",
+      instruction: "Fix the function parameter type so it accepts a slice",
+      expectedOutput: "[1, 2, 3]",
+      answerCode: "fn print_slice(arr: &[i32]) {\n    println!(\"{:?}\", arr);\n}\n\nfn main() {\n    let nums = [1, 2, 3];\n    print_slice(&nums);\n}",
+      why: "Change <code>[i32; 3]</code> to <code>&amp;[i32]</code>. The function now borrows a slice of any length, not only a 3-element array."
     },
     {
       num: 6,
-      title: "into_bytes vs as_bytes",
-      explainer: "<p><code>into_bytes()</code> converts a <code>String</code> into a <code>Vec&lt;u8&gt;</code> and destroys the original - ownership is consumed. <code>as_bytes()</code> returns a slice reference (<code>&amp;[u8]</code>) and leaves the original <code>String</code> intact.</p><p>If you need the string afterward, use <code>as_bytes()</code>.</p><p>In smart contracts, inspecting a wallet string's bytes for validation should not consume the string if you still need it afterward.</p>",
-      task: "<p>The code below wants to:</p><ol><li>Get the bytes of the string</li><li>Print the bytes</li><li>Print the original string</li></ol><p>Right now <code>into_bytes()</code> consumes <code>s</code>, so the final print fails.</p>",
-      starterCode: "fn main() {\n    let s = String::from(\"hello\");\n    let bytes = s.into_bytes();\n    println!(\"Bytes: {:?}\", bytes);\n    println!(\"String: {}\", s);\n}",
-      instruction: "Change one method so the original string stays usable",
-      expectedOutput: "Bytes: [104, 101, 108, 108, 111]\nString: hello",
-      answerCode: "fn main() {\n    let s = String::from(\"hello\");\n    let bytes = s.as_bytes();\n    println!(\"Bytes: {:?}\", bytes);\n    println!(\"String: {}\", s);\n}",
-      why: ""
+      title: "Slice Reference Size",
+      explainer: "<p>A slice reference stores two pieces of information: a pointer to where the data starts, and a length counting how many elements are in the view. On a 64-bit system, each is 8 bytes, so the total is 16 bytes.</p><p>Think of it like a museum ticket - the ticket does not contain the art, it only holds the room number and how many pieces are inside.</p><p><code>size_of_val(x)</code> returns the size of the value that <code>x</code> points to. To measure the slice reference itself (the fat pointer), pass <code>&amp;slice</code>.</p>",
+      task: "<p>The assertion fails because <code>size_of_val(slice)</code> measures the data the slice points to, not the reference itself. Fix the function argument and the number so the assertion measures the slice reference size and passes on a 64-bit system.</p>",
+      starterCode: "use std::mem::size_of_val;\n\nfn main() {\n    let c = ['a', 'b'];\n    let slice: &[char] = &c;\n    assert!(size_of_val(slice) == 8);\n}",
+      instruction: "Fix the argument to <code>size_of_val</code> and update the number so the assertion passes",
+      expectedOutput: "(no output - assertion passes)",
+      answerCode: "use std::mem::size_of_val;\n\nfn main() {\n    let c = ['a', 'b'];\n    let slice: &[char] = &c;\n    assert!(size_of_val(&slice) == 16);\n}",
+      why: "A slice reference is 16 bytes: 8 bytes for the pointer + 8 bytes for the length (<code>usize</code> on 64-bit). Pass <code>&amp;slice</code> to measure the reference itself, not the data it points to."
     }
   ];
 
@@ -329,7 +333,7 @@
       card.className = 'answer-card';
       const head = document.createElement('div');
       head.className = 'answer-card-head';
-      head.textContent = 'Exercise ' + ex.num + ' — ' + ex.title;
+      head.textContent = 'Exercise ' + ex.num + ' - ' + ex.title;
       const body = document.createElement('div');
       body.className = 'answer-card-body';
       const codeWrap = document.createElement('div');

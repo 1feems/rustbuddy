@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_design/styles.css">
   <style>
     :root {
       --color-bg:        #FFFFFF;
@@ -325,6 +326,146 @@
         <div class="card-bottom">
           <p class="card-title">Ownership</p>
           <p class="card-desc">Every value has exactly one owner. Learn how move, clone, and copy control who holds a value.</p>
+        </div>
+      </a>
+
+      <!-- 07 Borrowing — Cyan -->
+      <a href="borrowing.html" class="topic-card deck-cyan">
+        <div class="card-top">
+          <span class="card-number">07 / Borrowing</span>
+          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </div>
+        <div class="card-icon">
+          <svg width="90" height="90" fill="none" viewBox="0 0 100 100">
+            <circle cx="38" cy="50" r="16" stroke="rgba(0,0,0,0.5)" stroke-width="3.5"/>
+            <circle cx="38" cy="50" r="6" fill="rgba(0,0,0,0.4)"/>
+            <circle cx="66" cy="50" r="16" stroke="rgba(0,0,0,0.2)" stroke-width="3" stroke-dasharray="4 3"/>
+            <path d="M50 50 L54 50" stroke="rgba(0,0,0,0.45)" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="card-bottom">
+          <p class="card-title">Borrowing</p>
+          <p class="card-desc">Borrowing lets you use a value without taking ownership. Learn references, the borrow checker, and lifetimes.</p>
+        </div>
+      </a>
+
+      <!-- 08 String vs &str — Pink -->
+      <a href="string-vs-str.html" class="topic-card deck-pink">
+        <div class="card-top">
+          <span class="card-number">08 / String vs &amp;str</span>
+          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </div>
+        <div class="card-icon">
+          <svg width="90" height="90" fill="none" viewBox="0 0 100 100">
+            <rect x="12" y="36" width="42" height="28" rx="4" stroke="rgba(255,255,255,0.85)" stroke-width="3.5"/>
+            <rect x="46" y="42" width="42" height="22" rx="4" stroke="rgba(255,255,255,0.4)" stroke-width="2.5"/>
+            <line x1="20" y1="46" x2="46" y2="46" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round"/>
+            <line x1="20" y1="54" x2="46" y2="54" stroke="rgba(255,255,255,0.35)" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="card-bottom">
+          <p class="card-title">String vs &amp;str</p>
+          <p class="card-desc">Rust has two string types. String owns its data and can grow. &amp;str is a borrowed slice used for reading.</p>
+        </div>
+      </a>
+
+      <!-- 09 Slices — Lime -->
+      <a href="slices.html" class="topic-card deck-lime">
+        <div class="card-top">
+          <span class="card-number">09 / Slices</span>
+          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </div>
+        <div class="card-icon">
+          <svg width="90" height="90" fill="none" viewBox="0 0 100 100">
+            <rect x="14" y="34" width="72" height="32" rx="4" stroke="#171714" stroke-width="3.5"/>
+            <rect x="36" y="34" width="28" height="32" fill="rgba(0,0,0,0.12)"/>
+            <line x1="36" y1="34" x2="36" y2="66" stroke="#171714" stroke-width="3"/>
+            <line x1="64" y1="34" x2="64" y2="66" stroke="#171714" stroke-width="3"/>
+          </svg>
+        </div>
+        <div class="card-bottom">
+          <p class="card-title">Slices</p>
+          <p class="card-desc">A slice is a borrowed view into part of a collection. Work with arrays and strings without copying data.</p>
+        </div>
+      </a>
+
+      <!-- 10 Tuples — Orange -->
+      <a href="tuples.html" class="topic-card deck-orange">
+        <div class="card-top">
+          <span class="card-number">10 / Tuples</span>
+          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </div>
+        <div class="card-icon">
+          <svg width="90" height="90" fill="none" viewBox="0 0 100 100">
+            <path d="M22 32 L14 50 L22 68" stroke="rgba(255,255,255,0.8)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <path d="M78 32 L86 50 L78 68" stroke="rgba(255,255,255,0.8)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <circle cx="38" cy="50" r="9" fill="rgba(255,255,255,0.55)"/>
+            <circle cx="62" cy="50" r="9" fill="rgba(255,255,255,0.85)"/>
+          </svg>
+        </div>
+        <div class="card-bottom">
+          <p class="card-title">Tuples</p>
+          <p class="card-desc">A tuple groups values of different types. Learn indexing, destructuring, and nested tuples.</p>
+        </div>
+      </a>
+
+      <!-- 11 Structs — Cyan -->
+      <a href="structs.html" class="topic-card deck-cyan">
+        <div class="card-top">
+          <span class="card-number">11 / Structs</span>
+          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </div>
+        <div class="card-icon">
+          <svg width="90" height="90" fill="none" viewBox="0 0 100 100">
+            <rect x="18" y="26" width="64" height="48" rx="4" stroke="rgba(0,0,0,0.4)" stroke-width="3.5"/>
+            <line x1="18" y1="42" x2="82" y2="42" stroke="rgba(0,0,0,0.3)" stroke-width="2.5"/>
+            <line x1="18" y1="57" x2="82" y2="57" stroke="rgba(0,0,0,0.3)" stroke-width="2.5"/>
+            <line x1="36" y1="42" x2="36" y2="74" stroke="rgba(0,0,0,0.2)" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="card-bottom">
+          <p class="card-title">Structs</p>
+          <p class="card-desc">A struct is a custom type that groups named fields. Learn methods, field shorthand, and struct update syntax.</p>
+        </div>
+      </a>
+
+      <!-- 12 Enums — Pink -->
+      <a href="enums.html" class="topic-card deck-pink">
+        <div class="card-top">
+          <span class="card-number">12 / Enums</span>
+          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </div>
+        <div class="card-icon">
+          <svg width="90" height="90" fill="none" viewBox="0 0 100 100">
+            <circle cx="50" cy="30" r="9" stroke="rgba(255,255,255,0.85)" stroke-width="3"/>
+            <circle cx="26" cy="70" r="9" stroke="rgba(255,255,255,0.6)" stroke-width="3"/>
+            <circle cx="74" cy="70" r="9" stroke="rgba(255,255,255,0.6)" stroke-width="3"/>
+            <line x1="50" y1="39" x2="30" y2="61" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="50" y1="39" x2="70" y2="61" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="card-bottom">
+          <p class="card-title">Enums</p>
+          <p class="card-desc">An enum represents one of several named variants. Learn how to store data inside variants and model state.</p>
+        </div>
+      </a>
+
+      <!-- 13 Option — Lime -->
+      <a href="option.html" class="topic-card deck-lime">
+        <div class="card-top">
+          <span class="card-number">13 / Option</span>
+          <span class="card-arrow"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12L12 2M12 2H5M12 2V9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </div>
+        <div class="card-icon">
+          <svg width="90" height="90" fill="none" viewBox="0 0 100 100">
+            <circle cx="34" cy="50" r="18" stroke="#171714" stroke-width="3.5"/>
+            <circle cx="34" cy="50" r="7" fill="#171714"/>
+            <circle cx="68" cy="50" r="18" stroke="rgba(0,0,0,0.25)" stroke-width="3" stroke-dasharray="5 3"/>
+          </svg>
+        </div>
+        <div class="card-bottom">
+          <p class="card-title">Option</p>
+          <p class="card-desc">Option is how Rust handles values that might not exist. Use Some and None instead of null.</p>
         </div>
       </a>
 
