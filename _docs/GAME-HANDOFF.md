@@ -3,7 +3,7 @@
 > Read this every session before touching anything in `game/`.
 > This is the game's source of truth. Root `HANDOFF.md` points here.
 
-Last updated: 2026-07-08 (session 10)
+Last updated: 2026-07-08 (session 11)
 
 ---
 
@@ -17,33 +17,25 @@ For the full picture of how Rust Buddy fits within Buddy Tech and the client mod
 
 ---
 
+## Current State
+
+All 13 exercise pages and all 13 flashcard decks are built and live at rustbuddy.vercel.app.
+
+**Exercises** (all live): Variables, Symbols, Types, Functions, Ownership, Borrowing, Strings, Slices, Tuples, Structs, Enums, Option, Flow
+
+**Flashcard Decks** (all live): Values, Symbols, Types, Functions, Ownership, Borrowing, Strings, Slices, Tuples, Structs, Enums, Option, Flow
+
+---
+
 ## What's Next
 
-### 1. Flashcard Decks — Build Remaining 7
+### 1. V2 Flashcard Study Mode
 
-Build one HTML file per deck. Use `flashcards/values.html` as the template — copy exactly, swap gradient class and card content only.
+Single card centered, flip on click, "Know it" / "Still learning" buttons, progress bar. All decks are done — this is ready to build.
 
-**Term source:** `lessons/solana/rust-for-solana/VOCABULARY.md`
-- Filter by the `Flashcard Deck` column (4th column on every term row)
-- The `## Flashcard Deck Map` section at the top maps each deck to its exercise and lists key terms
-- Do not invent terms or pull from anywhere else
+### 2. Game Levels Reskin
 
-| Deck | File | Gradient | Terms | Notes |
-|---|---|---|---|---|
-| STRINGS | `flashcards/strings.html` | Lime | 16 | — |
-| SLICES | `flashcards/slices.html` | Orange | 8 | — |
-| TUPLES | `flashcards/tuples.html` | Cyan | 13 | — |
-| STRUCTS | `flashcards/structs.html` | Pink | 19 | — |
-| ENUMS | `flashcards/enums.html` | Yellow | 8 | — |
-| OPTION | `flashcards/option.html` | Lime | 6 | — |
-| FLOW | `flashcards/flow.html` | Orange | 29 | Trim to ~16 before building |
-
-After each file is built: update `flashcards/index.html` to flip that deck card from `class="soon"` to `class="live"`, then commit and push.
-
-### Later
-
-- V2 flashcard study mode: single card centered, flip on click, "Know it" / "Still learning" buttons, progress bar. Build after all decks are done.
-- Game levels reskin (`game/levels/`) — old style, low priority
+`game/levels/` — old style, low priority.
 
 ---
 
