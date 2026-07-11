@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rust Syntax — Rust Buddy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg:        #FFFFFF;
+      --color-surface:   #1E1E1A;
+      --color-primary:   #FF7657;
+      --color-secondary: #DFFF65;
+      --color-ink:       #171714;
+      --color-muted:     #77766F;
+      --color-border:    #171714;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-ink);
+      min-height: 100vh;
+    }
+
+    /* ── Nav ── */
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 40px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .site-header-left { display: flex; align-items: center; gap: 10px; }
+    .site-name {
+      font-size: 16px; font-weight: 700; letter-spacing: -0.02em;
+      text-decoration: none; color: var(--color-ink);
+    }
+    .header-sep { color: var(--color-muted); font-size: 14px; }
+    .header-section {
+      font-size: 14px; font-weight: 500; color: var(--color-muted);
+      text-decoration: none;
+    }
+    .header-section:hover { color: var(--color-ink); }
+
+    /* ── Hero ── */
+    .article-hero {
+      padding: 56px 40px 48px;
+      border-bottom: 1px solid var(--color-border);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .article-tag {
+      display: inline-flex;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--color-ink);
+      background: var(--color-secondary);
+      padding: 5px 12px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+    }
+    .article-title {
+      font-size: clamp(36px, 5vw, 60px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      color: var(--color-ink);
+      margin-bottom: 16px;
+    }
+    .article-meta {
+      font-size: 13px;
+      color: var(--color-muted);
+    }
+
+    /* ── TOC ── */
+    .toc-wrapper {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 32px 40px;
+      border-bottom: 1px solid rgba(23,23,20,0.1);
+    }
+    .toc-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 12px;
+    }
+    .toc-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      list-style: none;
+    }
+    .toc-list a {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-ink);
+      text-decoration: none;
+      background: #F4F3EF;
+      padding: 5px 12px;
+      border-radius: 100px;
+      transition: background 150ms ease;
+    }
+    .toc-list a:hover { background: var(--color-secondary); }
+
+    /* ── Body ── */
+    .article-body {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 48px 40px 100px;
+    }
+
+    .article-section {
+      margin-bottom: 56px;
+    }
+    .article-section h2 {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--color-ink);
+      margin-bottom: 20px;
+      padding-top: 8px;
+    }
+
+    .section-rule {
+      border: none;
+      border-top: 1px solid rgba(23,23,20,0.08);
+      margin-bottom: 56px;
+    }
+
+    /* ── Tables ── */
+    .syntax-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid rgba(23,23,20,0.1);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .syntax-table thead { background: #F4F3EF; }
+    .syntax-table th {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      padding: 10px 16px;
+      text-align: left;
+      border-bottom: 1px solid rgba(23,23,20,0.1);
+    }
+    .syntax-table td {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #2E2E2A;
+      padding: 11px 16px;
+      border-bottom: 1px solid rgba(23,23,20,0.06);
+      vertical-align: middle;
+    }
+    .syntax-table tr:last-child td { border-bottom: none; }
+    .syntax-table tr:hover td { background: #FAFAF8; }
+    .syntax-table td:first-child {
+      font-weight: 500;
+      color: var(--color-ink);
+      width: 190px;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 13px;
+      font-weight: 500;
+      background: #F0EFE9;
+      padding: 2px 7px;
+      border-radius: 5px;
+      color: var(--color-ink);
+      white-space: nowrap;
+    }
+
+    /* Symbol col */
+    .sym-col {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-primary);
+      width: 120px;
+    }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb {
+      padding: 10px 32px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(23,23,20,0.08);
+    }
+    .breadcrumb a {
+      color: var(--color-muted);
+      text-decoration: none;
+    }
+    .breadcrumb a:hover { color: var(--color-ink); }
+    .bc-sep { color: rgba(23,23,20,0.25); }
+    .bc-current { color: var(--color-ink); font-weight: 500; }
+  </style>
+  <link rel="stylesheet" href="../_design/mobile.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header-left">
+      <a href="../index.html" class="site-name">Rust Buddy</a>
+    </div>
+    <nav class="nav-links">
+      <a href="../exercises/index.html" class="nav-link">Exercises</a>
+      <a href="../flashcards/index.html" class="nav-link">Flashcards</a>
+      <a href="../resources/index.html" class="nav-link active">Resources</a>
+    </nav>
+  </header>
+  <nav class="breadcrumb">
+    <a href="../index.html">Rust Buddy</a>
+    <span class="bc-sep">/</span>
+    <a href="index.html">Resources</a>
+    <span class="bc-sep">/</span>
+    <span class="bc-current">Rust Syntax</span>
+  </nav>
+
+  <div class="article-hero">
+    <div class="article-tag">Reference</div>
+    <h1 class="article-title">Rust Syntax</h1>
+    <p class="article-meta">The rules for how you write Rust code — common syntax, symbols, and macros in one place.</p>
+  </div>
+
+  <div class="toc-wrapper">
+    <p class="toc-label">On this page</p>
+    <ul class="toc-list">
+      <li><a href="#common">Common Syntax</a></li>
+      <li><a href="#symbols">Symbols</a></li>
+      <li><a href="#macros">Macros</a></li>
+    </ul>
+  </div>
+
+  <div class="article-body">
+
+    <!-- Common Syntax -->
+    <section class="article-section" id="common">
+      <h2>Common Syntax</h2>
+      <table class="syntax-table">
+        <thead>
+          <tr><th>Purpose</th><th>Syntax</th><th>Example</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Create a variable</td><td><code>let name: Type = value;</code></td><td><code>let age: i32 = 25;</code></td></tr>
+          <tr><td>Mutable variable</td><td><code>let mut name: Type = value;</code></td><td><code>let mut score = 0;</code></td></tr>
+          <tr><td>Constant</td><td><code>const NAME: Type = value;</code></td><td><code>const PI: f64 = 3.14;</code></td></tr>
+          <tr><td>Function</td><td><code>fn name(param: Type) { }</code></td><td><code>fn greet(name: &amp;str) { }</code></td></tr>
+          <tr><td>Function with return</td><td><code>fn name() -&gt; Type { }</code></td><td><code>fn add() -&gt; i32 { }</code></td></tr>
+          <tr><td>Return a value</td><td><code>last expression</code> or <code>return</code></td><td><code>x + y</code></td></tr>
+          <tr><td>If statement</td><td><code>if condition { }</code></td><td><code>if age &gt;= 18 { }</code></td></tr>
+          <tr><td>Else if</td><td><code>else if condition { }</code></td><td><code>else if age == 18 { }</code></td></tr>
+          <tr><td>Else</td><td><code>else { }</code></td><td><code>else { println!("No"); }</code></td></tr>
+          <tr><td>Match</td><td><code>match value { }</code></td><td><code>match n { 1 =&gt; ..., _ =&gt; ... }</code></td></tr>
+          <tr><td>Loop forever</td><td><code>loop { }</code></td><td><code>loop { break; }</code></td></tr>
+          <tr><td>While loop</td><td><code>while condition { }</code></td><td><code>while x &lt; 10 { }</code></td></tr>
+          <tr><td>For loop</td><td><code>for item in collection { }</code></td><td><code>for n in 1..5 { }</code></td></tr>
+          <tr><td>Struct</td><td><code>struct Name { }</code></td><td><code>struct User { age: u32 }</code></td></tr>
+          <tr><td>Enum</td><td><code>enum Name { }</code></td><td><code>enum Color { Red, Blue }</code></td></tr>
+          <tr><td>Method</td><td><code>impl Type { fn method(...) { } }</code></td><td><code>impl User { fn greet(&amp;self) {} }</code></td></tr>
+          <tr><td>Type casting</td><td><code>value as Type</code></td><td><code>count as u64</code></td></tr>
+          <tr><td>Reference</td><td><code>&amp;value</code></td><td><code>&amp;name</code></td></tr>
+          <tr><td>Mutable reference</td><td><code>&amp;mut value</code></td><td><code>&amp;mut score</code></td></tr>
+          <tr><td>Generic type</td><td><code>Type&lt;T&gt;</code></td><td><code>Vec&lt;String&gt;</code></td></tr>
+          <tr><td>Generic function</td><td><code>fn name&lt;T&gt;()</code></td><td><code>fn print&lt;T&gt;(value: T)</code></td></tr>
+          <tr><td>Trait implementation</td><td><code>impl Trait for Type</code></td><td><code>impl Display for User</code></td></tr>
+          <tr><td>Error propagation</td><td><code>?</code></td><td><code>file.read_to_string()?;</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+    <hr class="section-rule">
+
+    <!-- Symbols -->
+    <section class="article-section" id="symbols">
+      <h2>Rust Symbols &amp; Syntax</h2>
+      <table class="syntax-table">
+        <thead>
+          <tr><th>Symbol</th><th>Name</th><th>Common use</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="sym-col">()</td><td>Parentheses</td><td>Function calls, parameters, unit type</td></tr>
+          <tr><td class="sym-col">{}</td><td>Curly braces</td><td>Blocks, functions, structs, match arms</td></tr>
+          <tr><td class="sym-col">[]</td><td>Square brackets</td><td>Arrays, indexing, attributes (<code>#[derive]</code>)</td></tr>
+          <tr><td class="sym-col">&lt;&gt;</td><td>Angle brackets</td><td>Generics (<code>Vec&lt;T&gt;</code>, <code>Option&lt;T&gt;</code>)</td></tr>
+          <tr><td class="sym-col">:</td><td>Colon</td><td>Type annotations (<code>x: i32</code>)</td></tr>
+          <tr><td class="sym-col">::</td><td>Double colon</td><td>Modules and namespaces (<code>std::io::stdin</code>)</td></tr>
+          <tr><td class="sym-col">;</td><td>Semicolon</td><td>Ends a statement</td></tr>
+          <tr><td class="sym-col">,</td><td>Comma</td><td>Separates items</td></tr>
+          <tr><td class="sym-col">.</td><td>Dot</td><td>Field and method access (<code>user.name</code>)</td></tr>
+          <tr><td class="sym-col">..</td><td>Range operator</td><td><code>1..5</code>, struct update syntax</td></tr>
+          <tr><td class="sym-col">..=</td><td>Inclusive range</td><td><code>1..=5</code></td></tr>
+          <tr><td class="sym-col">=&gt;</td><td>Fat arrow</td><td>Match arms</td></tr>
+          <tr><td class="sym-col">-&gt;</td><td>Thin arrow</td><td>Function return type</td></tr>
+          <tr><td class="sym-col">=</td><td>Assignment</td><td>Assign a value</td></tr>
+          <tr><td class="sym-col">==</td><td>Equality</td><td>Compare values</td></tr>
+          <tr><td class="sym-col">!=</td><td>Not equal</td><td>Compare values</td></tr>
+          <tr><td class="sym-col">&gt;</td><td>Greater than</td><td>Comparison</td></tr>
+          <tr><td class="sym-col">&lt;</td><td>Less than</td><td>Comparison, generics</td></tr>
+          <tr><td class="sym-col">&gt;=</td><td>Greater than or equal</td><td>Comparison</td></tr>
+          <tr><td class="sym-col">&lt;=</td><td>Less than or equal</td><td>Comparison</td></tr>
+          <tr><td class="sym-col">+</td><td>Plus</td><td>Addition</td></tr>
+          <tr><td class="sym-col">-</td><td>Minus</td><td>Subtraction</td></tr>
+          <tr><td class="sym-col">*</td><td>Asterisk</td><td>Multiplication, dereference</td></tr>
+          <tr><td class="sym-col">/</td><td>Slash</td><td>Division</td></tr>
+          <tr><td class="sym-col">%</td><td>Modulo</td><td>Remainder</td></tr>
+          <tr><td class="sym-col">+=</td><td>Add assignment</td><td><code>x += 1</code></td></tr>
+          <tr><td class="sym-col">-=</td><td>Subtract assignment</td><td><code>x -= 1</code></td></tr>
+          <tr><td class="sym-col">*=</td><td>Multiply assignment</td><td><code>x *= 2</code></td></tr>
+          <tr><td class="sym-col">/=</td><td>Divide assignment</td><td><code>x /= 2</code></td></tr>
+          <tr><td class="sym-col">&amp;</td><td>Ampersand</td><td>Immutable reference (borrow)</td></tr>
+          <tr><td class="sym-col">&amp;mut</td><td>Mutable reference</td><td>Mutable borrow</td></tr>
+          <tr><td class="sym-col">&amp;&amp;</td><td>Double ampersand</td><td>Logical AND</td></tr>
+          <tr><td class="sym-col">||</td><td>Double pipe</td><td>Logical OR</td></tr>
+          <tr><td class="sym-col">!</td><td>Exclamation mark</td><td>Macros (<code>println!</code>), logical NOT, never type</td></tr>
+          <tr><td class="sym-col">?</td><td>Question mark</td><td>Error propagation</td></tr>
+          <tr><td class="sym-col">_</td><td>Underscore</td><td>Ignore a value, wildcard pattern</td></tr>
+          <tr><td class="sym-col">@</td><td>At symbol</td><td>Pattern binding in match</td></tr>
+          <tr><td class="sym-col">|</td><td>Pipe</td><td>Closures, pattern alternatives</td></tr>
+          <tr><td class="sym-col">#[]</td><td>Attribute</td><td><code>#[derive(Debug)]</code>, <code>#[test]</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+    <hr class="section-rule">
+
+    <!-- Macros -->
+    <section class="article-section" id="macros">
+      <h2>Common Rust Macros</h2>
+      <table class="syntax-table">
+        <thead>
+          <tr><th>Macro</th><th>Purpose</th><th>Example</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>println!</code></td><td>Print with newline</td><td><code>println!("Hello");</code></td></tr>
+          <tr><td><code>print!</code></td><td>Print without newline</td><td><code>print!("Hello");</code></td></tr>
+          <tr><td><code>dbg!</code></td><td>Debug a value</td><td><code>dbg!(value);</code></td></tr>
+          <tr><td><code>assert!</code></td><td>Assert a condition</td><td><code>assert!(x &gt; 0);</code></td></tr>
+          <tr><td><code>assert_eq!</code></td><td>Assert equality</td><td><code>assert_eq!(x, 5);</code></td></tr>
+          <tr><td><code>assert_ne!</code></td><td>Assert inequality</td><td><code>assert_ne!(x, 0);</code></td></tr>
+          <tr><td><code>vec!</code></td><td>Create a vector</td><td><code>vec![1, 2, 3]</code></td></tr>
+          <tr><td><code>format!</code></td><td>Format into a String</td><td><code>format!("Hi {}", name)</code></td></tr>
+          <tr><td><code>panic!</code></td><td>Stop execution</td><td><code>panic!("Something went wrong");</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+  </div>
+
+  <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

@@ -27,10 +27,15 @@
     .back-link:hover { color: var(--color-ink); }
     .header-sep { color: var(--color-muted); font-size: 14px; }
     .header-title { font-size: 14px; font-weight: 500; color: var(--color-muted); }
-    .nav-links { display: flex; gap: 24px; }
-    .nav-link { font-size: 13px; font-weight: 600; color: var(--color-muted); text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase; }
-    .nav-link:hover { color: var(--color-ink); }
-    .nav-link.active { color: var(--color-primary); }
+    .nav-links { display: flex; gap: 8px; }
+    .nav-link {
+      font-size: 11px; font-weight: 700; color: var(--color-ink);
+      text-decoration: none; letter-spacing: 0.05em; text-transform: uppercase;
+      background: #C5E94E; padding: 5px 14px; border-radius: 20px;
+      transition: opacity 150ms ease;
+    }
+    .nav-link:hover { opacity: 0.85; }
+    .nav-link.active { opacity: 1; }
     .main { padding: 32px; max-width: 1400px; margin: 0 auto; }
     .tab-container { border: 1px solid var(--color-border); border-radius: 20px; overflow: hidden; }
     .tab-bar { display: flex; border-bottom: 1px solid var(--color-border); }
@@ -92,6 +97,23 @@
     .terms-table tr:last-child td { border-bottom: none; }
     .terms-table td:first-child { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; font-weight: 600; white-space: nowrap; width: 160px; }
     .terms-table td:last-child { color: var(--color-muted); }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb {
+      padding: 10px 32px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(23,23,20,0.08);
+    }
+    .breadcrumb a {
+      color: var(--color-muted);
+      text-decoration: none;
+    }
+    .breadcrumb a:hover { color: var(--color-ink); }
+    .bc-sep { color: rgba(23,23,20,0.25); }
+    .bc-current { color: var(--color-ink); font-weight: 500; }
   </style>
   <link rel="stylesheet" href="../_design/mobile.css">
 </head>
@@ -100,12 +122,20 @@
 <header class="site-header">
   <div class="site-header-left">
     <a href="../index.html" class="site-name">Rust Buddy</a>
-    <span class="header-sep">/</span>
-    <a href="index.html" class="back-link">Exercises</a>
-    <span class="header-sep">/</span>
-    <span class="header-title">Borrowing</span>
   </div>
+    <nav class="nav-links">
+      <a href="../exercises/index.html" class="nav-link active">Exercises</a>
+      <a href="../flashcards/index.html" class="nav-link">Flashcards</a>
+      <a href="../resources/index.html" class="nav-link">Resources</a>
+    </nav>
 </header>
+  <nav class="breadcrumb">
+    <a href="../index.html">Rust Buddy</a>
+    <span class="bc-sep">/</span>
+    <a href="index.html">Exercises</a>
+    <span class="bc-sep">/</span>
+    <span class="bc-current">Borrowing</span>
+  </nav>
 
 <main class="main">
   <div class="tab-container">

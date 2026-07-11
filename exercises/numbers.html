@@ -27,10 +27,15 @@
     .back-link:hover { color: var(--color-ink); }
     .header-sep { color: var(--color-muted); font-size: 14px; }
     .header-title { font-size: 14px; font-weight: 500; color: var(--color-muted); }
-    .nav-links { display: flex; gap: 24px; }
-    .nav-link { font-size: 13px; font-weight: 600; color: var(--color-muted); text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase; }
-    .nav-link:hover { color: var(--color-ink); }
-    .nav-link.active { color: var(--color-primary); }
+    .nav-links { display: flex; gap: 8px; }
+    .nav-link {
+      font-size: 11px; font-weight: 700; color: var(--color-ink);
+      text-decoration: none; letter-spacing: 0.05em; text-transform: uppercase;
+      background: #C5E94E; padding: 5px 14px; border-radius: 20px;
+      transition: opacity 150ms ease;
+    }
+    .nav-link:hover { opacity: 0.85; }
+    .nav-link.active { opacity: 1; }
     .main { padding: 32px; max-width: 1400px; margin: 0 auto; }
     .tab-container { border: 1px solid var(--color-border); border-radius: 20px; overflow: hidden; }
     .tab-bar { display: flex; border-bottom: 1px solid var(--color-border); }
@@ -92,6 +97,23 @@
     .terms-table tr:last-child td { border-bottom: none; }
     .terms-table td:first-child { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; font-weight: 600; white-space: nowrap; width: 160px; }
     .terms-table td:last-child { color: var(--color-muted); }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb {
+      padding: 10px 32px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(23,23,20,0.08);
+    }
+    .breadcrumb a {
+      color: var(--color-muted);
+      text-decoration: none;
+    }
+    .breadcrumb a:hover { color: var(--color-ink); }
+    .bc-sep { color: rgba(23,23,20,0.25); }
+    .bc-current { color: var(--color-ink); font-weight: 500; }
   </style>
   <link rel="stylesheet" href="../_design/mobile.css">
 </head>
@@ -100,12 +122,20 @@
 <header class="site-header">
   <div class="site-header-left">
     <a href="../index.html" class="site-name">Rust Buddy</a>
-    <span class="header-sep">/</span>
-    <a href="index.html" class="back-link">Exercises</a>
-    <span class="header-sep">/</span>
-    <span class="header-title">Numbers & Binary</span>
   </div>
+    <nav class="nav-links">
+      <a href="../exercises/index.html" class="nav-link active">Exercises</a>
+      <a href="../flashcards/index.html" class="nav-link">Flashcards</a>
+      <a href="../resources/index.html" class="nav-link">Resources</a>
+    </nav>
 </header>
+  <nav class="breadcrumb">
+    <a href="../index.html">Rust Buddy</a>
+    <span class="bc-sep">/</span>
+    <a href="index.html">Exercises</a>
+    <span class="bc-sep">/</span>
+    <span class="bc-current">Numbers & Binary</span>
+  </nav>
 
 <main class="main">
   <div class="tab-container">
@@ -234,7 +264,7 @@
     {
       num: 6,
       title: "Contract Build: Annotate a Payment",
-      explainer: "<p>You now know the five things that matter for numbers in a payment contract:</p><ol><li>Use <code>u64</code> for lamport amounts, always positive, large enough for any payment</li><li>Use <code>i32</code> (or another signed type) when a value could be negative</li><li>Annotate the type explicitly when the default <code>i32</code> is wrong</li><li>Use <code>as</code> to convert between types when you must</li><li>Use <code>f64</code> for decimal math, but cast integers before mixing them with floats</li></ol><p>This exercise puts them together. The contract below tracks a subscription payment: a base amount, a discount to subtract, and a final total.</p>",
+      explainer: "<p>You now know the five things that matter for numbers in a Solana contract:</p><ol><li>Use <code>u64</code> for lamport amounts, always positive, large enough for any payment</li><li>Use <code>i32</code> (or another signed type) when a value could be negative</li><li>Annotate the type explicitly when the default <code>i32</code> is wrong</li><li>Use <code>as</code> to convert between types when you must</li><li>Use <code>f64</code> for decimal math, but cast integers before mixing them with floats</li></ol><p>This exercise puts them together. The contract below tracks a subscription payment: a base amount, a discount to subtract, and a final total.</p>",
       task: "<p>A subscription payment contract tracks a base amount, a discount to subtract, and a final total. Right now all three variables are missing type annotations, and <code>total</code> is not computed.</p><ol><li>Set <code>base_amount</code> to <code>1_000_000</code> lamports (<code>u64</code>)</li><li>Set <code>discount</code> to <code>50_000</code> (<code>u64</code>)</li><li>Compute <code>total</code> as <code>base_amount - discount</code></li><li>Print <code>Payment: 950000 lamports</code></li></ol>",
       starterCode: "fn main() {\n    let base_amount: ___ = 1_000_000;\n    let discount: ___ = 50_000;\n    let total: ___ = ___;\n    println!(\"Payment: {} lamports\", total);\n}",
       instruction: "Fill in the blanks so the code compiles and prints the correct total",

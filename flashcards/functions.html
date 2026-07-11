@@ -92,20 +92,45 @@
     /* ── Progress bar ── */
     .progress-bar-wrap { position: fixed; bottom: 0; left: 0; right: 0; height: 4px; background: rgba(0,0,0,0.08); z-index: 100; }
     .progress-bar { height: 100%; background: var(--color-primary); transition: width 300ms ease; }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb {
+      padding: 10px 32px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(23,23,20,0.08);
+    }
+    .breadcrumb a {
+      color: var(--color-muted);
+      text-decoration: none;
+    }
+    .breadcrumb a:hover { color: var(--color-ink); }
+    .bc-sep { color: rgba(23,23,20,0.25); }
+    .bc-current { color: var(--color-ink); font-weight: 500; }
   </style>
   <link rel="stylesheet" href="../_design/mobile.css">
 </head>
 <body>
 
-  <header class="site-header">
+    <header class="site-header">
     <div class="site-header-left">
       <a href="../index.html" class="site-name">Rust Buddy</a>
-      <span class="header-sep">/</span>
-      <a href="index.html" class="header-title" style="text-decoration:none;color:var(--color-muted);">Flashcards</a>
-      <span class="header-sep">/</span>
-      <span class="header-title">Functions</span>
     </div>
+    <nav class="nav-links">
+      <a href="../exercises/index.html" class="nav-link">Exercises</a>
+      <a href="../flashcards/index.html" class="nav-link active">Flashcards</a>
+      <a href="../resources/index.html" class="nav-link">Resources</a>
+    </nav>
   </header>
+  <nav class="breadcrumb">
+    <a href="../index.html">Rust Buddy</a>
+    <span class="bc-sep">/</span>
+    <a href="index.html">Flashcards</a>
+    <span class="bc-sep">/</span>
+    <span class="bc-current">Functions</span>
+  </nav>
 
   <div class="page-header">
     <div class="page-header-left">
