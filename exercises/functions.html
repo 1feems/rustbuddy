@@ -177,13 +177,11 @@
             <tr><th>Concept</th><th>What it means</th></tr>
           </thead>
           <tbody>
-            <tr><td>fn name(x: i32) -> i32</td><td>Declare a function with typed arguments and a return type</td></tr>
-            <tr><td>-> i32</td><td>The return type annotation — what the function hands back</td></tr>
-            <tr><td>-> !</td><td>Diverging function — never returns to the caller</td></tr>
-            <tr><td>panic!()</td><td>Force the program to stop immediately</td></tr>
-            <tr><td>todo!()</td><td>Placeholder for code you have not written yet</td></tr>
-            <tr><td>unimplemented!()</td><td>Placeholder for code you will write later</td></tr>
-            <tr><td>match</td><td>Choose what to do based on a value, like a switch</td></tr>
+            <tr><td>fn name()</td><td>Declare a function named name</td></tr>
+            <tr><td>fn name(x: i32)</td><td>Function with one parameter: x of type i32</td></tr>
+            <tr><td>fn name(x: i32, y: i32)</td><td>Two parameters, each needs its own type</td></tr>
+            <tr><td>-> i32</td><td>The function returns an i32 to whoever called it</td></tr>
+            <tr><td>Caller</td><td>The code that calls a function and receives what it returns</td></tr>
           </tbody>
         </table>
       </div>
@@ -208,13 +206,11 @@
             <tr><th>Term</th><th>What it means</th><th>When you use it</th></tr>
           </thead>
           <tbody>
-            <tr><td>fn name(...) -> T</td><td>Function signature with typed inputs and return type</td><td>Every function that takes arguments or hands a value back</td></tr>
-            <tr><td>-> i32</td><td>Return type annotation, what the function promises to give back</td><td>Any function that returns a value to the caller</td></tr>
-            <tr><td>-> !</td><td>Diverging return type, the function never returns</td><td>Functions that panic, loop forever, or quit the program</td></tr>
-            <tr><td>panic!()</td><td>Stops the program immediately with an error message</td><td>When something goes wrong and there is no safe value to return</td></tr>
-            <tr><td>todo!()</td><td>Marks unwritten code, diverges if reached at runtime</td><td>Placeholder for functions or arms you plan to implement</td></tr>
-            <tr><td>unimplemented!()</td><td>Marks unsupported code paths, diverges if reached</td><td>Match arms or features not yet built out</td></tr>
-            <tr><td>match</td><td>Checks a value against patterns and runs the first match</td><td>When a value could be one of several things and each needs different handling</td></tr>
+            <tr><td>fn name()</td><td>Declare a function named name</td><td>Any time you want a named, reusable block of code</td></tr>
+            <tr><td>fn name(x: i32)</td><td>Function with one parameter: x of type i32</td><td>When a function needs an input value to work with</td></tr>
+            <tr><td>fn name(x: i32, y: i32)</td><td>Two parameters, each needs its own type annotation</td><td>When the function takes multiple inputs</td></tr>
+            <tr><td>-> i32</td><td>The function returns an i32 to whoever called it</td><td>Any function that hands a value back to the caller</td></tr>
+            <tr><td>Caller</td><td>The code that calls a function and receives what it returns</td><td>Understanding where a function's return value goes</td></tr>
           </tbody>
         </table>
       </div>
@@ -228,68 +224,68 @@
   const exercises = [
     {
       num: 1,
-      title: "Return Type Annotation",
-      explainer: "<p>A function is a named block of reusable code. It can take inputs, do something with them, and hand a value back to whoever called it. In Rust, if your function hands back a value, you must declare what type it returns, written as <code>-&gt; type</code> after the parentheses.</p><p>The last line of the function body becomes the return value, but only if there is no semicolon. Add a semicolon and the value disappears.</p>",
-      task: "<p>A function adds two numbers and should return the sum. Right now it fails because the function has no return type annotation and the last line has a semicolon.</p><ol><li>Add the return type annotation <code>-&gt; i32</code> to <code>add</code></li><li>Remove the semicolon so <code>x + y</code> becomes an expression</li><li>Print <code>Result: 7</code></li></ol>",
-      starterCode: "fn add(x: i32, y: i32) {\n    x + y;\n}\n\nfn main() {\n    let result = add(3, 4);\n    println!(\"Result: {}\", result);\n}",
-      instruction: "Fix both issues so the function compiles and returns the correct value",
-      expectedOutput: "Result: 7",
-      answerCode: "fn add(x: i32, y: i32) -> i32 {\n    x + y\n}\n\nfn main() {\n    let result = add(3, 4);\n    println!(\"Result: {}\", result);\n}",
-      why: ""
+      title: "Parameter Types Are Required",
+      explainer: "<p>A <strong>function</strong> is a named block of reusable code. You give it a name, describe what it takes as input, describe what it hands back, and then call it whenever you need it.</p><p>The inputs to a function are called <strong>parameters</strong>. In Rust, every parameter must have a type. You write the type directly after the parameter name, separated by a colon:</p><pre style='background:#1E1E1A;border-radius:8px;padding:12px 16px;margin:12px 0;font-family:SF Mono,Fira Code,monospace;font-size:12px;line-height:1.7;color:#c9d1e3;overflow-x:auto;white-space:pre;'>fn double(n: i32) -&gt; i32 {\n    n * 2\n}</pre><p>Here <code>n</code> is the parameter name and <code>i32</code> is its type. Without <code>: i32</code>, Rust cannot compile because it has no way to know what kind of value <code>n</code> holds.</p>",
+      task: "<p>A function doubles a number but is missing the type on its parameter. Right now Rust will not compile.</p><ol><li>Add <code>: i32</code> after <code>n</code> in the function signature.</li></ol>",
+      starterCode: "fn double(n) -> i32 {\n    n * 2\n}\n\nfn main() {\n    let result = double(5);\n    println!(\"Result: {}\", result);\n}",
+      instruction: "Fix the parameter so Rust knows what type <code>n</code> is",
+      expectedOutput: "Result: 10",
+      answerCode: "fn double(n: i32) -> i32 {\n    n * 2\n}\n\nfn main() {\n    let result = double(5);\n    println!(\"Result: {}\", result);\n}",
+      why: "<p>Add <code>: i32</code> after <code>n</code>. Rust now knows what type to expect.</p>"
     },
     {
       num: 2,
-      title: "Expression vs Statement",
-      explainer: "<p>You practiced this in the Statements &amp; Expressions exercises. Now it shows up inside a function.</p><p>The last line of a function body is what the function hands back to the caller, but only if there is no semicolon. The semicolon throws the value away. The function then returns <code>()</code> (nothing) even though you declared a return type of <code>i32</code>. Rust will refuse to compile because you promised a number but handed back nothing.</p><p>The instructor explained it this way: \"if we omit the semicolon, the result of this operation will get returned.\"</p>",
-      task: "<p>A function should return the sum of two numbers. Right now it returns <code>()</code> because the last line has a semicolon.</p><ol><li>Remove the semicolon from <code>x + y</code> inside <code>add</code></li><li>Confirm the function returns the sum to the caller</li></ol>",
-      starterCode: "fn add(x: i32, y: i32) -> i32 {\n    x + y;\n}\n\nfn main() {\n    println!(\"Result: {}\", add(3, 4));\n}",
-      instruction: "Remove one character so this compiles and prints <code>7</code>",
-      expectedOutput: "Result: 7",
-      answerCode: "fn add(x: i32, y: i32) -> i32 {\n    x + y\n}\n\nfn main() {\n    println!(\"Result: {}\", add(3, 4));\n}",
-      why: "<p>Remove the semicolon after <code>x + y</code>:</p>"
+      title: "Declaring a Return Type",
+      explainer: "<p>When a function hands a value back to the caller, you declare the type of that value after <code>-&gt;</code>. This goes between the closing parenthesis and the opening brace:</p><pre style='background:#1E1E1A;border-radius:8px;padding:12px 16px;margin:12px 0;font-family:SF Mono,Fira Code,monospace;font-size:12px;line-height:1.7;color:#c9d1e3;overflow-x:auto;white-space:pre;'>fn square(x: i32) -&gt; i32 {\n    x * x\n}</pre><p>Without <code>-&gt; i32</code>, Rust assumes the function returns nothing. If the function body actually produces a value, Rust sees a mismatch and will not compile:</p><pre style='background:#1E1E1A;border-radius:8px;padding:12px 16px;margin:12px 0;font-family:SF Mono,Fira Code,monospace;font-size:12px;line-height:1.7;color:#c9d1e3;overflow-x:auto;white-space:pre;'>error[E0308]: mismatched types\n --&gt; src/main.rs:2:5\n  |\n1 | fn square(x: i32) {\n  |                   - expected `()` because of default return type\n2 |     x * x\n  |     ^^^^^ expected `()`, found `i32`</pre>",
+      task: "<p>A function computes a square but is missing its return type. Right now Rust sees the body produces an <code>i32</code> but the signature promises nothing, so the types do not match.</p><ol><li>Add <code>-&gt; i32</code> between <code>)</code> and <code>{</code> in the function signature.</li></ol>",
+      starterCode: "fn square(x: i32) {\n    x * x\n}\n\nfn main() {\n    let result = square(4);\n    println!(\"Square: {}\", result);\n}",
+      instruction: "Fix the signature so Rust knows what this function returns",
+      expectedOutput: "Square: 16",
+      answerCode: "fn square(x: i32) -> i32 {\n    x * x\n}\n\nfn main() {\n    let result = square(4);\n    println!(\"Square: {}\", result);\n}",
+      why: "<p>Add <code>-&gt; i32</code> after the closing parenthesis. Rust now knows the function hands back an <code>i32</code>.</p>"
     },
     {
       num: 3,
-      title: "Diverging Function",
-      explainer: "<p>A <strong>diverging function</strong> is a function that never returns to the caller. Instead of handing back a value, it stops the program entirely. The return type <code>-&gt; !</code>, an exclamation mark, is how you tell Rust this function will never hand control back.</p><p>The instructor described the causes: \"panicking, looping forever, or quitting the program.\" The most common tool is <code>panic!()</code>, which stops the program immediately with an error.</p>",
-      task: "<p>A function is declared with return type <code>-&gt; !</code> but currently prints and exits normally. Right now the <code>println!</code> in <code>main</code> runs because the function never diverges.</p><ol><li>Call <code>never_return()</code></li><li>Ensure the <code>println!</code> in <code>main</code> never runs</li></ol>",
-      starterCode: "fn never_return() -> ! {\n    println!(\"I return!\");\n}\n\nfn main() {\n    never_return();\n    println!(\"This should never print.\");\n}",
-      instruction: "Solve this in two ways so the <code>println!</code> in <code>main</code> never runs",
-      expectedOutput: "(panics - the println! in main never runs)",
-      answerCode: "fn never_return() -> ! {\n    panic!(\"Aborted\");\n}\n\nfn main() {\n    never_return();\n    println!(\"This should never print.\");\n}\n\n// Answer - Way 2 (todo!):\n// fn never_return() -> ! {\n//     todo!(\"Not implemented yet\");\n// }\n// \n// fn main() {\n//     never_return();\n//     println!(\"This should never print.\");\n// }",
-      why: ""
+      title: "Multiple Parameters",
+      explainer: "<p>Functions can take more than one input. Each parameter gets its own name and its own type, separated by commas. You cannot share a type across two parameter names, each one needs its own <code>: type</code>:</p><pre style='background:#1E1E1A;border-radius:8px;padding:12px 16px;margin:12px 0;font-family:SF Mono,Fira Code,monospace;font-size:12px;line-height:1.7;color:#c9d1e3;overflow-x:auto;white-space:pre;'>fn add(x: i32, y: i32) -&gt; i32 {\n    x + y\n}</pre><p>If you write <code>fn add(x, y: i32)</code>, Rust will not compile because <code>x</code> is missing its type. Every parameter must be fully annotated.</p>",
+      task: "<p>A function adds two numbers but the second parameter <code>y</code> is missing its type annotation. Right now Rust will not compile.</p><ol><li>Add <code>: i32</code> after <code>y</code>.</li></ol>",
+      starterCode: "fn add(x: i32, y) -> i32 {\n    x + y\n}\n\nfn main() {\n    let total = add(3, 4);\n    println!(\"Total: {}\", total);\n}",
+      instruction: "Fix the second parameter so Rust knows its type",
+      expectedOutput: "Total: 7",
+      answerCode: "fn add(x: i32, y: i32) -> i32 {\n    x + y\n}\n\nfn main() {\n    let total = add(3, 4);\n    println!(\"Total: {}\", total);\n}",
+      why: "<p>Add <code>: i32</code> after <code>y</code>. Both parameters now have explicit types.</p>"
     },
     {
       num: 4,
-      title: "unimplemented! Macro",
-      explainer: "<p>The instructor named three macros that all create diverging functions:</p><ul><li><code>panic!()</code>, stops the program because something went wrong</li><li><code>todo!()</code>, stops the program because you haven't written this yet</li><li><code>unimplemented!()</code>, stops the program because this case is not supported yet</li></ul><p><code>unimplemented!()</code> is especially useful inside a <code>match</code> statement when you are building out a function tier by tier. It lets the code compile while signaling \"I haven't written this arm yet.\" If the program hits that arm at runtime, it stops.</p>",
-      task: "<p>A match statement returns prices for plan tiers, but the <code>\"premium\"</code> arm is empty. Right now the code won't compile because the match arm has no value.</p><ol><li>Match on a <code>tier</code> string</li><li>Return <code>500_000</code> for <code>\"basic\"</code></li><li>Mark <code>\"premium\"</code> as not yet implemented</li><li>Print <code>Price: 500000</code></li></ol>",
-      starterCode: "fn get_price(tier: &str) -> u64 {\n    match tier {\n        \"basic\" => 500_000,\n        \"premium\" => \n    }\n}\n\nfn main() {\n    println!(\"Price: {}\", get_price(\"basic\"));\n}",
-      instruction: "Fill in the blank so the compiler knows the premium tier is not implemented yet",
-      expectedOutput: "Price: 500000",
-      answerCode: "fn get_price(tier: &str) -> u64 {\n    match tier {\n        \"basic\" => 500_000,\n        \"premium\" => unimplemented!(\"premium tier not yet supported\"),\n    }\n}\n\nfn main() {\n    println!(\"Price: {}\", get_price(\"basic\"));\n}",
-      why: ""
+      title: "Using the Return Value",
+      explainer: "<p>When a function returns a value, that value appears at the call site. You can store it in a variable, pass it directly to another function, or use it in an expression. If you call a function but do not use what it returns, the value is discarded.</p><p>All three of these are valid:</p><pre style='background:#1E1E1A;border-radius:8px;padding:12px 16px;margin:12px 0;font-family:SF Mono,Fira Code,monospace;font-size:12px;line-height:1.7;color:#c9d1e3;overflow-x:auto;white-space:pre;'>let result = square(5);        // store it\nprintln!(\"{}\", square(5));     // pass it directly\nlet doubled = square(5) * 2;   // use it in an expression</pre><p>Defining a function does not call it. The function only runs when you actually call it by name.</p>",
+      task: "<p>A function converts Fahrenheit to Celsius and returns the correct value. Right now <code>main</code> prints the original temperature instead of using the function's return value.</p><ol><li>Replace <code>temp_f</code> inside <code>println!</code> with a call to <code>to_celsius(temp_f)</code>.</li></ol>",
+      starterCode: "fn to_celsius(f: f64) -> f64 {\n    (f - 32.0) * 5.0 / 9.0\n}\n\nfn main() {\n    let temp_f = 212.0;\n    println!(\"Celsius: {}\", temp_f);\n}",
+      instruction: "Use the function's return value in the print statement",
+      expectedOutput: "Celsius: 100",
+      answerCode: "fn to_celsius(f: f64) -> f64 {\n    (f - 32.0) * 5.0 / 9.0\n}\n\nfn main() {\n    let temp_f = 212.0;\n    println!(\"Celsius: {}\", to_celsius(temp_f));\n}",
+      why: "<p>Call <code>to_celsius(temp_f)</code> inside <code>println!</code>. The return value flows directly into the print.</p>"
     },
     {
       num: 5,
-      title: "Match Fill-in-the-Blank",
-      explainer: "<p><code>match</code> checks a value against a list of patterns and runs the first one that matches, like a multi-way switch. Every arm of a <code>match</code> must produce the same type. That is why <code>panic!()</code> is allowed inside a <code>match</code> that returns <code>i32</code>: <code>panic!()</code> has return type <code>!</code>, which Rust allows to stand in for any type because it never actually returns anything.</p><p>The instructor showed this exact pattern: a bool matched against <code>true</code> (returns a value) and <code>false</code> (prints something and panics). The <code>false</code> arm never produces an <code>i32</code>, but <code>panic!()</code> satisfies Rust's type checker anyway.</p><p>In a payment contract, a subscription check might return a fee if the subscription is active, and abort entirely if it is not.</p>",
-      task: "<p>The code below wants to:</p><ol><li>Set <code>b</code> to <code>false</code></li><li>Print <code>\"Success!\"</code> from the false arm</li><li>Panic (this is the expected behavior for this exercise)</li></ol>",
-      starterCode: "fn main() {\n    let b = ___;\n    let v = match b {\n        true => 1,\n        false => {\n            println!(\"Success!\");\n            panic!(\"we have no value for false, but we can panic\");\n        }\n    };\n    println!(\"v = {}\", v);\n}",
-      instruction: "Fill in <code>___</code> so the program prints <code>\"Success!\"</code> and panics",
-      expectedOutput: "Success!\n(then panics)",
-      answerCode: "fn main() {\n    let b = false;\n    let v = match b {\n        true => 1,\n        false => {\n            println!(\"Success!\");\n            panic!(\"we have no value for false, but we can panic\");\n        }\n    };\n    println!(\"v = {}\", v);\n}",
-      why: ""
+      title: "Type Safety at the Call Site",
+      explainer: "<p>Rust checks that the values you pass to a function match the types the function expects. If a function expects <code>i32</code>, you cannot pass <code>3.0</code>, that is an <code>f64</code>. Rust will not compile and will tell you exactly where the types conflict:</p><pre style='background:#1E1E1A;border-radius:8px;padding:12px 16px;margin:12px 0;font-family:SF Mono,Fira Code,monospace;font-size:12px;line-height:1.7;color:#c9d1e3;overflow-x:auto;white-space:pre;'>error[E0308]: mismatched types\n --&gt; src/main.rs:6:22\n  |\n6 |     let result = multiply(3.0, 4.0);\n  |                           ^^^ expected `i32`, found floating-point number</pre><p>This check happens at every function call, before the program ever runs. It is one of the main ways Rust prevents bugs.</p>",
+      task: "<p>A function multiplies two integers. The caller passes decimal numbers instead of whole numbers. Right now Rust will not compile because <code>f64</code> and <code>i32</code> are different types.</p><ol><li>Change <code>3.0</code> to <code>3</code> and <code>4.0</code> to <code>4</code> in the call to <code>multiply</code>.</li></ol>",
+      starterCode: "fn multiply(x: i32, y: i32) -> i32 {\n    x * y\n}\n\nfn main() {\n    let result = multiply(3.0, 4.0);\n    println!(\"Result: {}\", result);\n}",
+      instruction: "Fix the call site so the argument types match what the function expects",
+      expectedOutput: "Result: 12",
+      answerCode: "fn multiply(x: i32, y: i32) -> i32 {\n    x * y\n}\n\nfn main() {\n    let result = multiply(3, 4);\n    println!(\"Result: {}\", result);\n}",
+      why: "<p>Change <code>3.0</code> and <code>4.0</code> to <code>3</code> and <code>4</code>. The values now match the <code>i32</code> types the function expects.</p>"
     },
     {
       num: 6,
-      title: "Write Cold",
-      explainer: "<p>You have now practiced every part of a function:</p><ul><li><code>fn name(arg: type) -&gt; return_type</code>, the signature: name, inputs with types, output type</li><li>The body in <code>{ }</code>, where the work happens</li><li>The last expression without a semicolon, what gets returned to the caller</li><li><code>-&gt; !</code>, for functions that never return</li><li><code>panic!()</code>, <code>todo!()</code>, <code>unimplemented!()</code>, for diverging functions and placeholders</li><li><code>match</code>, for choosing what to do based on a value</li></ul><p>Write a function from scratch using all of these rules.</p>",
-      task: "<p>Write a complete <code>main</code> with a <code>square</code> function that:</p><ul><li>Takes one <code>i32</code> argument</li><li>Returns an <code>i32</code></li><li>Computes the square (<code>x * x</code>)</li><li>Is called from <code>main</code> with <code>5</code></li><li>Prints the result</li></ul><p>``<code>text Square: 25 </code>``</p>",
+      title: "Build: Amount Validator",
+      explainer: "<p>You now understand every part of a function:</p><ul><li>Every parameter needs a name and a type: <code>amount: u64</code></li><li>Declare the return type after <code>-&gt;</code>: <code>-&gt; bool</code></li><li>The last expression in the body is what the function hands back (no semicolon)</li><li>Call a function by writing its name and passing the arguments: <code>is_valid_amount(500, 100, 1000)</code></li></ul><p>Now build one from scratch.</p>",
+      task: "<p>A blockchain contract needs to validate transaction amounts before processing. Write a function that checks whether an amount falls within allowed bounds.</p><p><strong>Spec:</strong></p><ul><li>Function name: <code>is_valid_amount</code></li><li>Parameters: <code>amount: u64</code>, <code>min: u64</code>, <code>max: u64</code></li><li>Return type: <code>bool</code></li><li>Returns <code>true</code> if <code>amount</code> is between <code>min</code> and <code>max</code> (inclusive). Returns <code>false</code> otherwise.</li><li>Use implicit return (no <code>return</code> keyword).</li></ul><p><strong>In <code>main</code>:</strong></p><ul><li>Call <code>is_valid_amount(500, 100, 1000)</code> and print the result.</li><li>Call <code>is_valid_amount(50, 100, 1000)</code> and print the result.</li></ul>",
       starterCode: "",
       instruction: "",
-      expectedOutput: "Square: 25",
-      answerCode: "fn square(x: i32) -> i32 {\n    x * x\n}\n\nfn main() {\n    let result = square(5);\n    println!(\"Square: {}\", result);\n}",
+      expectedOutput: "true\nfalse",
+      answerCode: "fn is_valid_amount(amount: u64, min: u64, max: u64) -> bool {\n    amount >= min && amount <= max\n}\n\nfn main() {\n    println!(\"{}\", is_valid_amount(500, 100, 1000));\n    println!(\"{}\", is_valid_amount(50, 100, 1000));\n}",
       why: ""
     }
   ];

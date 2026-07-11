@@ -227,58 +227,58 @@
     },
     {
       num: 2,
-      title: "Semicolon Throws Away the Value",
-      explainer: "<p>The semicolon is the switch between expression and statement. Add a semicolon to the last line of a block and the value is gone, the block returns <code>()</code> instead. Remove it and the value comes through.</p><p>This is not a bug in Rust. It is intentional: Rust lets you decide exactly what a block hands back just by whether or not you put a semicolon on the last line.</p>",
-      task: "<p>A block computes <code>x + y</code> and should hand that sum to <code>result</code>. Right now the block ends with <code>x + y;</code>, the semicolon throws away the sum and <code>result</code> gets <code>()</code>.</p><ol><li>Use a block to compute <code>x + y</code></li><li>Assign the result to <code>result</code></li><li>Print <code>Result: 5</code></li></ol>",
-      starterCode: "fn main() {\n    let x = 2;\n    let y = 3;\n    let result = {\n        x + y;\n    };\n    println!(\"Result: {}\", result);\n}",
-      instruction: "Make it work in two separate ways. Try each one",
-      expectedOutput: "Result: 5",
-      answerCode: "fn main() {\n    let x = 2;\n    let y = 3;\n    let result = {\n        x + y\n    };\n    println!(\"Result: {}\", result);\n}\n\n// Answer, Way 2 (compare result to the unit type instead):\n// fn main() {\n//     let x = 2;\n//     let y = 3;\n//     let result = {\n//         x + y;\n//     };\n//     assert_eq!(result, ());\n//     println!(\"Result: {:?}\", result);\n// }",
-      why: "<p>If you keep the semicolon, the block returns <code>()</code>. You can make the assert work by comparing to <code>()</code>, but then you cannot print <code>result</code> as a number.</p>"
+      title: "Explicit Return vs Implicit Return",
+      explainer: "<p>Rust has two ways to return a value from a function.</p><p>The first way uses the <code>return</code> keyword: <code>return n * 2;</code>. This works, but most Rust code does not write it this way for normal returns.</p><p>The second way is implicit return: write the expression last with no semicolon. Rust sees the last expression in a function and hands that value back automatically.</p><p>Both produce the same result. Implicit return is the standard Rust style.</p>",
+      task: "<p>A function doubles a number using the <code>return</code> keyword. Rewrite it to use implicit return instead.</p><ol><li>Remove the <code>return</code> keyword.</li><li>Remove the semicolon from that line.</li></ol>",
+      starterCode: "fn double(n: i32) -> i32 {\n    return n * 2;\n}\n\nfn main() {\n    let result = double(5);\n    assert_eq!(result, 10);\n    println!(\"Success!\");\n}",
+      instruction: "Rewrite <code>double</code> so it uses implicit return",
+      expectedOutput: "Success!",
+      answerCode: "fn double(n: i32) -> i32 {\n    n * 2\n}\n\nfn main() {\n    let result = double(5);\n    assert_eq!(result, 10);\n    println!(\"Success!\");\n}",
+      why: "<p>Remove <code>return</code> and the semicolon. The last expression hands its value back automatically.</p>"
     },
     {
       num: 3,
       title: "Variable Assignments Are Statements",
-      explainer: "<p>A variable assignment, <code>let x = 5;</code>, is a statement. It stores a value but the assignment itself produces nothing. This matters when you try to use an assignment as the last line of a block expecting a value.</p><p>You can fix this in two ways: either return the variable itself on the next line (no semicolon), or wrap the assignment in its own block and return the variable separately.</p>",
-      task: "<p>A block sets <code>x</code> to <code>1</code>, increments it by <code>2</code>, and should hand the final value to <code>v</code>. Right now the block ends with the assignment <code>x += 2;</code> which is a statement, it returns <code>()</code>, not the value of <code>x</code>.</p><ol><li>Set <code>x</code> to <code>1</code> and increment it by <code>2</code> inside a block</li><li>Assign the final value of <code>x</code> to <code>v</code></li><li>Assert <code>v == 3</code> and print <code>Success!</code></li></ol>",
+      explainer: "<p>A variable assignment like <code>let mut x = 1;</code> is a statement. It stores a value but the assignment itself produces nothing. If that assignment is the last line of a block, the block returns <code>()</code>, not the value stored in <code>x</code>.</p><p>To hand back the value, write the variable name on its own line after the assignment, with no semicolon. That turns <code>x</code> into the final expression the block returns.</p>",
+      task: "<p>A block sets <code>x</code> to <code>1</code>, increments it by <code>2</code>, and should hand the final value to <code>v</code>. Right now the block ends with <code>x += 2;</code>, which is a statement. It returns <code>()</code>, not <code>3</code>.</p><ol><li>Add <code>x</code> on its own line after <code>x += 2</code>.</li><li>Do not add a semicolon after it.</li></ol>",
       starterCode: "fn main() {\n    let v = {\n        let mut x: i32 = 1;\n        x += 2;\n    };\n    assert_eq!(v, 3);\n    println!(\"Success!\");\n}",
-      instruction: "Fix this so <code>v</code> holds <code>3</code>. Don't remove any lines",
+      instruction: "Fix the block so <code>v</code> holds <code>3</code>",
       expectedOutput: "Success!",
       answerCode: "fn main() {\n    let v = {\n        let mut x: i32 = 1;\n        x += 2;\n        x\n    };\n    assert_eq!(v, 3);\n    println!(\"Success!\");\n}",
-      why: "<p>Add <code>x</code> as the final expression in the block, no semicolon, so the block returns the current value of <code>x</code>:</p>"
+      why: "<p>Add <code>x</code> as the final expression in the block with no semicolon. The block returns the current value of <code>x</code>.</p>"
     },
     {
       num: 4,
       title: "Functions and the Semicolon Rule",
-      explainer: "<p>The same rule applies inside functions. The last expression in a function body becomes the return value, but only if there is no semicolon. A semicolon turns that expression into a statement and the function returns <code>()</code> instead.</p><p>The instructor put it this way: \"if we omit the semicolon, the result of this operation will get returned, which means the return type would be i32.\"</p>",
-      task: "<p>A function adds two numbers and should return the sum to the caller. Right now <code>add</code> ends with <code>x + y;</code>, the semicolon means it returns <code>()</code>, not the sum.</p><ol><li>Call <code>add(1, 2)</code> and store the result in <code>s</code></li><li>Assert <code>s == 3</code> and print <code>Success!</code></li></ol>",
+      explainer: "<p>The same rule applies inside functions. The last expression in a function body becomes the return value, but only if there is no semicolon. A semicolon turns that expression into a statement and the function returns <code>()</code> instead.</p><p>If your function is declared to return <code>i32</code> but the last line ends with a semicolon, Rust will not compile. You will see this error:</p><pre style='background:#1E1E1A;border-radius:8px;padding:12px 16px;margin:12px 0;font-family:SF Mono,Fira Code,monospace;font-size:12px;line-height:1.7;color:#c9d1e3;overflow-x:auto;white-space:pre;'>error[E0308]: mismatched types\n --&gt; src/main.rs:1:27\n  |\n1 | fn add(x: i32, y: i32) -&gt; i32 {\n  |                            ^^^ expected `i32`, found `()`\n2 |     x + y;\n  |           - help: remove this semicolon to return this value</pre>",
+      task: "<p>A function adds two numbers and should return the sum. Right now <code>add</code> ends with <code>x + y;</code>. The semicolon makes it return <code>()</code> instead of the sum, and Rust will not compile.</p><ol><li>Remove the semicolon from <code>x + y</code>.</li></ol>",
       starterCode: "fn add(x: i32, y: i32) -> i32 {\n    x + y;\n}\n\nfn main() {\n    let s = add(1, 2);\n    assert_eq!(s, 3);\n    println!(\"Success!\");\n}",
-      instruction: "Remove one character so <code>add</code> returns the correct value",
+      instruction: "Fix <code>add</code> so it returns the correct value",
       expectedOutput: "Success!",
       answerCode: "fn add(x: i32, y: i32) -> i32 {\n    x + y\n}\n\nfn main() {\n    let s = add(1, 2);\n    assert_eq!(s, 3);\n    println!(\"Success!\");\n}",
-      why: "<p>Remove the semicolon from <code>x + y</code>, the expression now returns its value to the caller:</p>"
+      why: "<p>Remove the semicolon. The expression now returns its value to the caller.</p>"
     },
     {
       num: 5,
       title: "`if` as an Expression",
-      explainer: "<p>In Rust, <code>if</code> is an expression, it evaluates to a value. That means you can assign the result of an <code>if</code> directly to a variable. This is different from most languages where <code>if</code> is just a control-flow statement.</p><p>For this to work, every branch must return the same type, and no branch can have a semicolon on its last line, a semicolon would turn the value into <code>()</code> and the types would no longer match.</p>",
-      task: "<p>An <code>if</code> expression should assign a grade to a variable based on a score. Right now the <code>else</code> branch ends with <code>\"B\";</code>, the semicolon throws away the value and the types no longer match.</p><ol><li>Check whether <code>score</code> is 90 or above</li><li>Assign <code>\"A\"</code> or <code>\"B\"</code> to <code>grade</code> based on the result</li><li>Print <code>Grade: B</code></li></ol>",
+      explainer: "<p>In Rust, <code>if</code> is an expression. That means you can assign the result of an <code>if</code> directly to a variable.</p><p>Without this, you would write it like this:</p><pre style='background:#1E1E1A;border-radius:8px;padding:12px 16px;margin:12px 0;font-family:SF Mono,Fira Code,monospace;font-size:12px;line-height:1.7;color:#c9d1e3;overflow-x:auto;white-space:pre;'>let grade;\nif score &gt;= 90 {\n    grade = \"A\";\n} else {\n    grade = \"B\";\n}</pre><p>With <code>if</code> as an expression, you write it like this:</p><pre style='background:#1E1E1A;border-radius:8px;padding:12px 16px;margin:12px 0;font-family:SF Mono,Fira Code,monospace;font-size:12px;line-height:1.7;color:#c9d1e3;overflow-x:auto;white-space:pre;'>let grade = if score &gt;= 90 { \"A\" } else { \"B\" };</pre><p>Both do the same thing. For this to work, both branches must return the same type, and neither branch can have a semicolon on its last line.</p>",
+      task: "<p>An <code>if</code> expression assigns a grade based on a score. Right now the <code>else</code> branch ends with <code>\"B\";</code>. The semicolon turns it into <code>()</code>, so the two branches return different types and Rust will not compile.</p><ol><li>Remove the semicolon after <code>\"B\"</code>.</li></ol>",
       starterCode: "fn main() {\n    let score = 85;\n    let grade = if score >= 90 {\n        \"A\"\n    } else {\n        \"B\";\n    };\n    println!(\"Grade: {}\", grade);\n}",
-      instruction: "Remove one character so the <code>if</code> expression returns a value from both branches",
+      instruction: "Fix the <code>if</code> expression so both branches return a value",
       expectedOutput: "Grade: B",
       answerCode: "fn main() {\n    let score = 85;\n    let grade = if score >= 90 {\n        \"A\"\n    } else {\n        \"B\"\n    };\n    println!(\"Grade: {}\", grade);\n}",
-      why: "<p>Remove the semicolon from <code>\"B\"</code>, both branches now return <code>&amp;str</code> with no semicolon:</p>"
+      why: "<p>Remove the semicolon from <code>\"B\"</code>. Both branches now return <code>&amp;str</code> with no semicolon.</p>"
     },
     {
       num: 6,
-      title: "Contract Build: Fee Calculation",
-      explainer: "<p>You now understand the full picture:</p><ul><li>A <strong>statement</strong> (ends with <code>;</code>) performs an action and returns nothing, <code>()</code></li><li>An <strong>expression</strong> (no <code>;</code>) produces a value and hands it to the caller</li><li>The last line of a block or function determines what gets returned</li><li>Variable assignments are statements, you must return the variable explicitly if you want its value</li><li><code>if</code> is an expression, assign it to a variable when both branches return the same type</li></ul><p>In a payment contract, fee calculations must return the actual fee amount. If a semicolon sneaks onto the last line, the caller gets <code>()</code> instead of the number, and the payment math breaks.</p>",
-      task: "<p>A payment contract calculates a 5% fee and should return the amount to the caller. Right now <code>calculate_fee</code> has a semicolon on its last line, it returns <code>()</code> instead of the fee.</p><ol><li>Calculate a fee as 5% of the base amount</li><li>Return the fee from <code>calculate_fee</code></li><li>Print <code>Fee: 50000 lamports</code></li></ol>",
-      starterCode: "fn calculate_fee(base: u64, rate: u64) -> u64 {\n    base * rate / 100;\n}\n\nfn main() {\n    let fee = calculate_fee(1_000_000, 5);\n    println!(\"Fee: {} lamports\", fee);\n}",
-      instruction: "Remove one character so the correct fee is returned and printed",
-      expectedOutput: "Fee: 50000 lamports",
-      answerCode: "fn calculate_fee(base: u64, rate: u64) -> u64 {\n    base * rate / 100\n}\n\nfn main() {\n    let fee = calculate_fee(1_000_000, 5);\n    println!(\"Fee: {} lamports\", fee);\n}",
-      why: "<p>Remove the semicolon, the expression now returns the fee to the caller:</p>"
+      title: "Build: Fee Tier",
+      explainer: "<p>You now understand the full picture:</p><ul><li>A <strong>statement</strong> (ends with <code>;</code>) performs an action and returns nothing, <code>()</code></li><li>An <strong>expression</strong> (no <code>;</code>) produces a value and hands it to the caller</li><li>The last line of a block or function determines what gets returned</li><li>Variable assignments are statements. You must return the variable explicitly if you want its value.</li><li><code>if</code> is an expression. Assign it to a variable when both branches return the same type.</li></ul><p>Now build something that uses all of it.</p>",
+      task: "<p>Write a function for a blockchain contract that assigns a fee tier to a transaction based on the amount.</p><p><strong>Spec:</strong></p><ul><li>Function name: <code>fee_tier</code></li><li>Parameter: <code>amount: u64</code></li><li>Return type: <code>&amp;'static str</code></li><li>If <code>amount</code> is less than <code>1000</code>, return <code>\"low\"</code>. Otherwise return <code>\"high\"</code>.</li><li>Use an <code>if</code> expression for the logic.</li><li>Use implicit return (no <code>return</code> keyword).</li></ul><p><strong>In <code>main</code>:</strong></p><ul><li>Call <code>fee_tier(500)</code> and print the result.</li><li>Call <code>fee_tier(2000)</code> and print the result.</li></ul>",
+      starterCode: "",
+      instruction: "",
+      expectedOutput: "low\nhigh",
+      answerCode: "fn fee_tier(amount: u64) -> &'static str {\n    if amount < 1000 {\n        \"low\"\n    } else {\n        \"high\"\n    }\n}\n\nfn main() {\n    println!(\"{}\", fee_tier(500));\n    println!(\"{}\", fee_tier(2000));\n}",
+      why: ""
     }
   ];
 
