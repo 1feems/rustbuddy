@@ -36,9 +36,22 @@
       border-bottom: 1px solid var(--color-border);
     }
     .site-header-left { display: flex; align-items: center; gap: 10px; }
-    .site-name {
-      font-size: 16px; font-weight: 700; letter-spacing: -0.02em;
-      text-decoration: none; color: var(--color-primary);
+    .site-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+    .site-logo img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+    }
+    .site-logo-name {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--color-primary);
     }
     .header-sep { color: var(--color-muted); font-size: 14px; }
     .header-section {
@@ -236,7 +249,10 @@
 
   <header class="site-header">
     <div class="site-header-left">
-      <a href="../index.html" class="site-name">Rust Buddy</a>
+      <a href="../index.html" class="site-logo">
+      <img src="../_design/assets/rust.png" alt="Ferris">
+      <span class="site-logo-name">Rust Buddy</span>
+    </a>
     </div>
     <nav class="nav-links">
       <a href="../exercises/index.html" class="nav-link">Exercises</a>

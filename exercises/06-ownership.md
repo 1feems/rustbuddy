@@ -34,13 +34,11 @@ Think of it as handing over the keys to a car - only one person can own it at a 
 
 #### Your Task
 
-A string is assigned to a new variable, which moves ownership. Right now it fails because `s1` is no longer valid after the move.
+`s1` is assigned to `s2`, which moves ownership. `s1` is now invalid. The data is not gone, it lives in `s2` now.
 
-1. Create a string `s1`
-2. Keep both `s1` and `s2` usable after the assignment
-3. Print both
+Run the code as-is and read the error. Then fix it by removing the line that uses `s1`.
 
-**Fix this so both variables can be printed:**
+**Remove one line so the code only uses `s2`:**
 
 ```rust
 fn main() {
@@ -55,19 +53,19 @@ fn main() {
 #### Expected Output
 
 ```text
-s1 = hello
 s2 = hello
 ```
 
 <answer>
 <summary>Answer</summary>
 
+Remove the `s1` print line. After the move, `s1` is invalid. `s2` owns the data:
+
 ```rust
 fn main() {
     let s1 = String::from("hello");
-    let s2 = s1.clone();
+    let s2 = s1;
 
-    println!("s1 = {}", s1);
     println!("s2 = {}", s2);
 }
 ```
@@ -82,9 +80,9 @@ fn main() {
 
 #### Your Task
 
-A string is moved to a new variable, invalidating the original. Right now `s1` is invalidated by the move to `s2`.
+`s1` is moved to `s2`, which invalidates `s1`. You need an independent copy so both variables stay valid.
 
-1. Keep both `s1` and `s2` usable after the assignment
+1. Duplicate `s1` before the move
 2. Print both
 
 **Add one method call so both variables stay valid:**
@@ -129,10 +127,13 @@ Some types implement the `Copy` trait - meaning assignment duplicates the value 
 
 Heap types like `String` do NOT implement `Copy`. That's why they move instead of copy.
 
-
 #### Your Task
 
-This code already compiles. Run it in the Playground and make sure you understand why both variables are valid.
+This code already compiles. `i32` is a stack type — Rust copies it on assignment, no move happens. Both `x1` and `x2` hold independent copies.
+
+Paste and run it. Then add one line that confirms `x2` still holds `10`.
+
+**Add `assert_eq!(x2, 10);` before the print:**
 
 ```rust
 fn main() {
@@ -150,12 +151,21 @@ x1 = 10, x2 = 10
 ```
 
 <answer>
-<summary>What's happening here</summary>
+<summary>Answer</summary>
 
 `i32` lives entirely on the stack and has a fixed size known at compile time.  
 Rust automatically copies it on assignment - no move happens.  
 Both `x1` and `x2` hold independent copies of `10`.  
 Heap types like `String` do NOT do this automatically.
+
+```rust
+fn main() {
+    let x1: i32 = 10;
+    let x2 = x1;
+    assert_eq!(x2, 10);
+    println!("x1 = {}, x2 = {}", x1, x2);
+}
+```
 
 </answer>
 
@@ -169,13 +179,9 @@ Two ways to fix: clone the value before passing it, or have the function return 
 
 #### Your Task
 
-A string is passed into a function, moving ownership. Right now it fails because `s` was moved into the function and is no longer valid in `main`.
+`s` is passed into `take_ownership()`, moving ownership into the function. When the function ends, `s` is dropped. `main` can no longer use it.
 
-1. Pass `s` to `take_ownership()`
-2. Print the string inside the function
-3. Print it again in `main` after the call
-
-**Fix this in two ways so `s` can still be printed after the call:**
+**Fix this in two ways so `main` can still print `s` after the call:**
 
 ```rust
 fn take_ownership(s: String) {
@@ -241,15 +247,9 @@ In smart contracts, a helper that processes a wallet string and hands it back le
 
 #### Your Task
 
-The code below wants to:
+`process()` takes ownership of `s` and prints it, but never returns it. `main` has no way to use `s` after the call.
 
-1. Pass a string into `process()`
-2. Print it inside the function
-3. Use the returned string in `main`
-
-Right now `process()` takes the string but doesn't return it, so `main` can't use it.
-
-**Fix the function so it returns the String:**
+**Fix `process()` so it returns the `String`:**
 
 ```rust
 fn process(s: String) {
@@ -300,13 +300,7 @@ In smart contracts, inspecting a wallet string's bytes for validation should not
 
 #### Your Task
 
-The code below wants to:
-
-1. Get the bytes of the string
-2. Print the bytes
-3. Print the original string
-
-Right now `into_bytes()` consumes `s`, so the final print fails.
+`into_bytes()` consumes `s`, so the final print fails. Use the method that reads bytes without taking ownership.
 
 **Change one method so the original string stays usable:**
 
@@ -350,7 +344,11 @@ In smart contracts, a plan name might arrive as immutable from storage, then be 
 
 #### Your Task
 
-This code already compiles. Run it and make sure you understand why `s` can't be used after the move, and why `s1` can be mutated.
+This code already compiles. After the move, `s` is invalid and `s1` is mutable.
+
+Paste and run it. Then add one line that confirms `s1` holds `"hello world"` after the push.
+
+**Add `assert_eq!(s1, "hello world");` before the print:**
 
 ```rust
 fn main() {
@@ -368,12 +366,22 @@ s1 = hello world
 ```
 
 <answer>
-<summary>What's happening here</summary>
+<summary>Answer</summary>
 
 `let s = String::from("hello");` creates an immutable owner `s`.  
 `let mut s1 = s;` moves ownership from `s` to `s1`. `s` is now invalid.  
 `s1` is declared mutable, so `.push_str(" world")` is allowed.  
 Mutability is a property of the variable, not the data. When ownership moves, the new variable sets its own mutability.
+
+```rust
+fn main() {
+    let s = String::from("hello");
+    let mut s1 = s;
+    s1.push_str(" world");
+    assert_eq!(s1, "hello world");
+    println!("s1 = {}", s1);
+}
+```
 
 </answer>
 
@@ -389,12 +397,7 @@ In smart contracts, a tuple holding only stack data (lamport amounts, flags) cop
 
 #### Your Task
 
-The code below wants to:
-
-1. Copy a tuple into `t2` without `.clone()`
-2. Print both
-
-Right now the tuple contains a `String`, which forces `.clone()`.
+The tuple contains a `String`, which forces `.clone()`. Replace it with a stack type and `.clone()` is no longer needed.
 
 **Change one type so `.clone()` is no longer needed:**
 
@@ -444,15 +447,11 @@ In Solana, heap-allocated strings like subscriber IDs or plan names move on assi
 
 #### Your Task
 
-The code below wants to:
+`plan_name` is assigned to `new_plan`, which moves ownership. `plan_name` is now invalid. The data is not gone, it lives in `new_plan` now.
 
-1. Create a `plan_name` string
-2. Assign it to `new_plan`
-3. Print both
+Run the code as-is and read the error. Then fix it by removing the line that uses `plan_name`.
 
-Right now it fails because assigning `plan_name` to `new_plan` moves ownership.
-
-**Fix this so both variables can be printed:**
+**Remove one line so the code only uses `new_plan`:**
 
 ```rust
 fn main() {
@@ -467,19 +466,19 @@ fn main() {
 #### Expected Output
 
 ```text
-plan_name = premium
 new_plan = premium
 ```
 
 <answer>
 <summary>Answer</summary>
 
+Remove the `plan_name` print line. After the move, `plan_name` is invalid. `new_plan` owns the data:
+
 ```rust
 fn main() {
     let plan_name = String::from("premium");
-    let new_plan = plan_name.clone();
+    let new_plan = plan_name;
 
-    println!("plan_name = {}", plan_name);
     println!("new_plan = {}", new_plan);
 }
 ```
@@ -496,12 +495,7 @@ In smart contracts, you might need a backup copy of a subscriber ID before passi
 
 #### Your Task
 
-The code below wants to:
-
-1. Keep a backup of `subscriber` before processing
-2. Print both
-
-Right now the move to `processed` invalidates `subscriber`.
+`subscriber` is moved to `processed`, which invalidates `subscriber`. You need an independent copy so both variables stay valid.
 
 **Add one method call so both variables stay valid:**
 
@@ -547,7 +541,11 @@ In smart contracts, every lamport balance, counter, and flag is a stack type tha
 
 #### Your Task
 
-This code already compiles. Run it and make sure you understand why both variables are valid.
+This code already compiles. `u64` is a stack type — Rust copies it on assignment, no move happens. Both `balance` and `reserve` hold independent copies.
+
+Paste and run it. Then add one line that confirms `reserve` still holds `1_000_000`.
+
+**Add `assert_eq!(reserve, 1_000_000);` before the print:**
 
 ```rust
 fn main() {
@@ -565,12 +563,21 @@ balance = 1000000, reserve = 1000000
 ```
 
 <answer>
-<summary>What's happening here</summary>
+<summary>Answer</summary>
 
 `u64` lives entirely on the stack and has a fixed size known at compile time.  
 Rust automatically copies it on assignment - no move happens.  
 Both `balance` and `reserve` hold independent copies of `1_000_000`.  
 Heap types like `String` do NOT do this automatically.
+
+```rust
+fn main() {
+    let balance: u64 = 1_000_000;
+    let reserve = balance;
+    assert_eq!(reserve, 1_000_000);
+    println!("balance = {}, reserve = {}", balance, reserve);
+}
+```
 
 </answer>
 
@@ -584,14 +591,9 @@ In smart contracts, passing a plan name into a helper function consumes it. If `
 
 #### Your Task
 
-The code below wants to:
+`plan` is passed into `verify()`, moving ownership. When the function ends, `plan` is dropped. `main` can no longer use it.
 
-1. Pass `plan` to `verify()`
-2. Print `plan` in the function and again in `main` after the call
-
-Right now it fails because `plan` was moved into `verify()` and is no longer valid in `main`.
-
-**Fix this in two ways so `plan` can still be printed:**
+**Fix this in two ways so `main` can still print `plan` after the call:**
 
 ```rust
 fn verify(plan: String) {
@@ -655,15 +657,9 @@ A contract helper that processes a wallet string can give ownership back by retu
 
 #### Your Task
 
-The code below wants to:
+`format_wallet()` takes ownership of `id` and prints it, but never returns it. `main` has no way to use `id` after the call.
 
-1. Pass a wallet ID into `format_wallet()`
-2. Print it inside the function
-3. Use the returned string in `main`
-
-Right now `format_wallet()` takes the string but doesn't return it.
-
-**Fix the function so it returns the String:**
+**Fix `format_wallet()` so it returns the `String`:**
 
 ```rust
 fn format_wallet(id: String) {
@@ -710,13 +706,7 @@ fn main() {
 
 #### Your Task
 
-The code below wants to:
-
-1. Get the byte count of the wallet string
-2. Print the length
-3. Print the original wallet
-
-Right now `into_bytes()` consumes `wallet`, so the final print fails.
+`into_bytes()` consumes `wallet`, so the final print fails. Use the method that reads bytes without taking ownership.
 
 **Change one method so the wallet string stays usable:**
 
@@ -760,7 +750,11 @@ In smart contracts, a plan name might need to become mutable so a tier suffix ca
 
 #### Your Task
 
-This code already compiles. Run it and make sure you understand why `plan` can't be used after the move, and why `plan_mut` can be mutated.
+This code already compiles. After the move, `plan` is invalid and `plan_mut` is mutable.
+
+Paste and run it. Then add one line that confirms `plan_mut` holds `"basic_pro"` after the push.
+
+**Add `assert_eq!(plan_mut, "basic_pro");` before the print:**
 
 ```rust
 fn main() {
@@ -778,12 +772,22 @@ Plan: basic_pro
 ```
 
 <answer>
-<summary>What's happening here</summary>
+<summary>Answer</summary>
 
 `let plan = String::from("basic");` creates an immutable owner `plan`.  
 `let mut plan_mut = plan;` moves ownership from `plan` to `plan_mut`. `plan` is now invalid.  
 `plan_mut` is declared mutable, so `.push_str("_pro")` is allowed.  
 Mutability is a property of the variable, not the data. When ownership moves, the new variable sets its own mutability.
+
+```rust
+fn main() {
+    let plan = String::from("basic");
+    let mut plan_mut = plan;
+    plan_mut.push_str("_pro");
+    assert_eq!(plan_mut, "basic_pro");
+    println!("Plan: {}", plan_mut);
+}
+```
 
 </answer>
 
@@ -797,12 +801,7 @@ In smart contracts, a status tuple holding lamports and a flag copies freely. Ad
 
 #### Your Task
 
-The code below wants to:
-
-1. Copy a status tuple into `backup` without `.clone()`
-2. Print both
-
-Right now the `String` in the tuple forces `.clone()`.
+The tuple contains a `String`, which forces `.clone()`. Replace it with a stack type and `.clone()` is no longer needed.
 
 **Change one type so `.clone()` is no longer needed:**
 
