@@ -1,41 +1,84 @@
 # Rust Buddy — Game Handoff
 
 > Read this every session before touching anything in `game/`.
-> This is the game's source of truth. Root `HANDOFF.md` points here.
+> Read `GAME-CONTEXT.md` first for full platform context and learner profile.
 
-Last updated: 2026-07-11 (session 12)
-
----
-
-## What This Is
-
-**Rust Buddy** is the first product built on Buddy Tech — an agent-orchestrated technical communications studio. Rust Buddy is a Buddy Tech client: it has an asset brief (interactive exercises and flashcard decks), a content source (the Rust for Solana transcript from HerDAO Rust School), and a deployment target (rustbuddy.vercel.app).
-
-The game agents (Rust Game Agent, Exercise Agent, Flashcard Agent) are fully self-contained in this repo. They do not depend on the Buddy Tech root pipeline to operate. Their agent cards, design docs, copy, and style guide all live under `game/`.
-
-For the full picture of how Rust Buddy fits within Buddy Tech and the client model, read `SYSTEM-OVERVIEW.md` at the Buddy Tech root.
+Last updated: 2026-07-16 (session 25)
 
 ---
 
 ## Current State
 
-All 13 exercise pages and all 13 flashcard decks are built and live at rustbuddy.vercel.app.
+All exercise pages and flashcard decks are live at rustbuddy.vercel.app.
 
-**Exercises** (all live): Variables, Symbols, Types, Functions, Ownership, Borrowing, Strings, Slices, Tuples, Structs, Enums, Option, Flow
+**Exercises live:** Variables, Numbers, Chars & Bools, Statements & Expressions, Functions, Ownership, Borrowing, String vs &str, Slices, Tuples, Structs, Enums, Option, Flow Control
 
-**Flashcard Decks** (all live): Values, Symbols, Types, Functions, Ownership, Borrowing, Strings, Slices, Tuples, Structs, Enums, Option, Flow
+**Flashcard decks live:** Values, Symbols, Types, Functions, Ownership, Borrowing (Strings through Flow not yet built)
+
+**Repo:** github.com/1feems/rustbuddy (private). Files are at ROOT — no `game/` prefix. Always run `git remote -v` before committing.
 
 ---
 
-## What's Next
+## What Was Done This Session
 
-### 1. V2 Flashcard Study Mode
+- Ownership exercises audited and updated: 7 exercises total (added Scope and Drop as exercise 4)
+- Overview description, Quick Reference, and Terms to Know updated with Scope and Drop
+- KEY-TERMS.md ownership section: added Clone, Scope, Drop
+- EXERCISE-PAGE-DESIGN.md: updated to allow up to 8 exercises for complex topics
+- EXERCISE-AUDIT-TEMPLATE.md created: reusable template for all future exercise audits
+- exercise-audit-agent.md updated: references template, adds save path, adds template rule
+- AGENTS.md and DOC-INVENTORY.md created at game root
+- GAME-CONTEXT.md rewritten and moved to game root
+- All _docs/ files confirmed in game/_docs/ (not buddy tech root)
 
-Single card centered, flip on click, "Know it" / "Still learning" buttons, progress bar. All decks are done — this is ready to build.
+---
 
-### 2. Game Levels Reskin
+## What's Next — Priority Order
 
-`game/levels/` — old style, low priority.
+### 1. Audit: Borrowing exercises
+
+Use the Exercise Audit Agent workflow. All docs and paths are listed below — do not search for them.
+
+**File to audit:** `exercises/md/07-borrowing.md`
+**HTML to audit:** `exercises/borrowing.html`
+**Transcript path:** `/Users/feems/Desktop/buddy tech/pipeline/transcripts/solana/rust-for-solana/raw/freecodecamp-learn-rust-complete-course.txt`
+**Transcript range:** Borrowing concept starts at line ~5195. Instructor exercises start at ~5561. Read lines 5195 to ~5950 to cover the full concept and all practice exercises.
+
+**Read these docs in order before starting the audit:**
+
+| # | File | Why |
+|---|---|---|
+| 1 | `GAME-CONTEXT.md` | Learner profile — non-technical founder, 10th grade plain English, Solana payment contract goal |
+| 2 | `_docs/EXERCISE-PAGE-DESIGN.md` | Exercise structure rules — up to 8 for complex topics, build exercise is always last |
+| 3 | `_docs/COPY.md` | Blockchain context for build exercise, page descriptions |
+| 4 | `_docs/STYLE-GUIDE.md` | No em dashes, plain English, task language rules |
+| 5 | `_docs/KEY-TERMS.md` | Borrowing section — terms for the Terms to Know tab |
+| 6 | `_docs/EXERCISE-AUDIT-TEMPLATE.md` | The template to fill in — use this as the audit output |
+| 7 | `_docs/agent-cards/exercise-audit-agent.md` | Full audit checklist and rules |
+| 8 | Transcript lines 5195 to 5950 | Source of truth for what borrowing covers and what the instructor practiced |
+| 9 | `exercises/md/07-borrowing.md` | The file being audited |
+| 10 | `exercises/borrowing.html` | The live HTML — check it matches the md |
+
+**Save completed audit to:** `exercises/audits/07-borrowing-audit.md`
+
+**Do not update any files until findings are presented and approved.**
+
+---
+
+### 2. Functions exercise — pending decisions
+
+`exercises/functions.html` and `exercises/md/04-functions.md` need two decisions before going final:
+
+- **Ex 5:** task currently reuses the same function from the explainer. Needs a new task function (see ownership audit approach — describe the problem without revealing the fix).
+- **Ex 6:** decide whether to keep "fill in the signature" or give learner only `main()` and have them write the full function from scratch.
+
+Once decided, update both `.md` and `.html` and push.
+
+---
+
+### 3. V2 Flashcard Study Mode
+
+Single card centered, flip on click, "Know it" / "Still learning" buttons, progress bar. All decks are built — this is a UI feature, no content work needed.
 
 ---
 
@@ -43,46 +86,31 @@ Single card centered, flip on click, "Know it" / "Still learning" buttons, progr
 
 | File | Purpose |
 |---|---|
-| `_design/DESIGN_SYSTEM.md` | Full UI spec — dimensions, clip-paths, nav, landing hero |
-| `_design/styles.css` | CSS custom properties — edit here to change any design value |
-| `_design/DESIGN_TOKENS.md` | Token reference — what each token does and where it's used |
-| `_docs/COPY.md` | All page-level copy — labels, titles, descriptions, deck colors, file refs |
-| `_docs/STYLE-GUIDE.md` | Voice, tone, reading level, and copy rules for all game pages |
-| `_docs/EXERCISE-PAGE-DESIGN.md` | Exercise page layout spec — tabs, 6-exercise pattern, content source paths |
-| `_docs/GAME-LEVELS-DESIGN.md` | Game levels design |
-| `flashcards/FLASHCARD-CONTEXT.md` | Flashcard structural context and build rules |
-| `_docs/AGENT-ARCHITECTURE.md` | Platform map, agent routing, pipeline visual |
-| `_docs/agent-cards/practice-exercise-agent.md` | Exercise agent — full build workflow |
-| `_docs/agent-cards/flashcard-agent.md` | Flashcard agent — full build workflow |
-| `_docs/agent-cards/rust-game-agent.md` | Game coordinator — routes requests to sub-agents |
+| `GAME-CONTEXT.md` | Learner profile, product objectives, folder map — read first every session |
+| `AGENTS.md` | Agent inventory — routing table, what each agent reads and produces |
+| `DOC-INVENTORY.md` | Full index of all docs in the platform with descriptions |
+| `_design/DESIGN_SYSTEM_updated.md` | Master UI spec — all tokens, dimensions, colors. Never invent values outside this file. |
+| `_design/styles.css` | CSS custom properties |
+| `_design/mobile.css` | Mobile styles |
+| `_docs/COPY.md` | Source of truth for all page-level copy — titles, descriptions, deck colors |
+| `_docs/STYLE-GUIDE.md` | Voice, tone, reading level, copy rules — no em dashes, 10th grade |
+| `_docs/EXERCISE-PAGE-DESIGN.md` | Exercise page layout spec — tabs, up to 8 exercises, content rules |
+| `_docs/EXERCISE-AUDIT-TEMPLATE.md` | Reusable audit template — fill one copy per topic |
+| `_docs/KEY-TERMS.md` | All key terms per topic — source for Terms to Know tab |
+| `_docs/GAME-LEVELS-DESIGN.md` | Design spec for game levels |
+| `_docs/agent-cards/exercise-audit-agent.md` | Audit agent — checklist, read order, rules, template reference |
+| `_docs/agent-cards/practice-exercise-agent.md` | Exercise build agent — full workflow |
+| `_docs/agent-cards/flashcard-agent.md` | Flashcard agent — full workflow |
+| `_docs/agent-cards/rust-game-agent.md` | Coordinator agent — routes requests |
 
 ---
 
-## Review Before Pushing Functions Page Live
+## Platform Rules (always apply)
 
-The functions exercise page (`exercises/html/functions.html` + `exercises/md/04-functions.md`) was updated this session but has NOT been pushed yet. Review these before committing:
-
-**Done this session:**
-- Ex 1, 2, 3 — new "Your Task" functions so the explainer no longer gives away the answer
-  - Ex 1: `fn triple(n)` → expected output `Result: 15`
-  - Ex 2: `fn double(x: i32)` missing return type → expected output `Double: 12`
-  - Ex 3: `fn subtract(a: i32, b)` missing second param type → expected output `Result: 7`
-- Ex 6 — changed to Option 1: body given, learner fills in the signature blanks
-
-**Still needs a decision:**
-- Ex 5 — same problem as 1-3: explainer error message shows `multiply(3.0, 4.0)` and the task IS `multiply(3.0, 4.0)`. Needs a new task function.
-- Ex 6 — currently set to "fill in the signature." Owner wants to reconsider: should it give learner only `main()` already written and have them write the entire function from scratch (tests all 5 concepts)? Decision pending.
-- Ex 4 — confirmed fine, no changes needed.
-
-Once Ex 5 and Ex 6 are decided, both `.md` and `.html` files must be updated, then push to GitHub to go live.
-
----
-
-## Notes for Next Agent
-
-- Exercise page template: `exercises/ownership.html` — copy exactly, change only title, exercises, and code snippets
-- Flashcard deck template: `flashcards/values.html` — copy exactly, change gradient class and card content
-- No em dashes anywhere on the site
-- Hero titles are always one line — no `<br>` tags
-- All copy must match `_docs/COPY.md` — do not invent new page labels or titles
-- Commit + push after every completed file — nothing is live until pushed to GitHub
+- No em dashes anywhere on the site. Use commas or rephrase.
+- 10th grade plain English. Define every term before using it.
+- Exercise page template: `exercises/ownership.html` — canonical template for all exercise pages
+- Flashcard deck template: `flashcards/values.html` — canonical template for all flashcard decks
+- All copy must match `_docs/COPY.md` — do not invent new titles or descriptions
+- Commit and push after every completed file — nothing is live until pushed to GitHub
+- Always run `git remote -v` before committing to confirm the correct repo
