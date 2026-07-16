@@ -60,20 +60,20 @@ Quick Reference  (small caps label)
 
 ### Exercise count and structure — every page
 
-Every exercise page has exactly **6 exercises**:
+Most exercise pages have **6 exercises**. Complex topics (Ownership, Borrowing, Structs) may have up to **8 exercises** when the concept requires more steps to reach the final build exercise.
 
 | Exercise | Track | Context |
 |---|---|---|
-| 1–5 | Track A — pure Rust | Generic variable names: `x`, `y`, `result`, `s` |
-| 6 | Track B — Solana/blockchain | Contract names: `wallet`, `amount`, `lamports`, `plan`, `treasury` |
+| 1 to (last-1) | Track A — pure Rust | Generic variable names: `x`, `y`, `result`, `s` |
+| Last | Track B — blockchain/contract | Contract names: `wallet`, `amount`, `lamports`, `plan`, `treasury` |
 
-Exercise 6 is always the **Build exercise** — a standalone challenge where the learner writes a small piece of a subscription payment contract using everything they learned in exercises 1–5. It does not have broken code to fix; it has a blank canvas and a spec.
+The last exercise is always the **Build exercise** — a standalone challenge where the learner applies everything they practiced to write a piece of a payment contract. It does not have broken code to fix; it has a scaffold or blank canvas and a spec.
 
-**Title format for exercise 6:**
+**Title format for the build exercise:**
 - `Build: [Topic]` — e.g. `Build: Subscription Variables`, `Build: Borrowing in a Contract`
 - Or `Contract Build: [Topic]` — e.g. `Contract Build: Annotate a Payment`
 
-Do not add a 7th exercise. Do not merge Track A and B into the same exercise.
+Do not exceed 8 exercises. Do not merge Track A and B into the same exercise.
 
 ---
 

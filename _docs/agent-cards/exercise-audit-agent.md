@@ -121,13 +121,13 @@ Read exercises 1 to 5 in order as a beginner learner. After each exercise ask:
 
 Flag any exercise where the learner finishes without the knowledge they need to move forward. Each exercise should leave the learner one step closer to the full concept, not just one step closer to exercise 6.
 
-### 3. Exercise 6 — Concept Application
+### 3. Final Exercise — Concept Application
 
-Exercise 6 is a build challenge in a blockchain/smart contract context (wallet, plan, amount, treasury). It is not a pure Rust exercise — it uses what the learner knows to do something real.
+The last exercise is a build challenge in a blockchain/smart contract context (wallet, plan, amount, treasury). Most pages have 6 exercises. Complex topics (Ownership, Borrowing, Structs) may have up to 8. The last exercise is always the build exercise.
 
 Ask:
-- After exercises 1 to 5, does the learner have everything they need to attempt exercise 6?
-- Does exercise 6 test the concept or test code-writing ability? It should test the concept.
+- After all preceding exercises, does the learner have everything they need to attempt the build exercise?
+- Does the build exercise test the concept or test code-writing ability? It should test the concept.
 - Is the task clear? Does the learner know what success looks like before starting?
 - Is the blockchain context from `_docs/COPY.md` correct for this topic?
 

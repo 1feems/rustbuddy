@@ -60,10 +60,12 @@ Sources:
 
 | Term | What it means | When you use it |
 |---|---|---|
-| Owner | The variable responsible for a value — when it goes out of scope, the value is freed | Always — every value has one |
-| Move | Transferring ownership from one variable to another — the original can no longer be used | When passing a `String` or `Vec` to a function |
-| Copy | Duplicating a value so both the original and the new variable are valid | With integers, booleans, floats — they copy automatically |
-| Scope | The block of code where a variable lives — between `{` and `}` | Determines when values are dropped |
+| Owner | The variable responsible for a value. When it goes out of scope, the value is freed. | Always. Every value has one. |
+| Move | Ownership transfers to a new variable. The original can no longer be used. | When assigning a `String` or `Vec` to a new variable or passing it to a function |
+| Clone | `.clone()` makes a full independent copy of heap data. Both variables stay valid. Costs memory. | When you need two valid copies of a `String` or `Vec` |
+| Copy | Stack-only types copy automatically on assignment. Both variables stay valid. Free. | With integers, booleans, floats. They copy automatically. |
+| Scope | The block between `{` and `}` where a variable is valid. | Every time you open a code block. Determines when variables are created and dropped. |
+| Drop | Rust frees a value's memory automatically when its owner goes out of scope. | Every time a scope ends. No manual cleanup needed. |
 
 ---
 

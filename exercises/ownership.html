@@ -169,7 +169,7 @@
       <div class="overview-wrap">
         <div class="overview-topic">Topic</div>
         <div class="overview-headline">Ownership</div>
-        <div class="overview-desc">Ownership is how Rust manages memory without a garbage collector. Every value has exactly one owner. When you assign a heap value to a new variable, ownership moves and the old variable becomes invalid. This prevents two parts of your code from trying to free the same memory.</div>
+        <div class="overview-desc">Ownership is how Rust manages memory without a garbage collector. Every value has exactly one owner. When the owner goes out of scope, Rust frees the memory automatically. This prevents dangling pointers, double-free errors, and memory leaks without needing a garbage collector.</div>
         <div class="overview-divider"></div>
         <div class="overview-ref-label">Quick Reference</div>
         <table class="terms-table">
@@ -181,6 +181,8 @@
             <tr><td>Move</td><td>Assigning a String to a new variable transfers ownership. The old variable becomes invalid.</td></tr>
             <tr><td>.clone()</td><td>Deep copy — duplicates heap data so both variables stay valid. Costs memory.</td></tr>
             <tr><td>Copy</td><td>Stack types (i32, u64, bool, char) copy automatically on assignment. Free and instant.</td></tr>
+            <tr><td>Scope</td><td>The block between { and } where a variable is valid.</td></tr>
+            <tr><td>Drop</td><td>When the owner goes out of scope, Rust frees the memory automatically. No manual cleanup.</td></tr>
             <tr><td>Heap</td><td>Where String and Vec live. Data can grow. Must be moved or cloned.</td></tr>
             <tr><td>Stack</td><td>Where i32, bool, char live. Fixed size. Copied automatically.</td></tr>
           </tbody>
@@ -207,12 +209,14 @@
             <tr><th>Term</th><th>What it means</th><th>When you use it</th></tr>
           </thead>
           <tbody>
-            <tr><td>Owner</td><td>The variable that holds a value, only one at a time</td><td>Every heap value in Rust has exactly one owner</td></tr>
-            <tr><td>Move</td><td>Assigning a String to a new variable transfers ownership, the old one becomes invalid</td><td>Any time you assign a String or Vec to another variable or pass it to a function</td></tr>
-            <tr><td>.clone()</td><td>Deep copies heap data so both variables stay valid</td><td>When you need an independent copy of a String or Vec</td></tr>
-            <tr><td>Copy trait</td><td>Stack-only types copy automatically on assignment, no move needed</td><td>i32, u64, bool, char and other fixed-size stack types</td></tr>
-            <tr><td>Heap</td><td>Where String and Vec live — data can grow, must be moved or cloned</td><td>Any type whose size is not known at compile time</td></tr>
-            <tr><td>Stack</td><td>Where i32, bool, char live — fixed size, copied automatically</td><td>Primitive types and other Copy types</td></tr>
+            <tr><td>Owner</td><td>The variable responsible for a value. When it goes out of scope, the value is freed.</td><td>Every value in Rust has exactly one owner at a time</td></tr>
+            <tr><td>Move</td><td>Ownership transfers to a new variable. The original can no longer be used.</td><td>Any time you assign a String or Vec to another variable or pass it to a function</td></tr>
+            <tr><td>.clone()</td><td>Makes a full independent copy of heap data. Both variables stay valid. Costs memory.</td><td>When you need two valid copies of a String or Vec</td></tr>
+            <tr><td>Copy trait</td><td>Stack-only types copy automatically on assignment. No move, no clone needed.</td><td>i32, u64, bool, char and other fixed-size stack types</td></tr>
+            <tr><td>Scope</td><td>The block between { and } where a variable is valid.</td><td>Every time you open a code block — functions, loops, if blocks, inner blocks</td></tr>
+            <tr><td>Drop</td><td>Rust frees a value's memory automatically when its owner goes out of scope.</td><td>Every time a scope ends. No manual cleanup needed.</td></tr>
+            <tr><td>Heap</td><td>Where String and Vec live. Data can grow. Must be moved or cloned.</td><td>Any type whose size is not known at compile time</td></tr>
+            <tr><td>Stack</td><td>Where i32, bool, char live. Fixed size. Copied automatically.</td><td>Primitive types and other Copy types</td></tr>
           </tbody>
         </table>
       </div>
@@ -259,6 +263,17 @@
     },
     {
       num: 4,
+      title: "Scope and Drop",
+      explainer: "<p>A scope is the block of code between <code>{</code> and <code>}</code>. A variable is valid from where it is declared until the end of that block. When the block closes, the variable goes out of scope. Rust calls <code>drop</code> and frees the memory automatically.</p><p>This is the third ownership rule: when the owner goes out of scope, the value is dropped. This is why ownership matters. If two variables owned the same data, Rust would try to free it twice. That is a double-free error. One owner, one drop.</p>",
+      task: "<p><code>s</code> is declared inside an inner block. The block closes before <code>main</code> ends. The code then tries to use <code>s</code> after the block. Rust will not compile. Fix the error.</p>",
+      starterCode: "fn main() {\n    {\n        let s = String::from(\"hello\");\n        println!(\"Inside: {}\", s);\n    }\n\n    println!(\"Outside: {}\", s);\n}",
+      instruction: "",
+      expectedOutput: "Inside: hello",
+      answerCode: "fn main() {\n    {\n        let s = String::from(\"hello\");\n        println!(\"Inside: {}\", s);\n    }\n}",
+      why: "<p><code>s</code> was declared inside the inner block. When that block closed, Rust called <code>drop</code> and freed the memory. Remove the <code>println!</code> that tries to use <code>s</code> after the block ends. Once the <code>}</code> is reached, <code>s</code> no longer exists.</p>"
+    },
+    {
+      num: 5,
       title: "A Function Call Is a Move",
       explainer: "<p>Passing a <code>String</code> to a function moves ownership into that function. When the function's scope ends, drop is called and the memory is freed. The caller can no longer use the value.</p>",
       task: "<p><code>greet(s)</code> is called in <code>main</code>. The code has an ownership error after the call. Rust will not compile. Fix the error.</p>",
@@ -269,7 +284,7 @@
       why: "<p>After <code>greet(s)</code>, ownership moved into the function. When <code>greet</code> ended, <code>s</code> was dropped. Remove the line in <code>main</code> that tries to use <code>s</code> after the call.</p>"
     },
     {
-      num: 5,
+      num: 6,
       title: "Returning Ownership",
       explainer: "<p>A function can return ownership back to the caller. Ownership moves in, the function does its work, and ownership moves back out on return. No new memory is allocated. It is the same data moving back.</p>",
       task: "<p><code>process</code> takes ownership of <code>s</code> but <code>main</code> needs the value back after the call. Right now it will not compile. Fix <code>process</code> so the caller gets the value back.</p>",
@@ -280,7 +295,7 @@
       why: "<p>Add a return type to <code>process</code> and return <code>s</code> at the end with no semicolon. The last expression without a semicolon is the return value.</p>"
     },
     {
-      num: 6,
+      num: 7,
       title: "Build: Log and Return",
       explainer: "<p>A payment contract needs to log which plan a user is on and keep using the plan name after logging.</p>",
       task: "<p><code>main</code> is written for you. Write the <code>log_plan</code> function so the code compiles and produces the expected output.</p>",

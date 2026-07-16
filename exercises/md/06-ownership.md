@@ -16,6 +16,8 @@ Check your answer only after you've tried.
 | Move | Assigning a `String` to a new variable transfers ownership. The old variable becomes invalid. |
 | Clone | `.clone()` makes a full independent copy of heap data. Both variables stay valid. Costs memory. |
 | Copy | Stack types (`i32`, `u64`, `bool`, `char`) copy automatically on assignment. Free and instant. |
+| Scope | The block between `{` and `}` where a variable is valid. |
+| Drop | When the owner goes out of scope, Rust frees the memory automatically. No manual cleanup needed. |
 | Heap | Where `String` and `Vec` live. Data can grow. Must be moved or cloned. |
 | Stack | Where `i32`, `bool`, `char` live. Fixed size. Copied automatically. |
 
@@ -203,7 +205,54 @@ If `x1` were a `String` instead of an `i32`, the `println!("x1 = {}", x1)` line 
 
 ---
 
-## Exercise 4 - A Function Call Is a Move
+## Exercise 4 - Scope and Drop
+
+A scope is the block of code between `{` and `}`. A variable is valid from where it is declared until the end of that block. When the block closes, the variable goes out of scope. Rust calls `drop` and frees the memory automatically. This is the third ownership rule: when the owner goes out of scope, the value is dropped.
+
+This is why moves matter. If two variables owned the same data, Rust would try to free it twice when both went out of scope. That is a double-free error. Ownership prevents it by allowing only one owner.
+
+#### Your Task
+
+`s` is declared inside an inner block. The block closes before `main` ends. The code then tries to use `s` after the block. Rust will not compile. Fix the error.
+
+```rust
+fn main() {
+    {
+        let s = String::from("hello");
+        println!("Inside: {}", s);
+    }
+
+    println!("Outside: {}", s);
+}
+```
+
+#### Expected Output
+
+```text
+Inside: hello
+```
+
+<answer>
+<summary>Answer</summary>
+
+Remove the `println!` that uses `s` after the block closes. Once the `}` is reached, `s` goes out of scope and is dropped:
+
+```rust
+fn main() {
+    {
+        let s = String::from("hello");
+        println!("Inside: {}", s);
+    }
+}
+```
+
+`s` was declared inside the inner block. When that block closed, Rust called `drop` and freed the memory. The `s` in the outer scope no longer exists.
+
+</answer>
+
+---
+
+## Exercise 5 - A Function Call Is a Move
 
 Passing a `String` to a function moves ownership into that function. When the function's scope ends, drop is called and the memory is freed. The caller can no longer use the value.
 
@@ -249,7 +298,7 @@ fn main() {
 
 ---
 
-## Exercise 5 - Returning Ownership
+## Exercise 6 - Returning Ownership
 
 A function can return ownership back to the caller. Ownership moves in, the function does its work, and ownership moves back out on return. No new memory is allocated. It is the same data moving back.
 
@@ -298,7 +347,7 @@ fn main() {
 
 ---
 
-## Exercise 6 - Build: Log and Return
+## Exercise 7 - Build: Log and Return
 
 A payment contract needs to log which plan a user is on and keep using the plan name after logging.
 
@@ -326,7 +375,7 @@ Backup: premium
 <answer>
 <summary>Answer</summary>
 
-`main` calls `log_plan` and binds the return value to `plan` — so `log_plan` must take a `String` and return a `String`. It also needs to print before returning:
+`main` calls `log_plan` and binds the return value to `plan`, so `log_plan` must take a `String` and return a `String`. It also needs to print before returning:
 
 ```rust
 fn log_plan(name: String) -> String {
