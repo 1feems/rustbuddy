@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rust: Ownership - Rust Bud</title>
+  <title>Rust: Functions - Rust Bud</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -111,7 +111,7 @@
     .terms-table th { text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); border-bottom: 1px solid var(--color-border); }
     .terms-table td { padding: 14px 16px; border-bottom: 1px solid rgba(23,23,20,0.12); vertical-align: top; line-height: 1.55; }
     .terms-table tr:last-child td { border-bottom: none; }
-    .terms-table td:first-child { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; font-weight: 600; white-space: nowrap; width: 160px; }
+    .terms-table td:first-child { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; font-weight: 600; white-space: nowrap; width: 200px; }
     .terms-table td:last-child { color: var(--color-muted); }
 
     /* ── Breadcrumb ── */
@@ -153,7 +153,7 @@
     <span class="bc-sep">/</span>
     <a href="index.html">Exercises</a>
     <span class="bc-sep">/</span>
-    <span class="bc-current">Ownership</span>
+    <span class="bc-current">Functions</span>
   </nav>
 
 <main class="main">
@@ -168,8 +168,8 @@
     <div class="tab-panel" id="panel-overview">
       <div class="overview-wrap">
         <div class="overview-topic">Topic</div>
-        <div class="overview-headline">Ownership</div>
-        <div class="overview-desc">Ownership is how Rust manages memory without a garbage collector. Every value has exactly one owner. When you assign a heap value to a new variable, ownership moves and the old variable becomes invalid. This prevents two parts of your code from trying to free the same memory.</div>
+        <div class="overview-headline">Functions</div>
+        <div class="overview-desc">A function is a named block of code that takes inputs, does something with them, and can hand a value back. In Rust, every function that returns a value must declare its return type, and the last line of the function body is what gets returned.</div>
         <div class="overview-divider"></div>
         <div class="overview-ref-label">Quick Reference</div>
         <table class="terms-table">
@@ -177,12 +177,11 @@
             <tr><th>Concept</th><th>What it means</th></tr>
           </thead>
           <tbody>
-            <tr><td>Owner</td><td>The variable that holds a value. Only one owner at a time.</td></tr>
-            <tr><td>Move</td><td>Assigning a String to a new variable transfers ownership. The old variable becomes invalid.</td></tr>
-            <tr><td>.clone()</td><td>Deep copy — duplicates heap data so both variables stay valid. Costs memory.</td></tr>
-            <tr><td>Copy</td><td>Stack types (i32, u64, bool, char) copy automatically on assignment. Free and instant.</td></tr>
-            <tr><td>Heap</td><td>Where String and Vec live. Data can grow. Must be moved or cloned.</td></tr>
-            <tr><td>Stack</td><td>Where i32, bool, char live. Fixed size. Copied automatically.</td></tr>
+            <tr><td>fn name()</td><td>Declare a function named name</td></tr>
+            <tr><td>fn name(x: i32)</td><td>Function with one parameter: x of type i32</td></tr>
+            <tr><td>fn name(x: i32, y: i32)</td><td>Two parameters, each needs its own type</td></tr>
+            <tr><td>-> i32</td><td>The function returns an i32 to whoever called it</td></tr>
+            <tr><td>Caller</td><td>The code that calls a function and receives what it returns</td></tr>
           </tbody>
         </table>
       </div>
@@ -207,12 +206,11 @@
             <tr><th>Term</th><th>What it means</th><th>When you use it</th></tr>
           </thead>
           <tbody>
-            <tr><td>Owner</td><td>The variable that holds a value, only one at a time</td><td>Every heap value in Rust has exactly one owner</td></tr>
-            <tr><td>Move</td><td>Assigning a String to a new variable transfers ownership, the old one becomes invalid</td><td>Any time you assign a String or Vec to another variable or pass it to a function</td></tr>
-            <tr><td>.clone()</td><td>Deep copies heap data so both variables stay valid</td><td>When you need an independent copy of a String or Vec</td></tr>
-            <tr><td>Copy trait</td><td>Stack-only types copy automatically on assignment, no move needed</td><td>i32, u64, bool, char and other fixed-size stack types</td></tr>
-            <tr><td>Heap</td><td>Where String and Vec live — data can grow, must be moved or cloned</td><td>Any type whose size is not known at compile time</td></tr>
-            <tr><td>Stack</td><td>Where i32, bool, char live — fixed size, copied automatically</td><td>Primitive types and other Copy types</td></tr>
+            <tr><td>fn name()</td><td>Declare a function named name</td><td>Any time you want a named, reusable block of code</td></tr>
+            <tr><td>fn name(x: i32)</td><td>Function with one parameter: x of type i32</td><td>When a function needs an input value to work with</td></tr>
+            <tr><td>fn name(x: i32, y: i32)</td><td>Two parameters, each needs its own type annotation</td><td>When the function takes multiple inputs</td></tr>
+            <tr><td>-> i32</td><td>The function returns an i32 to whoever called it</td><td>Any function that hands a value back to the caller</td></tr>
+            <tr><td>Caller</td><td>The code that calls a function and receives what it returns</td><td>Understanding where a function's return value goes</td></tr>
           </tbody>
         </table>
       </div>
@@ -226,68 +224,68 @@
   const exercises = [
     {
       num: 1,
-      title: "Move Semantics",
-      explainer: "<p>In Rust, every value has exactly one owner at a time. When that owner is a heap type like <code>String</code>, assigning it to a new variable does not copy the data. It <strong>moves</strong> it. Ownership transfers to the new variable. The old one becomes invalid.</p><p>The move happens at the assignment line:</p><pre style='background:#1E1E1A;border-radius:8px;padding:12px 16px;margin:12px 0;font-family:SF Mono,Fira Code,monospace;font-size:12px;line-height:1.7;color:#c9d1e3;overflow-x:auto;white-space:pre;'>let s2 = s1;</pre><p>After that line, <code>s1</code> holds nothing. Any code that tries to use <code>s1</code> after the move will not compile. Rust will tell you: <code>use of moved value: s1</code>.</p><p>This prevents two variables from pointing at the same memory and causing crashes.</p>",
-      task: "<p><code>s1</code> is assigned to <code>s2</code> on line 2. That is the move. After that line, <code>s1</code> is invalid. Right now the code tries to print both, but <code>s1</code> no longer owns any data.</p><ol><li>Remove the line that prints <code>s1</code>.</li></ol>",
-      starterCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1;\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
-      instruction: "Remove one line so the code only uses <code>s2</code>",
-      expectedOutput: "s2 = hello",
-      answerCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1;\n\n    println!(\"s2 = {}\", s2);\n}",
-      why: "<p>Remove the <code>s1</code> print. After <code>let s2 = s1</code>, ownership has moved. <code>s2</code> holds the data now.</p>"
+      title: "Parameter Types Are Required",
+      explainer: "<p>A <strong>function</strong> is a named block of reusable code. You give it a name, describe what it takes as input, describe what it hands back, and then call it whenever you need it.</p><p>The inputs to a function are called <strong>parameters</strong>. In Rust, every parameter must have a type. You write the type directly after the parameter name, separated by a colon:</p><pre style='background:#1E1E1A;border-radius:8px;padding:12px 16px;margin:12px 0;font-family:SF Mono,Fira Code,monospace;font-size:12px;line-height:1.7;color:#c9d1e3;overflow-x:auto;white-space:pre;'>fn double(n: i32) -&gt; i32 {\n    n * 2\n}</pre><p>Here <code>n</code> is the parameter name and <code>i32</code> is its type. Without <code>: i32</code>, Rust cannot compile because it has no way to know what kind of value <code>n</code> holds.</p>",
+      task: "<p>A function triples a number but Rust will not compile it. The parameter <code>n</code> has no type annotation.</p><p>Fix the signature so the function compiles and prints <code>Result: 15</code>.</p>",
+      starterCode: "fn triple(n) -> i32 {\n    n * 3\n}\n\nfn main() {\n    let result = triple(5);\n    println!(\"Result: {}\", result);\n}",
+      instruction: "Fix the parameter so Rust knows what type <code>n</code> is",
+      expectedOutput: "Result: 15",
+      answerCode: "fn triple(n: i32) -> i32 {\n    n * 3\n}\n\nfn main() {\n    let result = triple(5);\n    println!(\"Result: {}\", result);\n}",
+      why: "<p>Add <code>: i32</code> after <code>n</code>. Rust now knows what type to expect.</p>"
     },
     {
       num: 2,
-      title: "Clone",
-      explainer: "<p>Sometimes you need both variables to stay valid after an assignment. Moving does not allow that. Cloning does.</p><p><code>.clone()</code> duplicates the entire heap allocation. Rust allocates new memory and copies every byte of the original into it. Both variables end up with completely independent copies of the data. This is explicit and intentional — for large data, cloning takes time and memory. That is why Rust does not do it automatically.</p><table style='width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;'><thead><tr style='border-bottom:1px solid rgba(23,23,20,0.15);'><th style='text-align:left;padding:8px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#77766F;'>What happens</th><th style='text-align:left;padding:8px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#77766F;'>Result</th></tr></thead><tbody><tr style='border-bottom:1px solid rgba(23,23,20,0.08);'><td style='padding:8px 12px;'>Move</td><td style='padding:8px 12px;color:#77766F;'>Ownership transfers. Old variable becomes invalid.</td></tr><tr style='border-bottom:1px solid rgba(23,23,20,0.08);'><td style='padding:8px 12px;'>Clone</td><td style='padding:8px 12px;color:#77766F;'>New copy is made. Both variables stay valid. Costs memory.</td></tr><tr><td style='padding:8px 12px;'>Copy</td><td style='padding:8px 12px;color:#77766F;'>Stack types copy automatically. Both valid. Free.</td></tr></tbody></table>",
-      task: "<p><code>s1</code> is assigned to <code>s2</code>, which moves ownership. <code>s1</code> is now invalid. Right now the code will not compile because both are used after the assignment.</p><ol><li>Add <code>.clone()</code> after <code>s1</code> on the assignment line so <code>s2</code> gets its own copy.</li></ol>",
-      starterCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1;\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
-      instruction: "Add one method call so both variables stay valid",
-      expectedOutput: "s1 = hello\ns2 = hello",
-      answerCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1.clone();\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
-      why: "<p>Call <code>.clone()</code> on <code>s1</code> before assigning. <code>s2</code> gets its own copy. <code>s1</code> stays valid.</p>"
+      title: "Declaring a Return Type",
+      explainer: "<p>When a function hands a value back to the caller, you declare the type of that value after <code>-&gt;</code>. This goes between the closing parenthesis and the opening brace:</p><pre style='background:#1E1E1A;border-radius:8px;padding:12px 16px;margin:12px 0;font-family:SF Mono,Fira Code,monospace;font-size:12px;line-height:1.7;color:#c9d1e3;overflow-x:auto;white-space:pre;'>fn square(x: i32) -&gt; i32 {\n    x * x\n}</pre><p>Without <code>-&gt; i32</code>, Rust assumes the function returns nothing. If the function body actually produces a value, Rust sees a mismatch and will not compile:</p><pre style='background:#1E1E1A;border-radius:8px;padding:12px 16px;margin:12px 0;font-family:SF Mono,Fira Code,monospace;font-size:12px;line-height:1.7;color:#c9d1e3;overflow-x:auto;white-space:pre;'>error[E0308]: mismatched types\n --&gt; src/main.rs:2:5\n  |\n1 | fn square(x: i32) {\n  |                   - expected `()` because of default return type\n2 |     x * x\n  |     ^^^^^ expected `()`, found `i32`</pre>",
+      task: "<p>A function doubles a number but Rust won't compile it. The signature promises nothing, but the body produces an <code>i32</code>.</p><p>Add the return type so the compiler knows what this function hands back.</p>",
+      starterCode: "fn double(x: i32) {\n    x * 2\n}\n\nfn main() {\n    let result = double(6);\n    println!(\"Double: {}\", result);\n}",
+      instruction: "Fix the signature so Rust knows what this function returns",
+      expectedOutput: "Double: 12",
+      answerCode: "fn double(x: i32) -> i32 {\n    x * 2\n}\n\nfn main() {\n    let result = double(6);\n    println!(\"Double: {}\", result);\n}",
+      why: "<p>Add <code>-&gt; i32</code> after the closing parenthesis. Rust now knows the function hands back an <code>i32</code>.</p>"
     },
     {
       num: 3,
-      title: "Copy Trait",
-      explainer: "<p>Some types implement the <strong>Copy trait</strong>. Assignment duplicates the value automatically. Both variables stay valid. No <code>.clone()</code> needed.</p><p>These are stack-only types with a fixed size: <code>i32</code>, <code>u64</code>, <code>f64</code>, <code>bool</code>, <code>char</code>. Because their size is always known and small, Rust copies them instantly at no meaningful cost.</p><p>This is different from <code>String</code>. A <code>String</code> can grow to any size, so Rust does not know how much work a copy would take. It moves instead. With <code>i32</code>, Rust always knows the cost — 4 bytes — so it copies automatically.</p>",
-      task: "<p><code>x1</code> is assigned to <code>x2</code>. Because <code>i32</code> implements Copy, both variables hold independent values. <code>x1</code> is still valid after the assignment. Right now only <code>x1</code> is printed.</p><ol><li>Add a line to print <code>x2</code>.</li></ol>",
-      starterCode: "fn main() {\n    let x1: i32 = 10;\n    let x2 = x1;\n\n    println!(\"x1 = {}\", x1);\n\n    // Print x2 here\n}",
-      instruction: "Add one <code>println!</code> line so both values appear in the output",
-      expectedOutput: "x1 = 10\nx2 = 10",
-      answerCode: "fn main() {\n    let x1: i32 = 10;\n    let x2 = x1;\n\n    println!(\"x1 = {}\", x1);\n    println!(\"x2 = {}\", x2);\n}",
-      why: "<p>Add <code>println!(\"x2 = {}\", x2);</code>. Both variables hold independent copies of <code>10</code>. If <code>x1</code> were a <code>String</code> instead of an <code>i32</code>, the <code>x1</code> line would not compile after the assignment.</p>"
+      title: "Multiple Parameters",
+      explainer: "<p>Functions can take more than one input. Each parameter gets its own name and its own type, separated by commas. You cannot share a type across two parameter names, each one needs its own <code>: type</code>:</p><pre style='background:#1E1E1A;border-radius:8px;padding:12px 16px;margin:12px 0;font-family:SF Mono,Fira Code,monospace;font-size:12px;line-height:1.7;color:#c9d1e3;overflow-x:auto;white-space:pre;'>fn add(x: i32, y: i32) -&gt; i32 {\n    x + y\n}</pre><p>If you write <code>fn add(x, y: i32)</code>, Rust will not compile because <code>x</code> is missing its type. Every parameter must be fully annotated.</p>",
+      task: "<p>A function subtracts two numbers but Rust will not compile it. The second parameter is missing its type.</p><p>Fix the signature so both parameters are fully annotated.</p>",
+      starterCode: "fn subtract(a: i32, b) -> i32 {\n    a - b\n}\n\nfn main() {\n    let result = subtract(10, 3);\n    println!(\"Result: {}\", result);\n}",
+      instruction: "Fix the second parameter so Rust knows its type",
+      expectedOutput: "Result: 7",
+      answerCode: "fn subtract(a: i32, b: i32) -> i32 {\n    a - b\n}\n\nfn main() {\n    let result = subtract(10, 3);\n    println!(\"Result: {}\", result);\n}",
+      why: "<p>Add <code>: i32</code> after <code>b</code>. Both parameters now have explicit types.</p>"
     },
     {
       num: 4,
-      title: "A Function Call Is a Move",
-      explainer: "<p>In Exercise 1, you saw that assigning a <code>String</code> to a new variable moves ownership. The same rule applies when you call a function.</p><p>When you write <code>greet(s)</code>, Rust treats it like handing <code>s</code> to the function parameter. The parameter becomes the new owner. When the function finishes and its scope ends, Rust automatically frees the memory. No garbage collector. No manual cleanup.</p><p>The caller pays a price: <code>s</code> is now invalid. Rust freed the memory when the function ended. If <code>main</code> tries to use <code>s</code> after the call, it is reaching for memory that no longer exists. Rust catches this at compile time and refuses.</p>",
-      task: "<p><code>greet(s)</code> is called in <code>main</code>. Ownership of <code>s</code> moves into the function. When <code>greet</code> ends, the memory is freed. Right now <code>main</code> tries to print <code>s</code> after the call — Rust will not compile.</p><ol><li>Remove the <code>println!</code> line in <code>main</code> that uses <code>s</code> after the call.</li></ol>",
-      starterCode: "fn greet(s: String) {\n    println!(\"Hello, {}!\", s);\n}\n\nfn main() {\n    let s = String::from(\"world\");\n    greet(s);\n    println!(\"s is still: {}\", s);\n}",
-      instruction: "Remove one line so the code accepts the move",
-      expectedOutput: "Hello, world!",
-      answerCode: "fn greet(s: String) {\n    println!(\"Hello, {}!\", s);\n}\n\nfn main() {\n    let s = String::from(\"world\");\n    greet(s);\n}",
-      why: "<p>Remove the last <code>println!</code>. After <code>greet(s)</code>, ownership has moved into the function and the memory was freed when it ended. <code>s</code> in <code>main</code> is invalid.</p>"
+      title: "Using the Return Value",
+      explainer: "<p>When a function returns a value, that value appears at the call site. You can store it in a variable, pass it directly to another function, or use it in an expression. If you call a function but do not use what it returns, the value is discarded.</p><p>All three of these are valid:</p><pre style='background:#1E1E1A;border-radius:8px;padding:12px 16px;margin:12px 0;font-family:SF Mono,Fira Code,monospace;font-size:12px;line-height:1.7;color:#c9d1e3;overflow-x:auto;white-space:pre;'>let result = square(5);        // store it\nprintln!(\"{}\", square(5));     // pass it directly\nlet doubled = square(5) * 2;   // use it in an expression</pre><p>Defining a function does not call it. The function only runs when you actually call it by name.</p>",
+      task: "<p>A function converts Fahrenheit to Celsius and returns the correct value. Right now <code>main</code> ignores the return value and prints the original temperature instead.</p><p>Fix <code>main</code> so it uses what the function returns and prints <code>Celsius: 100</code>.</p>",
+      starterCode: "fn to_celsius(f: f64) -> f64 {\n    (f - 32.0) * 5.0 / 9.0\n}\n\nfn main() {\n    let temp_f = 212.0;\n    println!(\"Celsius: {}\", temp_f);\n}",
+      instruction: "Use the function's return value in the print statement",
+      expectedOutput: "Celsius: 100",
+      answerCode: "fn to_celsius(f: f64) -> f64 {\n    (f - 32.0) * 5.0 / 9.0\n}\n\nfn main() {\n    let temp_f = 212.0;\n    println!(\"Celsius: {}\", to_celsius(temp_f));\n}",
+      why: "<p>Call <code>to_celsius(temp_f)</code> inside <code>println!</code>. The return value flows directly into the print.</p>"
     },
     {
       num: 5,
-      title: "Returning Ownership",
-      explainer: "<p>In Exercise 4, passing a <code>String</code> to a function gave up ownership for good. But ownership does not have to stay inside a function. A function can return the value back, transferring ownership out to the caller.</p><p>When <code>main</code> writes:</p><pre style='background:#1E1E1A;border-radius:8px;padding:12px 16px;margin:12px 0;font-family:SF Mono,Fira Code,monospace;font-size:12px;line-height:1.7;color:#c9d1e3;overflow-x:auto;white-space:pre;'>let s = process(s);</pre><p>Ownership moves into <code>process</code>, the function does its work, and then ownership moves back out when <code>process</code> returns. <code>main</code> binds the returned value to <code>s</code> and owns the data again.</p><p>Why do this instead of cloning? Returning ownership means no new memory is allocated. The same data stays in the same place — ownership just moves in and then back out. Cloning (Exercise 2) creates a second copy, which costs memory. This pattern is more work than borrowing, which you will learn next.</p>",
-      task: "<p><code>process()</code> takes ownership of <code>s</code> and prints it, but never returns it. <code>main</code> tries to use <code>s</code> after the call — Rust will not compile because ownership moved into <code>process</code> and the memory was freed when it ended.</p><ol><li>Add <code>-&gt; String</code> to the <code>process</code> function signature.</li><li>Add <code>s</code> as the last line of the <code>process</code> body with no semicolon so it returns.</li></ol>",
-      starterCode: "fn process(s: String) {\n    println!(\"Processing: {}\", s);\n}\n\nfn main() {\n    let s = String::from(\"hello\");\n    let s = process(s);\n    println!(\"Done: {}\", s);\n}",
-      instruction: "Fix <code>process</code> so it hands ownership back to the caller",
-      expectedOutput: "Processing: hello\nDone: hello",
-      answerCode: "fn process(s: String) -> String {\n    println!(\"Processing: {}\", s);\n    s\n}\n\nfn main() {\n    let s = String::from(\"hello\");\n    let s = process(s);\n    println!(\"Done: {}\", s);\n}",
-      why: "<p>Add <code>-&gt; String</code> to the signature. Write <code>s</code> as the last expression with no semicolon so ownership returns to the caller.</p>"
+      title: "Type Safety at the Call Site",
+      explainer: "<p>Rust checks that the values you pass to a function match the types the function expects. If a function expects <code>i32</code>, you cannot pass <code>3.0</code>, that is an <code>f64</code>. Rust will not compile and will tell you exactly where the types conflict:</p><pre style='background:#1E1E1A;border-radius:8px;padding:12px 16px;margin:12px 0;font-family:SF Mono,Fira Code,monospace;font-size:12px;line-height:1.7;color:#c9d1e3;overflow-x:auto;white-space:pre;'>error[E0308]: mismatched types\n --&gt; src/main.rs:6:22\n  |\n6 |     let result = multiply(3.0, 4.0);\n  |                           ^^^ expected `i32`, found floating-point number</pre><p>This check happens at every function call, before the program ever runs. It is one of the main ways Rust prevents bugs.</p>",
+      task: "<p>A function multiplies two integers. The caller passes decimal numbers instead of whole numbers. Right now Rust will not compile because <code>f64</code> and <code>i32</code> are different types.</p><ol><li>Change <code>3.0</code> to <code>3</code> and <code>4.0</code> to <code>4</code> in the call to <code>multiply</code>.</li></ol>",
+      starterCode: "fn multiply(x: i32, y: i32) -> i32 {\n    x * y\n}\n\nfn main() {\n    let result = multiply(3.0, 4.0);\n    println!(\"Result: {}\", result);\n}",
+      instruction: "Fix the call site so the argument types match what the function expects",
+      expectedOutput: "Result: 12",
+      answerCode: "fn multiply(x: i32, y: i32) -> i32 {\n    x * y\n}\n\nfn main() {\n    let result = multiply(3, 4);\n    println!(\"Result: {}\", result);\n}",
+      why: "<p>Change <code>3.0</code> and <code>4.0</code> to <code>3</code> and <code>4</code>. The values now match the <code>i32</code> types the function expects.</p>"
     },
     {
       num: 6,
-      title: "Build: Log and Return",
-      explainer: "<p>You have seen the full ownership picture. A <code>String</code> moves on assignment and on function calls. Clone creates an independent copy at a cost. Stack types copy for free. A function can return ownership back so the caller keeps access.</p><p>Now write something from scratch that puts it together.</p>",
-      task: "<p>Write a function called <code>log_plan</code> that a contract uses to record which plan a user is on. The function receives the plan name, prints it, and hands ownership back so the caller can still use it.</p><p><strong>Spec:</strong></p><ul><li>Function name: <code>log_plan</code></li><li>Parameter: <code>name: String</code></li><li>Return type: <code>String</code></li><li>Prints <code>\"Plan logged: {name}\"</code> inside the function</li><li>Returns <code>name</code> to the caller with implicit return</li></ul><p><strong>In <code>main</code>:</strong> Call <code>log_plan</code> with <code>\"premium\"</code>, get ownership back, then clone the result into a <code>backup</code>. Print both.</p>",
-      starterCode: "",
+      title: "Build: Amount Validator",
+      explainer: "<p>You now understand every part of a function:</p><ul><li>Every parameter needs a name and a type: <code>amount: u64</code></li><li>Declare the return type after <code>-&gt;</code>: <code>-&gt; bool</code></li><li>The last expression in the body is what the function hands back (no semicolon)</li><li>Call a function by writing its name and passing the arguments: <code>is_valid_amount(500, 100, 1000)</code></li></ul><p>Now build one from scratch.</p>",
+      task: "<p>A blockchain contract needs to validate transaction amounts before processing. The logic is already written — your job is to complete the function signature.</p><p><strong>Spec:</strong></p><ul><li>Function name: <code>is_valid_amount</code></li><li>Parameters: <code>amount: u64</code>, <code>min: u64</code>, <code>max: u64</code></li><li>Return type: <code>bool</code></li></ul><p>Fill in the function signature so the code compiles and runs.</p>",
+      starterCode: "fn ___(___: u64, ___: u64, ___: u64) -> ___ {\n    amount >= min && amount <= max\n}\n\nfn main() {\n    println!(\"{}\", is_valid_amount(500, 100, 1000));\n    println!(\"{}\", is_valid_amount(50, 100, 1000));\n}",
       instruction: "",
-      expectedOutput: "Plan logged: premium\nActive: premium\nBackup: premium",
-      answerCode: "fn log_plan(name: String) -> String {\n    println!(\"Plan logged: {}\", name);\n    name\n}\n\nfn main() {\n    let plan = log_plan(String::from(\"premium\"));\n    let backup = plan.clone();\n    println!(\"Active: {}\", plan);\n    println!(\"Backup: {}\", backup);\n}",
+      expectedOutput: "true\nfalse",
+      answerCode: "fn is_valid_amount(amount: u64, min: u64, max: u64) -> bool {\n    amount >= min && amount <= max\n}\n\nfn main() {\n    println!(\"{}\", is_valid_amount(500, 100, 1000));\n    println!(\"{}\", is_valid_amount(50, 100, 1000));\n}",
       why: ""
     }
   ];
