@@ -167,22 +167,27 @@ Check `_docs/KEY-TERMS.md` for this topic. Every term in the exercise file's Qui
 
 ## Output Format
 
-### Section 1 — Findings
+Use the template at `_docs/EXERCISE-AUDIT-TEMPLATE.md`. Copy it and fill in every section for the topic being audited.
 
-Answer the central question first: does the learner get the full concept from these 6 exercises? Then list every issue found, grouped by checklist area. Be specific — quote the line, name the missing concept, cite the transcript.
+Save the completed audit to `exercises/audits/[NN]-[topic]-audit.md` — for example `exercises/audits/06-ownership-audit.md`. Create the `audits/` folder if it does not exist.
 
-### Section 2 — Recommendations
+Present the completed audit to the user before making any changes to the exercise files.
 
-One recommendation per finding. State the fix clearly. Prioritise by impact on concept completeness — fill the biggest gaps first.
+### What the report must include
 
-After the report is reviewed and approved, update the exercise `.md` file directly.
+1. **Central question answered first** — does the learner get the full concept from these exercises?
+2. **Concept completeness table** — every concept from the transcript listed, marked covered or missing
+3. **One finding per issue** — quoted line or named concept, traced to transcript or style guide
+4. **One recommendation per finding** — ordered by impact, biggest gaps first
+5. **Decision** — approved, minor updates, or rebuild
 
 ---
 
 ## Rules
 
 - **No transcript read = no audit.** Always read the relevant timestamp range before forming any opinion.
-- **The central question comes first.** Do the 6 exercises give the full concept? Answer this before listing individual issues.
+- **The central question comes first.** Do the exercises give the learner the full concept? Answer this before listing individual issues.
 - **No invented fixes.** Every recommendation must trace to the transcript or the style guide.
 - **One issue, one fix.** Do not combine multiple problems into one recommendation.
 - **Report first, update second.** Produce the findings report before touching the file. Update only after approval.
+- **Use the template.** Every audit uses `_docs/EXERCISE-AUDIT-TEMPLATE.md`. No freeform reports.

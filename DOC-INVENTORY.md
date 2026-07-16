@@ -23,7 +23,8 @@ Source of truth for every doc in the Rust Buddy platform. Read this to know what
 | `ASSET-LIST.md` | List of all HTML pages and their build status | Track what pages exist and what still needs to be built. **Note: outdated — many pages listed as not built are now live. Needs updating.** |
 | `COPY.md` | Source of truth for all page-level copy — titles, descriptions, card text | Any agent writing or editing page copy must pull from here. Do not invent new titles or descriptions. |
 | `Creative-Cards-DESIGN.md` | Design spec for the product feature cards section | Reference when building or restyling product card components |
-| `EXERCISE-PAGE-DESIGN.md` | Exercise page layout spec — tabs, panels, 6-exercise pattern, content rules | Required reading before building or auditing any exercise page |
+| `EXERCISE-PAGE-DESIGN.md` | Exercise page layout spec — tabs, panels, up to 8 exercises for complex topics, content rules | Required reading before building or auditing any exercise page |
+| `EXERCISE-AUDIT-TEMPLATE.md` | Reusable template for exercise audits — fill in one copy per topic | Used by the Exercise Audit Agent. Completed audits saved to `exercises/audits/[NN]-[topic]-audit.md` |
 | `EXERCISE-WIREFRAME.md` | Early wireframe reference for exercise page layout | Historical reference only. The canonical template is now `game/exercises/html/variables.html`. |
 | `GAME-LEVELS-DESIGN.md` | Design spec for the 7 interactive game levels | Reference when building game level pages — each level builds one piece of a Solana payment contract |
 | `KEY-TERMS.md` | All key terms per exercise page — source for the Terms to Know tab | Required reading when building or updating the Terms to Know tab on any exercise page |
@@ -55,7 +56,7 @@ Source of truth for every doc in the Rust Buddy platform. Read this to know what
 |---|---|---|
 | `game/exercises/EXERCISE-STYLE-GUIDE.md` | `practice-exercise-agent.md` | The 7-part exercise format rules — one concept per exercise, constraint types, instruction language. Needs to be created. |
 | `game/flashcards/FLASHCARD-CONTEXT.md` | `GAME-HANDOFF.md` | Flashcard deck structure, card format, build rules. Needs to be created. |
-| `game/_docs/exercise-audit-agent.md` | Not yet referenced | Agent card for auditing and improving existing exercise pages. Needs to be created. |
+| `exercise-audit-agent.md` | Audit agent card — checklist, read order, output format, rules | Run before any exercise audit. References `EXERCISE-AUDIT-TEMPLATE.md` for output structure. |
 
 ---
 
