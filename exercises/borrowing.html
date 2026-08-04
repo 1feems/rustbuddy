@@ -232,8 +232,8 @@
       starterCode: 'fn calculate_length(s: String) -> usize {\n    s.len()\n}\n\nfn main() {\n    let s1 = String::from("hello");\n    let len = calculate_length(s1);\n    println!("Length: {}", len);\n    println!("Original: {}", s1);\n}',
       instruction: 'Fix this so both println! lines work. Change the minimum number of things.',
       expectedOutput: 'Length: 5\nOriginal: hello',
-      answerCode: 'fn calculate_length(s: &String) -> usize {\n    s.len()\n}\n\nfn main() {\n    let s1 = String::from("hello");\n    let len = calculate_length(&s1);\n    println!("Length: {}", len);\n    println!("Original: {}", s1);\n}',
-      why: 'The parameter changes from <code>String</code> to <code>&amp;String</code>. The call changes from <code>s1</code> to <code>&amp;s1</code>. The function now borrows the value without taking ownership, so <code>s1</code> stays valid after the call.'
+      answerCode: "fn calculate_length(s: &String) -> usize { // ② &String means this function borrows the value — it does not own it\n    s.len()                                 // ③ reads the length through the reference — no ownership needed for read-only access\n}\n\nfn main() {\n    let s1 = String::from(\"hello\");    // ① s1 owns the String\n    let len = calculate_length(&s1);   // ② &s1 passes a reference — s1 keeps ownership, the function just borrows it\n    println!(\"Length: {}\", len);       // ③ len holds the returned usize — no ownership involved\n    println!(\"Original: {}\", s1);      // ④ s1 is still valid because ownership was never moved — only borrowed\n}",
+      why: "Borrowing with <code>&amp;</code> lets a function read a value without taking it. The original variable stays valid because ownership never transferred. Think of it like lending your key — the borrower can use it, but you still own it."
     },
     {
       num: 2,
@@ -243,8 +243,8 @@
       starterCode: 'fn main() {\n    let s = String::from("hello");\n    let r1 = &s;\n    let r2 = &s;\n    println!("r1: {}, r2: {}", r1, r2);\n}',
       instruction: '',
       expectedOutput: 'r1: hello, r2: hello',
-      answerCode: 'fn main() {\n    let s = String::from("hello");\n    let r1 = &s;\n    let r2 = &s;\n    println!("r1: {}, r2: {}", r1, r2);\n}',
-      why: 'Rule 1 says any number of immutable references is fine as long as there are no mutable references at the same time. Both <code>r1</code> and <code>r2</code> are read-only, so Rust allows them together.'
+      answerCode: "fn main() {\n    let s = String::from(\"hello\"); // ① s owns the String\n    let r1 = &s;                   // ② r1 is an immutable reference — it borrows s for reading only\n    let r2 = &s;                   // ③ r2 is also an immutable reference — multiple read-only borrows are allowed at the same time\n    println!(\"r1: {}, r2: {}\", r1, r2); // ④ both references are valid — neither can change s, so they do not conflict\n}",
+      why: "Rule 1 says any number of immutable references are fine as long as there are no mutable references at the same time. Both <code>r1</code> and <code>r2</code> are read-only — neither can change the data — so Rust allows them to coexist."
     },
     {
       num: 3,
@@ -254,8 +254,8 @@
       starterCode: 'fn add_exclamation(s: &String) {\n    s.push_str("!");\n}\n\nfn main() {\n    let s = String::from("hello");\n    add_exclamation(&s);\n    println!("{}", s);\n}',
       instruction: 'Add <code>mut</code> in the right places so the function can modify the string. Don\'t add or remove any lines.',
       expectedOutput: 'hello!',
-      answerCode: 'fn add_exclamation(s: &mut String) {\n    s.push_str("!");\n}\n\nfn main() {\n    let mut s = String::from("hello");\n    add_exclamation(&mut s);\n    println!("{}", s);\n}',
-      why: 'Three things change: <code>let s</code> becomes <code>let mut s</code>, <code>&amp;String</code> becomes <code>&amp;mut String</code>, and <code>&amp;s</code> becomes <code>&amp;mut s</code>. All three must match for a mutable borrow to work.'
+      answerCode: "fn add_exclamation(s: &mut String) { // ② &mut String declares a mutable borrow — this function can change the value\n    s.push_str(\"!\");                  // ③ push_str appends to the String through the mutable reference\n}\n\nfn main() {\n    let mut s = String::from(\"hello\"); // ① mut here allows s to be borrowed mutably — a variable must be mutable before it can be mutably borrowed\n    add_exclamation(&mut s);           // ② &mut s passes a mutable reference — s stays owned by main but the function can change it\n    println!(\"{}\", s);                 // ④ s reflects the change — the mutation happened through the borrow, not a move\n}",
+      why: "Three things change together: the variable needs <code>mut</code>, the reference needs <code>&amp;mut</code>, and the parameter type needs <code>&amp;mut</code>. All three must match. Without <code>mut</code>, Rust treats the value as read-only and refuses to compile any code that tries to change it."
     },
     {
       num: 4,
@@ -265,8 +265,8 @@
       starterCode: 'fn main() {\n    let mut s = String::from("hello");\n    let r1 = &mut s;\n    let r2 = &mut s;\n    println!("{}, {}", r1, r2);\n}',
       instruction: 'Fix this so only one mutable reference exists at a time',
       expectedOutput: 'hello',
-      answerCode: 'fn main() {\n    let mut s = String::from("hello");\n    // let r1 = &mut s;\n    let r2 = &mut s;\n    println!("{}", r2);\n}',
-      why: 'Only one mutable reference can exist at a time. Commenting out <code>r1</code> removes the conflict. The println also updates to only use <code>r2</code>.'
+      answerCode: "fn main() {\n    let mut s = String::from(\"hello\"); // ① s is declared mutable — it can be borrowed mutably\n    // let r1 = &mut s;               // ② commented out — two mutable references at the same time violate rule 1\n    let r2 = &mut s;                   // ③ only one mutable reference exists now — r2 is the sole mutable borrow of s\n    println!(\"{}\", r2);                // ④ r2 is valid and used before it goes out of scope\n}",
+      why: "Rust allows only one mutable reference to a value at a time. If two mutable references existed simultaneously, two parts of the code could change the same memory at once — a data race. Rust catches this at compile time, not at runtime."
     },
     {
       num: 5,
@@ -276,8 +276,8 @@
       starterCode: 'fn main() {\n    let mut s = String::from("hello");\n    let r1 = &mut s;\n    r1.push_str(" world");\n    let r2 = &mut s;\n    r2.push_str("!");\n    println!("{}", s);\n}',
       instruction: 'Wrap r1 in an inner block so it drops before r2 is created',
       expectedOutput: 'hello world!',
-      answerCode: 'fn main() {\n    let mut s = String::from("hello");\n    {\n        let r1 = &mut s;\n        r1.push_str(" world");\n    }\n    let r2 = &mut s;\n    r2.push_str("!");\n    println!("{}", s);\n}',
-      why: 'The inner block ends <code>r1</code>\'s lifetime before <code>r2</code> is created. Rule 1 is satisfied — only one mutable reference exists at any given time.'
+      answerCode: "fn main() {\n    let mut s = String::from(\"hello\"); // ① s is mutable so it can be borrowed mutably\n    {\n        let r1 = &mut s;               // ② r1 is the first mutable reference — it is the only one active right now\n        r1.push_str(\" world\");         // ③ r1 modifies s through the mutable borrow\n    }                                  // ④ r1 goes out of scope here and the mutable borrow ends\n    let r2 = &mut s;                   // ⑤ r2 is a new mutable reference — r1 is gone so rule 1 is satisfied\n    r2.push_str(\"!\");                  // ⑥ r2 modifies s through its own mutable borrow\n    println!(\"{}\", s);                 // ⑦ both modifications are visible — s was changed twice, sequentially\n}",
+      why: "The inner block <code>{ }</code> ends <code>r1</code>'s lifetime before <code>r2</code> is created. Rule 1 is satisfied because only one mutable reference exists at any moment. Sequential mutable borrows are allowed — it is simultaneous ones that cause data races."
     },
     {
       num: 6,
@@ -287,8 +287,8 @@
       starterCode: 'fn main() {\n    let mut s = String::from("hello");\n    let r1 = &s;\n    let r2 = &mut s;\n    println!("{}, {}", r1, r2);\n}',
       instruction: 'Fix this so the references don\'t conflict',
       expectedOutput: 'hello',
-      answerCode: 'fn main() {\n    let mut s = String::from("hello");\n    // let r1 = &s;\n    let r2 = &mut s;\n    println!("{}", r2);\n}',
-      why: 'You cannot have <code>&amp;s</code> and <code>&amp;mut s</code> alive at the same time. Commenting out the immutable reference removes the conflict.'
+      answerCode: "fn main() {\n    let mut s = String::from(\"hello\"); // ① s is mutable — it could be borrowed either way\n    // let r1 = &s;                   // ② commented out — an immutable borrow while a mutable borrow exists violates rule 1\n    let r2 = &mut s;                   // ③ r2 holds the only active reference — a mutable one, with no immutable references competing\n    println!(\"{}\", r2);                // ④ r2 is valid and used — no conflict with any other borrow\n}",
+      why: "An immutable reference guarantees the data will not change while you hold it. A mutable reference is a promise that you might change it. Having both at once would break the guarantee — Rust refuses to compile it. You must choose: read-only (any number) or read-write (exactly one)."
     }
   ];
 

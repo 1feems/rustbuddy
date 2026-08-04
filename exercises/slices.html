@@ -236,8 +236,8 @@
       starterCode: "fn print_array(arr: [i32; 5]) {\n    println!(\"{:?}\", arr);\n}\n\nfn main() {\n    let arr = [1, 2, 3, 4, 5];\n    print_array(arr);\n}",
       instruction: "Add the type label to <code>arr</code> so the declaration matches the function parameter",
       expectedOutput: "[1, 2, 3, 4, 5]",
-      answerCode: "fn print_array(arr: [i32; 5]) {\n    println!(\"{:?}\", arr);\n}\n\nfn main() {\n    let arr: [i32; 5] = [1, 2, 3, 4, 5];\n    print_array(arr);\n}",
-      why: "The array type is <code>[i32; 5]</code> - five <code>i32</code> values. Add that label after the variable name with a colon."
+      answerCode: "fn print_array(arr: [i32; 5]) { // ② the function expects exactly five i32 values — the size is part of the type\n    println!(\"{:?}\", arr);      // ③ {:?} uses the Debug trait to print the full array\n}\n\nfn main() {\n    let arr: [i32; 5] = [1, 2, 3, 4, 5]; // ① the type annotation [i32; 5] matches the function parameter — five i32 values on the stack\n    print_array(arr);                      // ② arr is passed to the function — arrays with Copy elements are copied, not moved\n}",
+      why: "The size of an array is part of its type. <code>[i32; 5]</code> and <code>[i32; 4]</code> are different types — a function that expects one will not accept the other. The type annotation tells the compiler exactly how much stack space to allocate."
     },
     {
       num: 2,
@@ -247,8 +247,8 @@
       starterCode: "fn main() {\n    let arr: [i32; 10] = 0;\n    println!(\"Length: {}\", arr.len);\n}",
       instruction: "Fix both lines so the array is created correctly and the length prints",
       expectedOutput: "Length: 10",
-      answerCode: "fn main() {\n    let arr: [i32; 10] = [0; 10];\n    println!(\"Length: {}\", arr.len());\n}",
-      why: "<code>[0; 10]</code> is the short init syntax: zero repeated ten times. <code>arr.len()</code> needs parentheses because <code>len</code> is a method, not a field."
+      answerCode: "fn main() {\n    let arr: [i32; 10] = [0; 10];         // ① [0; 10] is the short init syntax — creates ten i32 values all set to zero\n    println!(\"Length: {}\", arr.len());    // ② .len() is a method call — parentheses are required, len without () is not valid\n}",
+      why: "<code>[0; 10]</code> is a shorthand that tells Rust to fill an array with ten copies of the value <code>0</code>. It is equivalent to writing all ten zeros out by hand but much shorter. <code>.len()</code> is a method — in Rust, methods always need parentheses even when they take no arguments."
     },
     {
       num: 3,
@@ -258,8 +258,8 @@
       starterCode: "fn main() {\n    let months = [\"Jan\", \"Feb\", \"Mar\"];\n    println!(\"Second month: {}\", months[2]);\n    println!(\"Out of range: {}\", months[5]);\n}",
       instruction: "Fix the index and comment out the out-of-range line",
       expectedOutput: "Second month: Feb",
-      answerCode: "fn main() {\n    let months = [\"Jan\", \"Feb\", \"Mar\"];\n    println!(\"Second month: {}\", months[1]);\n    // println!(\"Out of range: {}\", months[5]);\n}",
-      why: "<code>months[1]</code> is the second element - indexing starts at 0. <code>months[5]</code> does not exist and would panic, so it must be commented out."
+      answerCode: "fn main() {\n    let months = [\"Jan\", \"Feb\", \"Mar\"];        // ① array of three &str values — valid indices are 0, 1, and 2\n    println!(\"Second month: {}\", months[1]);   // ② index 1 is the second element — indexing starts at 0, not 1\n    // println!(\"Out of range: {}\", months[5]); // ③ commented out — index 5 does not exist in a 3-element array and would cause a panic\n}",
+      why: "Array indexing starts at 0 in Rust. The \"second\" element is always at index 1. Accessing an index that does not exist is caught at runtime, not compile time — the program panics immediately. For safe access without panicking, use <code>.get()</code> which returns <code>Option</code>."
     },
     {
       num: 4,
@@ -269,8 +269,8 @@
       starterCode: "fn main() {\n    let arr = [10, 20, 30];\n    let item = arr[10];\n    println!(\"Item: {:?}\", item);\n}",
       instruction: "Replace direct indexing with <code>get()</code>",
       expectedOutput: "Item: None",
-      answerCode: "fn main() {\n    let arr = [10, 20, 30];\n    let item = arr.get(10);\n    println!(\"Item: {:?}\", item);\n}",
-      why: "<code>arr.get(10)</code> returns <code>None</code> instead of panicking. The type becomes <code>Option&lt;&amp;i32&gt;</code>."
+      answerCode: "fn main() {\n    let arr = [10, 20, 30];       // ① array with three elements — valid indices are 0, 1, 2\n    let item = arr.get(10);       // ② .get(10) returns Option<&i32> — None because index 10 does not exist, no panic\n    println!(\"Item: {:?}\", item); // ③ {:?} prints the Option — prints None rather than crashing the program\n}",
+      why: "Direct indexing <code>arr[10]</code> panics when the index is out of bounds — the program crashes immediately. <code>.get()</code> returns an <code>Option</code> instead, letting the caller decide what to do. In contract code, a panic means lost funds — <code>.get()</code> is the safe default whenever the index might be invalid."
     },
     {
       num: 5,
@@ -280,8 +280,8 @@
       starterCode: "fn print_slice(arr: [i32; 3]) {\n    println!(\"{:?}\", arr);\n}\n\nfn main() {\n    let nums = [1, 2, 3];\n    print_slice(&nums);\n}",
       instruction: "Fix the function parameter type so it accepts a slice",
       expectedOutput: "[1, 2, 3]",
-      answerCode: "fn print_slice(arr: &[i32]) {\n    println!(\"{:?}\", arr);\n}\n\nfn main() {\n    let nums = [1, 2, 3];\n    print_slice(&nums);\n}",
-      why: "Change <code>[i32; 3]</code> to <code>&amp;[i32]</code>. The function now borrows a slice of any length, not only a 3-element array."
+      answerCode: "fn print_slice(arr: &[i32]) { // ① &[i32] is a slice — a borrowed view into any contiguous sequence of i32 values, any length\n    println!(\"{:?}\", arr);    // ② prints the slice — works the same as printing an array\n}\n\nfn main() {\n    let nums = [1, 2, 3]; // ③ nums is an array with a fixed type [i32; 3]\n    print_slice(&nums);    // ④ &nums creates a reference to the array — Rust automatically coerces &[i32; 3] into &[i32] for the function call\n}",
+      why: "A function that takes <code>[i32; 3]</code> only accepts arrays of exactly three elements. A function that takes <code>&amp;[i32]</code> accepts a slice of any length — making it more flexible. This is the preferred pattern for functions that only need to read a sequence of values."
     },
     {
       num: 6,
@@ -291,7 +291,7 @@
       starterCode: "use std::mem::size_of_val;\n\nfn main() {\n    let c = ['a', 'b'];\n    let slice: &[char] = &c;\n    assert!(size_of_val(slice) == 8);\n}",
       instruction: "Fix the argument to <code>size_of_val</code> and update the number so the assertion passes",
       expectedOutput: "(no output - assertion passes)",
-      answerCode: "use std::mem::size_of_val;\n\nfn main() {\n    let c = ['a', 'b'];\n    let slice: &[char] = &c;\n    assert!(size_of_val(&slice) == 16);\n}",
+      answerCode: "use std::mem::size_of_val;\n\nfn main() {\n    let c = ['a', 'b'];                    // ① c is an array of two chars on the stack\n    let slice: &[char] = &c;               // ② slice is a fat pointer — it stores a pointer to c's data AND the length (2)\n    assert!(size_of_val(&slice) == 16);    // ③ &slice measures the reference itself — pointer (8 bytes) + length (8 bytes) = 16 bytes on 64-bit\n}",
       why: "A slice reference is 16 bytes: 8 bytes for the pointer + 8 bytes for the length (<code>usize</code> on 64-bit). Pass <code>&amp;slice</code> to measure the reference itself, not the data it points to."
     }
   ];

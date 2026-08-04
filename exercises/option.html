@@ -232,8 +232,8 @@
       starterCode: "fn main() {\n    let five = 5;\n    println!(\"{:?}\", five);\n}",
       instruction: "Wrap the value in <code>Some()</code>",
       expectedOutput: "Some(5)",
-      answerCode: "fn main() {\n    let five = Some(5);\n    println!(\"{:?}\", five);\n}",
-      why: "<code>Some(5)</code> wraps the number 5 inside the <code>Option&lt;i32&gt;</code> type. The compiler infers <code>i32</code> from the literal. <code>Option</code> is in the prelude so no import is needed."
+      answerCode: "fn main() {\n    let five = Some(5);      // ① Some(5) wraps the integer 5 inside the Option<i32> enum — the compiler infers i32 from the literal\n    println!(\"{:?}\", five);  // ② {:?} prints the Option — output is Some(5), not just 5\n}",
+      why: "<code>Option</code> is how Rust represents a value that might not exist. Instead of allowing <code>null</code> (which causes crashes in other languages), Rust requires you to explicitly wrap a value in <code>Some</code> or use <code>None</code>. The compiler then forces you to handle both possibilities before using the value."
     },
     {
       num: 2,
@@ -243,8 +243,8 @@
       starterCode: "fn main() {\n    let maybe = Some(10);\n\n    match maybe {\n        Some(n) => println!(\"Got: {}\", n),\n    }\n}",
       instruction: "Add a <code>None</code> arm to the match",
       expectedOutput: "Got: 10",
-      answerCode: "fn main() {\n    let maybe = Some(10);\n\n    match maybe {\n        Some(n) => println!(\"Got: {}\", n),\n        None => println!(\"Nothing here\"),\n    }\n}",
-      why: "Every <code>match</code> on <code>Option</code> must be exhaustive - all variants must have an arm. The <code>None =&gt;</code> arm handles the absence case. Without it, the compiler will not let the code compile."
+      answerCode: "fn main() {\n    let maybe = Some(10); // ① maybe holds Some(10) — the Option has a value right now\n\n    match maybe {\n        Some(n) => println!(\"Got: {}\", n), // ② Some(n) destructures the Option — n receives the inner value 10\n        None => println!(\"Nothing here\"),  // ③ None arm handles the absent case — match must be exhaustive, both variants required\n    }\n}",
+      why: "<code>match</code> on <code>Option</code> must be exhaustive — every variant must have an arm. Leaving out <code>None</code> is a compile error because Rust cannot guarantee the missing case is handled. This is the mechanism that replaces null checks: the compiler makes it impossible to forget."
     },
     {
       num: 3,
@@ -254,8 +254,8 @@
       starterCode: "fn plus_one(x: Option<i32>) -> Option<i32> {\n    match x {\n        Some(i) => Some(i + 1),\n    }\n}\n\nfn main() {\n    println!(\"{:?}\", plus_one(Some(5)));\n    println!(\"{:?}\", plus_one(None));\n}",
       instruction: "Add the <code>None</code> arm that returns <code>None</code>",
       expectedOutput: "Some(6)\nNone",
-      answerCode: "fn plus_one(x: Option<i32>) -> Option<i32> {\n    match x {\n        None => None,\n        Some(i) => Some(i + 1),\n    }\n}\n\nfn main() {\n    println!(\"{:?}\", plus_one(Some(5)));\n    println!(\"{:?}\", plus_one(None));\n}",
-      why: "<code>None =&gt; None</code> is the identity path: if there's no value, there's nothing to increment, so return no value. This lets the function safely handle both cases without crashing."
+      answerCode: "fn plus_one(x: Option<i32>) -> Option<i32> { // ① takes an Option<i32> and returns an Option<i32> — transforms the value if present\n    match x {\n        None => None,              // ② None in, None out — nothing to increment, return absence\n        Some(i) => Some(i + 1),   // ③ Some(i) destructures the Option — i is the inner value, we increment it and wrap the result back in Some\n    }\n}\n\nfn main() {\n    println!(\"{:?}\", plus_one(Some(5))); // ④ Some(5) goes in, Some(6) comes out — value was present and incremented\n    println!(\"{:?}\", plus_one(None));    // ⑤ None goes in, None comes out — nothing to transform\n}",
+      why: "The <code>None =&gt; None</code> arm is the identity path — when there is no value, there is nothing to transform, so return no value. This pattern (transform the inner value if present, pass <code>None</code> through unchanged) is the foundation of safe data transformation in Rust."
     },
     {
       num: 4,
@@ -265,8 +265,8 @@
       starterCode: "fn main() {\n    let six = Some(6);\n\n    if let Some(n) = six {\n        println!(\"{}\", n);\n    }\n}",
       instruction: "Change <code>six</code> to <code>None</code> and add an <code>else</code> block",
       expectedOutput: "No value",
-      answerCode: "fn main() {\n    let six = None;\n\n    if let Some(n) = six {\n        println!(\"{}\", n);\n    } else {\n        println!(\"No value\");\n    }\n}",
-      why: "<code>if let Some(n)</code> destructures the <code>Option</code>: <code>n</code> holds the inner value if it exists. When <code>six</code> is <code>None</code>, the <code>if</code> block is skipped and the <code>else</code> block runs."
+      answerCode: "fn main() {\n    let six = None; // ① six now holds None — the Option has no value\n\n    if let Some(n) = six { // ② if let tries to destructure six as Some — n would receive the inner value if it existed\n        println!(\"{}\", n); // ③ this block is skipped entirely because six is None — no inner value to bind to n\n    } else {\n        println!(\"No value\"); // ④ the else block runs when the if let pattern does not match — handles the None case\n    }\n}",
+      why: "<code>if let</code> is a pattern match shortcut for when you only care about one variant. It is cleaner than a full <code>match</code> when you want to act on <code>Some</code> and either do nothing or handle <code>None</code> in an <code>else</code> block. It destructures the inner value directly into a named variable."
     },
     {
       num: 5,
@@ -276,8 +276,8 @@
       starterCode: "fn reward(x: Option<i32>) -> Option<i32> {\n    match x {\n        None => None,\n        Some(i) => Some(i * 2),\n    }\n}\n\nfn main() {\n    let bonus: Option<i32> = Some(5);\n    println!(\"{:?}\", reward(bonus));\n}",
       instruction: "Remove the type annotation from <code>bonus</code> and confirm it still works",
       expectedOutput: "Some(10)",
-      answerCode: "fn reward(x: Option<i32>) -> Option<i32> {\n    match x {\n        None => None,\n        Some(i) => Some(i * 2),\n    }\n}\n\nfn main() {\n    let bonus = Some(5);\n    println!(\"{:?}\", reward(bonus));\n}",
-      why: "The compiler infers <code>Option&lt;i32&gt;</code> from the function signature <code>reward(x: Option&lt;i32&gt;)</code>. Explicit annotations are optional when the compiler has enough context from how the value is used."
+      answerCode: "fn reward(x: Option<i32>) -> Option<i32> { // ① the function signature gives the compiler all the type information it needs\n    match x {\n        None => None,\n        Some(i) => Some(i * 2), // ② i is inferred as i32 from the function signature — no annotation needed here\n    }\n}\n\nfn main() {\n    let bonus = Some(5);             // ③ the type annotation is removed — the compiler infers Option<i32> from the reward() function signature when bonus is passed in\n    println!(\"{:?}\", reward(bonus)); // ④ bonus is passed to reward — the compiler confirms the types match\n}",
+      why: "Rust's type inference works across function calls. When <code>bonus</code> is passed to <code>reward(x: Option&lt;i32&gt;)</code>, the compiler can infer that <code>bonus</code> must be <code>Option&lt;i32&gt;</code>. Writing the annotation explicitly is optional — leave it out when the context makes the type obvious."
     },
     {
       num: 6,
@@ -287,8 +287,8 @@
       starterCode: "fn main() {\n    let names = [\"alice\", \"bob\", \"carol\"];\n    let third = names[3];\n    println!(\"{}\", third);\n}",
       instruction: "Replace direct indexing with <code>get()</code> and handle both cases",
       expectedOutput: "No such name",
-      answerCode: "fn main() {\n    let names = [\"alice\", \"bob\", \"carol\"];\n\n    match names.get(3) {\n        Some(name) => println!(\"{}\", name),\n        None => println!(\"No such name\"),\n    }\n}",
-      why: "<code>names.get(3)</code> returns <code>None</code> because the array has only 3 elements (indices 0, 1, 2). The program prints <code>No such name</code> instead of crashing. This pattern is important any time you're reading from a position that might not exist."
+      answerCode: "fn main() {\n    let names = [\"alice\", \"bob\", \"carol\"]; // ① array of three elements — valid indices are 0, 1, 2\n\n    match names.get(3) {                          // ② .get(3) returns Option<&&str> — None because index 3 does not exist, no panic\n        Some(name) => println!(\"{}\", name),       // ③ Some(name) destructures the Option — name receives a reference to the element if it existed\n        None => println!(\"No such name\"),         // ④ None arm handles the absent case — prints safely instead of crashing\n    }\n}",
+      why: "<code>.get()</code> is the safe alternative to direct indexing. It returns <code>Option</code> so the caller must handle the case where the index does not exist. In contract code, a panic at an array index means the whole transaction fails — <code>.get()</code> plus <code>match</code> gives you full control over what happens when data is missing."
     }
   ];
 

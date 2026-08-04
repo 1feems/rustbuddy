@@ -236,8 +236,8 @@
       starterCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1;\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
       instruction: "",
       expectedOutput: "s1 = hello\ns2 = hello",
-      answerCode: "// Option 1 — Clone: give s2 its own copy so both variables stay valid\nfn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1.clone();\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}\n\n// Option 2 — Accept the move: remove the s1 print\nfn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1;\n\n    println!(\"s2 = {}\", s2);\n}",
-      why: "<p>There are two valid approaches. Clone gives <code>s2</code> its own independent copy so both variables stay valid. Accepting the move means removing the line that tries to use <code>s1</code> after it has been moved.</p>"
+      answerCode: "// Option 1 — Clone\nfn main() {\n    let s1 = String::from(\"hello\"); // ① s1 owns this String on the heap\n    let s2 = s1.clone();            // ② .clone() creates a second independent copy — s1 keeps its ownership\n    println!(\"s1 = {}\", s1);       // ③ s1 is still valid because its ownership was never moved\n    println!(\"s2 = {}\", s2);       // ④ s2 owns its own separate copy — both can be used at the same time\n}\n\n// Option 2 — Accept the move\nfn main() {\n    let s1 = String::from(\"hello\"); // ① s1 owns the String\n    let s2 = s1;                    // ② ownership moves to s2 — s1 is now invalid, Rust enforces this at compile time\n    println!(\"s2 = {}\", s2);       // ③ only s2 can be used now — attempting to print s1 would not compile\n}",
+      why: "<p><strong>Option 1:</strong> In Rust, assigning a <code>String</code> to a new variable moves ownership and the original becomes invalid. <code>.clone()</code> allocates a brand new copy on the heap so both variables have their own data. This is intentionally explicit because cloning costs memory and time.</p><p><strong>Option 2:</strong> When you only need one variable, accepting the move is the right call. The original variable is gone and Rust enforces this at compile time so you never accidentally use data that was moved away.</p>"
     },
     {
       num: 2,
@@ -247,8 +247,8 @@
       starterCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1;\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
       instruction: "Add one method call so both variables stay valid",
       expectedOutput: "s1 = hello\ns2 = hello",
-      answerCode: "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1.clone();\n\n    println!(\"s1 = {}\", s1);\n    println!(\"s2 = {}\", s2);\n}",
-      why: "<p>Call <code>.clone()</code> on <code>s1</code> before assigning. <code>s2</code> gets its own copy. <code>s1</code> stays valid.</p>"
+      answerCode: "fn main() {\n    let s1 = String::from(\"hello\"); // ① s1 is the original owner of the String\n    let s2 = s1.clone();            // ② .clone() allocates new heap memory and copies every byte — s2 gets its own data, s1 keeps its ownership\n    println!(\"s1 = {}\", s1);       // ③ s1 is still valid — clone() never moved ownership, it duplicated the data\n    println!(\"s2 = {}\", s2);       // ④ s2 holds a completely independent copy — the two Strings share no memory\n}",
+      why: "<p>A move transfers single ownership from one variable to another. A clone creates a second equal copy so both variables become owners of their own separate data. Use clone when you genuinely need two independent copies — Rust does not do it automatically because it has a real cost.</p>"
     },
     {
       num: 3,
@@ -258,8 +258,8 @@
       starterCode: "fn main() {\n    let x1: i32 = 10;\n    let x2 = x1;\n\n    println!(\"x1 = {}\", x1);\n\n    // Print x2 here\n}",
       instruction: "Add one <code>println!</code> line so both values appear in the output",
       expectedOutput: "x1 = 10\nx2 = 10",
-      answerCode: "fn main() {\n    let x1: i32 = 10;\n    let x2 = x1;\n\n    println!(\"x1 = {}\", x1);\n    println!(\"x2 = {}\", x2);\n}",
-      why: "<p>Add <code>println!(\"x2 = {}\", x2);</code>. Both variables hold independent copies of <code>10</code>. If <code>x1</code> were a <code>String</code> instead of an <code>i32</code>, the <code>x1</code> line would not compile after the assignment.</p>"
+      answerCode: "fn main() {\n    let x1: i32 = 10; // ① x1 stores an i32 on the stack — i32 has the Copy trait, so assignment duplicates it instead of moving it\n    let x2 = x1;      // ② Copy kicks in here — x2 gets its own independent value, x1 is still valid\n    println!(\"x1 = {}\", x1); // ③ x1 is still valid — no move happened, just a cheap stack copy\n    println!(\"x2 = {}\", x2); // ④ x2 holds its own copy of 10 — both variables are completely independent\n}",
+      why: "<p>Types like <code>i32</code>, <code>bool</code>, and <code>char</code> implement the <code>Copy</code> trait because their size is fixed and small. Rust copies them automatically on assignment. <code>String</code> cannot implement <code>Copy</code> because its size varies — copying it requires a heap allocation, which Rust makes you do explicitly with <code>.clone()</code>.</p>"
     },
     {
       num: 4,
@@ -269,8 +269,8 @@
       starterCode: "fn main() {\n    {\n        let s = String::from(\"hello\");\n        println!(\"Inside: {}\", s);\n    }\n\n    println!(\"Outside: {}\", s);\n}",
       instruction: "",
       expectedOutput: "Inside: hello",
-      answerCode: "fn main() {\n    {\n        let s = String::from(\"hello\");\n        println!(\"Inside: {}\", s);\n    }\n}",
-      why: "<p><code>s</code> was declared inside the inner block. When that block closed, Rust called <code>drop</code> and freed the memory. Remove the <code>println!</code> that tries to use <code>s</code> after the block ends. Once the <code>}</code> is reached, <code>s</code> no longer exists.</p>"
+      answerCode: "fn main() {\n    {\n        let s = String::from(\"hello\"); // ① s is declared inside this inner block — its lifetime is limited to this scope\n        println!(\"Inside: {}\", s);    // ② s is used while it is still in scope — valid here\n    }                                  // ③ the block ends here — Rust automatically calls drop() and frees s's memory\n}",
+      why: "<p>Every variable lives from where it is declared to the closing <code>}</code> of the block it belongs to. When that block ends, Rust automatically frees the memory — no manual cleanup needed. This is how Rust avoids memory leaks and double-free errors without a garbage collector.</p>"
     },
     {
       num: 5,
@@ -280,8 +280,8 @@
       starterCode: "fn greet(s: String) {\n    println!(\"Hello, {}!\", s);\n}\n\nfn main() {\n    let s = String::from(\"world\");\n    greet(s);\n    println!(\"s is still: {}\", s);\n}",
       instruction: "",
       expectedOutput: "Hello, world!",
-      answerCode: "fn greet(s: String) {\n    println!(\"Hello, {}!\", s);\n}\n\nfn main() {\n    let s = String::from(\"world\");\n    greet(s);\n}",
-      why: "<p>After <code>greet(s)</code>, ownership moved into the function. When <code>greet</code> ended, <code>s</code> was dropped. Remove the line in <code>main</code> that tries to use <code>s</code> after the call.</p>"
+      answerCode: "fn greet(s: String) {          // ② s is now the owner — ownership moved from main into this function parameter\n    println!(\"Hello, {}!\", s); // ③ s is used while greet owns it\n}                              // ④ s goes out of scope here — Rust calls drop and frees the memory\n\nfn main() {\n    let s = String::from(\"world\"); // ① s owns the String in main\n    greet(s);                      // ② ownership moves into greet — s in main is invalid after this line\n}",
+      why: "<p>Passing a value to a function is the same as assignment — it moves ownership. Once <code>greet(s)</code> runs, the <code>s</code> in <code>main</code> no longer exists. When the function ends, the value is dropped. To use the value again after the call, the function must return it.</p>"
     },
     {
       num: 6,
@@ -291,8 +291,8 @@
       starterCode: "fn process(s: String) {\n    println!(\"Processing: {}\", s);\n}\n\nfn main() {\n    let s = String::from(\"hello\");\n    let s = process(s);\n    println!(\"Done: {}\", s);\n}",
       instruction: "",
       expectedOutput: "Processing: hello\nDone: hello",
-      answerCode: "fn process(s: String) -> String {\n    println!(\"Processing: {}\", s);\n    s\n}\n\nfn main() {\n    let s = String::from(\"hello\");\n    let s = process(s);\n    println!(\"Done: {}\", s);\n}",
-      why: "<p>Add a return type to <code>process</code> and return <code>s</code> at the end with no semicolon. The last expression without a semicolon is the return value.</p>"
+      answerCode: "fn process(s: String) -> String { // ② ownership of s moves in — the return type declares that ownership will move back out\n    println!(\"Processing: {}\", s); // ③ s is used while process owns it\n    s                              // ④ no semicolon — this expression is the return value, ownership transfers back to the caller\n}\n\nfn main() {\n    let s = String::from(\"hello\"); // ① s owns the String in main\n    let s = process(s);            // ② ownership moves into process, then comes back — the new s receives it\n    println!(\"Done: {}\", s);       // ⑤ s is valid again because process returned ownership\n}",
+      why: "<p>Functions can give ownership back to the caller by returning the value. The last expression in a function without a semicolon is the return value — ownership moves out of the function and into whoever receives the result. This pattern lets functions do work on a value without permanently consuming it.</p>"
     },
     {
       num: 7,
@@ -302,8 +302,8 @@
       starterCode: "fn main() {\n    let plan = log_plan(String::from(\"premium\"));\n    let backup = plan.clone();\n    println!(\"Active: {}\", plan);\n    println!(\"Backup: {}\", backup);\n}",
       instruction: "",
       expectedOutput: "Plan logged: premium\nActive: premium\nBackup: premium",
-      answerCode: "fn log_plan(name: String) -> String {\n    println!(\"Plan logged: {}\", name);\n    name\n}\n\nfn main() {\n    let plan = log_plan(String::from(\"premium\"));\n    let backup = plan.clone();\n    println!(\"Active: {}\", plan);\n    println!(\"Backup: {}\", backup);\n}",
-      why: "<p><code>main</code> calls <code>log_plan</code> and binds the return value to <code>plan</code>, so <code>log_plan</code> must take a <code>String</code> and return a <code>String</code>. It also needs to print before returning.</p>"
+      answerCode: "fn log_plan(name: String) -> String {  // ② log_plan receives ownership of name — the return type says ownership comes back out\n    println!(\"Plan logged: {}\", name); // ③ uses name while log_plan owns it\n    name                               // ④ returns ownership back to the caller — no semicolon makes this the return value\n}\n\nfn main() {\n    let plan = log_plan(String::from(\"premium\")); // ① creates the String, moves ownership into log_plan, then receives it back\n    let backup = plan.clone();                    // ⑤ plan is still owned by main — .clone() creates a fully independent copy on the heap\n    println!(\"Active: {}\", plan);                 // ⑥ plan is valid — ownership was returned from log_plan, not lost\n    println!(\"Backup: {}\", backup);               // ⑦ backup is a separate String — changes to one would not affect the other\n}",
+      why: "<p>To use a value both inside and after a function call, the function must either borrow the value or return ownership back. Here <code>log_plan</code> takes ownership, prints, and hands it back. Calling <code>.clone()</code> creates a second independent copy — both <code>plan</code> and <code>backup</code> are valid, separately owned <code>String</code> values.</p>"
     }
   ];
 

@@ -227,8 +227,8 @@
       starterCode: 'fn main() {\n    let s: String = "hello, world";\n    println!("{}", s);\n}',
       instruction: 'Fix the type annotation. Do not add or remove any lines.',
       expectedOutput: 'hello, world',
-      answerCode: 'fn main() {\n    let s: &str = "hello, world";\n    println!("{}", s);\n}',
-      why: 'A text literal in quotes is already a <code>&amp;str</code>. Changing the annotation from <code>String</code> to <code>&amp;str</code> matches what Rust actually gives you.'
+      answerCode: "fn main() {\n    let s: &str = \"hello, world\"; // ① &str is the correct type for a string literal — the text lives in read-only memory and s is a borrowed reference to it\n    println!(\"{}\", s);            // ② prints the borrowed text — no ownership involved, just reading\n}",
+      why: "<p>A string literal like <code>\"hello, world\"</code> is baked into the program binary at compile time. Its type is <code>&amp;str</code> — a borrowed slice pointing to that fixed memory. <code>String</code> is a separate heap-allocated type that owns its data. You cannot store a <code>&amp;str</code> in a <code>String</code> variable without converting it first.</p>"
     },
     {
       num: 2,
@@ -238,8 +238,8 @@
       starterCode: 'fn print_it(s: &str) {\n    println!("{}", s);\n}\n\nfn main() {\n    let s: Box<str> = "hello, world".into();\n    print_it(___);\n}',
       instruction: 'Fill in the blank to make the print_it call work',
       expectedOutput: 'hello, world',
-      answerCode: 'fn print_it(s: &str) {\n    println!("{}", s);\n}\n\nfn main() {\n    let s: Box<str> = "hello, world".into();\n    print_it(&s);\n}',
-      why: 'A reference to a <code>Box&lt;str&gt;</code> automatically derefs to <code>&amp;str</code> when passed to a function that expects it. The compiler follows the chain of references for you.'
+      answerCode: "fn print_it(s: &str) {\n    println!(\"{}\", s); // ③ receives a &str and prints it\n}\n\nfn main() {\n    let s: Box<str> = \"hello, world\".into(); // ① .into() converts the &str literal into a heap-allocated Box<str>\n    print_it(&s);                            // ② &s creates a reference to the Box — Rust automatically dereferences Box<str> into &str\n}",
+      why: "<p><code>Box&lt;str&gt;</code> implements <code>Deref&lt;Target = str&gt;</code>, which lets Rust automatically coerce <code>&amp;Box&lt;str&gt;</code> into <code>&amp;str</code> when passing to a function. This deref coercion saves you from writing out every conversion manually.</p>"
     },
     {
       num: 3,
@@ -249,8 +249,8 @@
       starterCode: "fn main() {\n    let s = String::new();\n    s.push(\"monthly \");\n    s.push_str('p');\n    s.push_str(\"lan\");\n    println!(\"{}\", s);\n}",
       instruction: 'Fix all errors without adding a new line',
       expectedOutput: 'monthly plan',
-      answerCode: "fn main() {\n    let mut s = String::new();\n    s.push_str(\"monthly \");\n    s.push('p');\n    s.push_str(\"lan\");\n    println!(\"{}\", s);\n}",
-      why: '<code>mut</code> unlocks the <code>String</code> so it can grow. <code>push_str</code> takes a string slice in double quotes. <code>push</code> takes a single char in single quotes. The original code had them swapped.'
+      answerCode: "fn main() {\n    let mut s = String::new(); // ① mut is required — String must be declared mutable before you can append to it\n    s.push_str(\"monthly \");   // ② push_str takes a &str (double quotes) — use it for multiple characters\n    s.push('p');              // ③ push takes a char (single quotes) — use it for exactly one character\n    s.push_str(\"lan\");        // ④ push_str again for the remaining slice — builds \"monthly plan\" piece by piece\n    println!(\"{}\", s);        // ⑤ prints the fully assembled String\n}",
+      why: "<p><code>push_str</code> and <code>push</code> are two different methods for two different inputs. <code>push_str</code> takes a <code>&amp;str</code> (a slice of text), <code>push</code> takes a single <code>char</code>. Getting them mixed up is a type error — Rust refuses to compile it. The <code>mut</code> keyword is also required because appending changes the String's contents.</p>"
     },
     {
       num: 4,
@@ -260,8 +260,8 @@
       starterCode: 'fn main() {\n    let s1 = String::from("hello,");\n    let s2 = String::from(" world");\n    let s3 = s1 + s2;\n    println!("{}", s3);\n}',
       instruction: 'Fix the concatenation so it compiles and prints correctly',
       expectedOutput: 'hello, world',
-      answerCode: 'fn main() {\n    let s1 = String::from("hello,");\n    let s2 = String::from(" world");\n    let s3 = s1 + &s2;\n    println!("{}", s3);\n}',
-      why: 'Passing <code>&amp;s2</code> instead of <code>s2</code> gives the <code>+</code> operator the <code>&amp;str</code> it requires on the right side. <code>s1</code> is consumed by the operation, so only <code>s3</code> is valid afterward.'
+      answerCode: "fn main() {\n    let s1 = String::from(\"hello,\"); // ① s1 owns its String\n    let s2 = String::from(\" world\"); // ② s2 owns its String\n    let s3 = s1 + &s2;              // ③ + moves s1's ownership into s3 and appends &s2 — &String auto-coerces to &str, s1 is now invalid\n    println!(\"{}\", s3);             // ④ s3 owns the combined result — s1 is gone, s2 is still valid\n}",
+      why: "<p>The <code>+</code> operator is defined as <code>fn add(self, s: &amp;str) -&gt; String</code>. <code>self</code> means <code>s1</code> is moved and consumed — you cannot use it after. The right side must be a <code>&amp;str</code>, so passing <code>&amp;s2</code> works because <code>&amp;String</code> automatically coerces to <code>&amp;str</code>.</p>"
     },
     {
       num: 5,
@@ -271,8 +271,8 @@
       starterCode: 'fn main() {\n    let name: &str = "premium";\n    let stored: String = name;\n    println!("{}", stored);\n}',
       instruction: 'Convert name so it can be stored as a String. Do not add or remove any lines.',
       expectedOutput: 'premium',
-      answerCode: 'fn main() {\n    let name: &str = "premium";\n    let stored: String = name.to_string();\n    println!("{}", stored);\n}',
-      why: '<code>.to_string()</code> copies the slice\'s text into new heap memory, creating an owned <code>String</code>. <code>String::from(name)</code> does the same thing and is equally correct.'
+      answerCode: "fn main() {\n    let name: &str = \"premium\";            // ① name borrows a string literal — it does not own the text\n    let stored: String = name.to_string(); // ② .to_string() allocates new heap memory and copies the text into it — stored now owns the data\n    println!(\"{}\", stored);                // ③ stored is an owned String — independent of the original &str\n}",
+      why: "<p><code>&amp;str</code> is a borrowed view into existing text. <code>String</code> owns its data on the heap. Converting requires allocating new memory and copying the text — <code>.to_string()</code> and <code>String::from()</code> both do this. Neither is faster than the other; they produce identical results.</p>"
     },
     {
       num: 6,
@@ -282,8 +282,8 @@
       starterCode: 'fn print_it(s: &str) {\n    println!("{}", s);\n}\n\nfn main() {\n    let s = String::from("hello, world");\n    print_it(s);\n}',
       instruction: 'Fix this without adding a new line',
       expectedOutput: 'hello, world',
-      answerCode: 'fn print_it(s: &str) {\n    println!("{}", s);\n}\n\nfn main() {\n    let s = String::from("hello, world");\n    print_it(&s);\n}',
-      why: 'Passing <code>&amp;s</code> instead of <code>s</code> gives the function a reference. Rust automatically coerces <code>&amp;String</code> to <code>&amp;str</code> when the function expects it.'
+      answerCode: "fn print_it(s: &str) {\n    println!(\"{}\", s); // ③ receives a &str and prints it — read-only access, no ownership needed\n}\n\nfn main() {\n    let s = String::from(\"hello, world\"); // ① s owns the String on the heap\n    print_it(&s);                         // ② &s creates a reference to the String — Rust automatically coerces &String into &str for the function call\n}",
+      why: "<p><code>String</code> implements <code>Deref&lt;Target = str&gt;</code>, so <code>&amp;String</code> automatically coerces to <code>&amp;str</code> when passed to a function that expects it. Writing <code>&amp;s</code> instead of <code>s</code> keeps <code>s</code> owned by <code>main</code> — no move happens, and <code>s</code> remains valid after the call.</p>"
     }
   ];
 

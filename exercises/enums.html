@@ -232,8 +232,8 @@
       starterCode: "fn main() {\n    let home = IpAddr::V4(127, 0, 0, 1);\n    let loopback = IpAddr::V6(String::from(\"::1\"));\n    println!(\"{:?}, {:?}\", home, loopback);\n}",
       instruction: "Define the <code>IpAddr</code> enum with <code>#[derive(Debug)]</code> above <code>main</code>",
       expectedOutput: "V4(127, 0, 0, 1), V6(\"::1\")",
-      answerCode: "#[derive(Debug)]\nenum IpAddr {\n    V4(u8, u8, u8, u8),\n    V6(String),\n}\n\nfn main() {\n    let home = IpAddr::V4(127, 0, 0, 1);\n    let loopback = IpAddr::V6(String::from(\"::1\"));\n    println!(\"{:?}, {:?}\", home, loopback);\n}",
-      why: "The enum has two variants: <code>V4</code> holds four <code>u8</code> values, <code>V6</code> holds one <code>String</code>. <code>#[derive(Debug)]</code> is required for <code>{:?}</code> to work - without it, Rust does not know how to format the enum."
+      answerCode: "#[derive(Debug)]\nenum IpAddr {\n    V4(u8, u8, u8, u8), // ① V4 variant holds four u8 values — each octet of an IPv4 address stored as a tuple inside the variant\n    V6(String),          // ② V6 variant holds one String — the full IPv6 address as text\n}\n\nfn main() {\n    let home = IpAddr::V4(127, 0, 0, 1);           // ③ EnumName::Variant syntax creates a V4 instance — the four u8 values are stored inside\n    let loopback = IpAddr::V6(String::from(\"::1\")); // ④ creates a V6 instance — the String is stored inside the variant\n    println!(\"{:?}, {:?}\", home, loopback);          // ⑤ {:?} uses the Debug trait to print both enum instances\n}",
+      why: "An enum defines a type that can be one of several named forms. Each variant can optionally hold data — and the data shape can differ between variants. <code>V4</code> holds four numbers while <code>V6</code> holds a string, but both are the same <code>IpAddr</code> type. This lets you represent different kinds of data under one unified type."
     },
     {
       num: 2,
@@ -243,8 +243,8 @@
       starterCode: "#[derive(Debug)]\nenum Direction {\n    North,\n    South,\n    East,\n    West,\n}\n\nfn main() {\n    let way = Direction::North;\n    println!(\"{:?}\", way);\n}",
       instruction: "",
       expectedOutput: "North",
-      answerCode: "#[derive(Debug)]\nenum Direction {\n    North,\n    South,\n    East,\n    West,\n}\n\nfn main() {\n    let way = Direction::South;\n    println!(\"{:?}\", way);\n}",
-      why: "An enum instance stores exactly one variant. Changing from <code>North</code> to <code>South</code> replaces the entire value. This is why enums are great for states that are mutually exclusive."
+      answerCode: "#[derive(Debug)]\nenum Direction {\n    North, // ① one of four possible variants — this enum can only ever be one of these at a time\n    South,\n    East,\n    West,\n}\n\nfn main() {\n    let way = Direction::North; // ② way holds exactly one variant — North — and nothing else\n    println!(\"{:?}\", way);      // ③ changing North to South replaces the entire value — way cannot hold two directions at once\n}",
+      why: "An enum instance stores exactly one variant. Changing from <code>North</code> to <code>South</code> replaces the entire value — you are not adding to it. This mutual exclusivity makes enums ideal for representing states like subscription status (<code>Active</code> or <code>Expired</code>) where only one can be true at a time."
     },
     {
       num: 3,
@@ -254,8 +254,8 @@
       starterCode: "enum Plan {\n    Free,\n    Basic,\n    Premium,\n}\n\nfn main() {\n    println!(\"Basic is {}\", Plan::Basic as u8);\n}",
       instruction: "Add explicit discriminators so Basic equals 5",
       expectedOutput: "Basic is 5",
-      answerCode: "enum Plan {\n    Free,\n    Basic = 5,\n    Premium,\n}\n\nfn main() {\n    println!(\"Basic is {}\", Plan::Basic as u8);\n    println!(\"Premium is {}\", Plan::Premium as u8);\n}",
-      why: "Setting <code>Basic = 5</code> makes <code>Premium</code> automatically 6. <code>Free</code> stays 0 because it comes before the custom start. The <code>as u8</code> cast reads the discriminator as a number."
+      answerCode: "enum Plan {\n    Free,      // ① no explicit discriminator — Free stays at 0 because it comes before the custom start\n    Basic = 5, // ② explicit discriminator set to 5 — overrides the default sequence starting here\n    Premium,   // ③ no explicit discriminator — auto-increments from Basic, so Premium = 6\n}\n\nfn main() {\n    println!(\"Basic is {}\", Plan::Basic as u8);     // ④ as u8 casts the variant to its discriminator value — prints 5\n    println!(\"Premium is {}\", Plan::Premium as u8); // ⑤ Premium auto-incremented from Basic — prints 6\n}",
+      why: "C-like enums assign a number to each variant. Setting one explicitly changes where the sequence starts from that point. This pattern is used when you need to store a plan tier or status as a single compact number — useful for on-chain storage where every byte counts."
     },
     {
       num: 4,
@@ -265,8 +265,8 @@
       starterCode: "enum Message {\n    Quit,\n    Move,\n    Write,\n}\n\nfn main() {\n    let n = Message::Move as ___;\n    println!(\"{}\", n);\n}",
       instruction: "Fill in the blank with the type to cast to",
       expectedOutput: "1",
-      answerCode: "enum Message {\n    Quit,\n    Move,\n    Write,\n}\n\nfn main() {\n    let n = Message::Move as u8;\n    println!(\"{}\", n);\n}",
-      why: "<code>Message::Move as u8</code> casts the variant to its discriminator. <code>Quit</code> is 0, <code>Move</code> is 1, <code>Write</code> is 2 - discriminators start at 0 by default."
+      answerCode: "enum Message {\n    Quit,  // ① discriminator 0 — default, auto-assigned\n    Move,  // ② discriminator 1 — default, auto-assigned\n    Write, // ③ discriminator 2 — default, auto-assigned\n}\n\nfn main() {\n    let m = Message::Move;        // ④ m holds the Move variant\n    let n = Message::Move as u8;  // ⑤ as u8 casts the variant to its discriminator — Move is 1 because it is the second variant (0-indexed)\n    println!(\"{}\", n);            // ⑥ prints 1\n}",
+      why: "The <code>as</code> keyword casts an enum variant to its underlying integer discriminator. Default discriminators start at 0 and increment by 1. You must use the full <code>EnumName::Variant</code> path in the cast expression — using the variable <code>m</code> directly does not work for casting."
     },
     {
       num: 5,
@@ -276,8 +276,8 @@
       starterCode: "#[derive(Debug)]\nenum Action {\n    Quit,\n    Move { x: i32, y: i32 },\n    Write(String),\n    ChangeColor(i32, i32, i32),\n}\n\nfn main() {\n    let msg = Action::Move(1, 2);\n    println!(\"{:?}\", msg);\n}",
       instruction: "Fix the creation of <code>msg</code> to use struct-like syntax",
       expectedOutput: "Move { x: 1, y: 2 }",
-      answerCode: "#[derive(Debug)]\nenum Action {\n    Quit,\n    Move { x: i32, y: i32 },\n    Write(String),\n    ChangeColor(i32, i32, i32),\n}\n\nfn main() {\n    let msg = Action::Move { x: 1, y: 2 };\n    println!(\"{:?}\", msg);\n}",
-      why: "<code>Move</code> uses curly braces because it's defined with named fields. <code>Write</code> uses parentheses because it's defined with a tuple. The shape of the data must match the shape defined in the enum."
+      answerCode: "#[derive(Debug)]\nenum Action {\n    Quit,                         // ① no data — just a marker variant\n    Move { x: i32, y: i32 },     // ② struct-like variant — named fields with curly braces\n    Write(String),                // ③ tuple-like variant — unnamed field with parentheses\n    ChangeColor(i32, i32, i32),   // ④ tuple-like variant — three unnamed i32 fields\n}\n\nfn main() {\n    let msg = Action::Move { x: 1, y: 2 }; // ⑤ struct-like syntax requires curly braces and field names — must match the definition exactly\n    println!(\"{:?}\", msg);                  // ⑥ {:?} prints the variant name and its field values\n}",
+      why: "The syntax for creating a variant must match how that variant was defined. <code>Move</code> was defined with named fields <code>{ x: i32, y: i32 }</code>, so you must use curly brace syntax with field names. Using parentheses like <code>Move(1, 2)</code> would not compile — the data shape is part of the type contract."
     },
     {
       num: 6,
@@ -287,8 +287,8 @@
       starterCode: "enum Message {\n    Quit,\n    Move { x: i32, y: i32 },\n    Write(String),\n}\n\nfn main() {\n    let msgs = [\n        Message::Quit,\n        Message::Move { x: 1, y: 2 },\n        Message::Write(String::from(\"hello\")),\n    ];\n\n    println!(\"Length: {}\", msgs.len());\n}",
       instruction: "Add the type annotation <code>[Message; 3]</code> to the <code>msgs</code> declaration",
       expectedOutput: "Length: 3",
-      answerCode: "enum Message {\n    Quit,\n    Move { x: i32, y: i32 },\n    Write(String),\n}\n\nfn main() {\n    let msgs: [Message; 3] = [\n        Message::Quit,\n        Message::Move { x: 1, y: 2 },\n        Message::Write(String::from(\"hello\")),\n    ];\n\n    println!(\"Length: {}\", msgs.len());\n}",
-      why: "<code>[Message; 3]</code> tells Rust: this is an array of 3 elements, and every element is a <code>Message</code>. Different variants are fine because they all share the same <code>Message</code> type."
+      answerCode: "enum Message {\n    Quit,\n    Move { x: i32, y: i32 },\n    Write(String),\n}\n\nfn main() {\n    let msgs: [Message; 3] = [                   // ① [Message; 3] is the type annotation — an array of exactly three Message values\n        Message::Quit,                           // ② first element — the Quit variant, no data\n        Message::Move { x: 1, y: 2 },           // ③ second element — the Move variant with named fields\n        Message::Write(String::from(\"hello\")),   // ④ third element — the Write variant with a String inside\n    ];\n    println!(\"Length: {}\", msgs.len()); // ⑤ .len() returns 3 — all three different variants stored in one array under the same Message type\n}",
+      why: "All variants of an enum belong to the same type. <code>Quit</code>, <code>Move</code>, and <code>Write</code> are all <code>Message</code> — so they can be stored together in a <code>[Message; 3]</code> array. This is a key advantage of enums: one type that can represent many different shapes of data."
     }
   ];
 

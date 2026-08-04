@@ -230,8 +230,8 @@
       starterCode: "fn main() {\n    let t: (___, ___) = (1, \"hello\");\n    println!(\"Second: {}\", t.1);\n}",
       instruction: "Fill in the two blanks with the correct types for each element",
       expectedOutput: "Second: hello",
-      answerCode: "fn main() {\n    let t: (i32, &str) = (1, \"hello\");\n    println!(\"Second: {}\", t.1);\n}",
-      why: "A tuple type lists the types inside parentheses in the same order as the values. <code>1</code> is an integer so <code>i32</code>. <code>\"hello\"</code> is a string slice so <code>&amp;str</code>."
+      answerCode: "fn main() {\n    let t: (i32, &str) = (1, \"hello\"); // ① the type annotation lists each element's type in order — 1 is i32, \"hello\" is &str\n    println!(\"Second: {}\", t.1);       // ② t.1 accesses the second element — tuple indexing starts at 0\n}",
+      why: "A tuple type lists the types of each element in parentheses, in the same order as the values. The <code>:</code> after the variable name introduces the type annotation — it does not assign a value. The <code>=</code> is where the actual value goes. Getting these mixed up is a common error when first writing tuple declarations."
     },
     {
       num: 2,
@@ -241,8 +241,8 @@
       starterCode: "fn main() {\n    let t: (___, ___, ___, ___, ___) = (1u8, -1i16, 3i64, \"hello\", String::from(\"world\"));\n    println!(\"Tuple created\");\n}",
       instruction: "Fill in the five blanks with the correct types for each element",
       expectedOutput: "Tuple created",
-      answerCode: "fn main() {\n    let t: (u8, i16, i64, &str, String) = (1u8, -1i16, 3i64, \"hello\", String::from(\"world\"));\n    println!(\"Tuple created\");\n}",
-      why: "The types follow the values in order: <code>u8</code>, <code>i16</code>, <code>i64</code>, <code>&amp;str</code>, and <code>String</code>. The type annotation must match the values exactly."
+      answerCode: "fn main() {\n    let t: (u8, i16, i64, &str, String) = (1u8, -1i16, 3i64, \"hello\", String::from(\"world\")); // ① each type in the annotation matches its corresponding value — u8, i16, i64 are number types, &str is a borrowed string literal, String is an owned heap string\n    println!(\"Tuple created\"); // ② the tuple is created and valid — each element is stored at its own index\n}",
+      why: "Tuples can hold any mix of types. The type annotation must list every type in the exact same order as the values. The number suffixes on the literals (like <code>1u8</code>) tell the compiler what type that specific integer is — without them, the compiler might infer a different type than you intended."
     },
     {
       num: 3,
@@ -252,8 +252,8 @@
       starterCode: "fn main() {\n    let t: (u8, (i16, u32)) = (1, (-1, 3));\n    println!(\"Inner second: {}\", t.1.2);\n}",
       instruction: "Fix the index so the correct value is printed",
       expectedOutput: "Inner second: 3",
-      answerCode: "fn main() {\n    let t: (u8, (i16, u32)) = (1, (-1, 3));\n    println!(\"Inner second: {}\", t.1.1);\n}",
-      why: "<code>t.1</code> reaches the inner tuple <code>(-1, 3)</code>. The second element of that inner tuple is at index <code>.1</code>, not <code>.2</code> - indexing starts at 0."
+      answerCode: "fn main() {\n    let t: (u8, (i16, u32)) = (1, (-1, 3)); // ① t holds a u8 at index 0 and an inner tuple (i16, u32) at index 1\n    println!(\"Inner second: {}\", t.1.1);    // ② t.1 reaches the inner tuple (-1, 3), then .1 reaches the second element of that tuple — which is 3\n}",
+      why: "Chained dot notation navigates into nested tuples one level at a time. <code>t.1</code> gets the inner tuple at position 1. <code>.1</code> on that result gets the second element inside the inner tuple. Index 2 would be out of bounds — the inner tuple only has two elements (indices 0 and 1)."
     },
     {
       num: 4,
@@ -263,8 +263,8 @@
       starterCode: "fn main() {\n    let t: (u8, i16, i64, &str, String) = (1, -1, 3, \"hello\", String::from(\"world\"));\n    println!(\"Third: {}\", t.___);\n}",
       instruction: "Fill in the blank with the correct index",
       expectedOutput: "Third: 3",
-      answerCode: "fn main() {\n    let t: (u8, i16, i64, &str, String) = (1, -1, 3, \"hello\", String::from(\"world\"));\n    println!(\"Third: {}\", t.2);\n}",
-      why: "The third element is at index <code>2</code> because indexing starts at 0. First is <code>t.0</code>, second is <code>t.1</code>, third is <code>t.2</code>."
+      answerCode: "fn main() {\n    let t: (u8, i16, i64, &str, String) = (1, -1, 3, \"hello\", String::from(\"world\")); // ① t holds five values — u8 at .0, i16 at .1, i64 at .2, &str at .3, String at .4\n    println!(\"Third: {}\", t.2); // ② t.2 accesses the third element — 3 as an i64 — because indexing starts at 0\n}",
+      why: "Tuple indexing always starts at 0. The \"third\" element is at index 2. This is the same rule as arrays and slices — consistent across all indexed types in Rust. Writing <code>t.3</code> would get the fourth element (<code>\"hello\"</code>), not the third."
     },
     {
       num: 5,
@@ -274,8 +274,8 @@
       starterCode: "fn main() {\n    let t = (10, 20, 30);\n    let ___ = t;\n    println!(\"x = {}, y = {}, z = {}\", x, y, z);\n}",
       instruction: "Fill in the blank to destructure the tuple",
       expectedOutput: "x = 10, y = 20, z = 30",
-      answerCode: "fn main() {\n    let t = (10, 20, 30);\n    let (x, y, z) = t;\n    println!(\"x = {}, y = {}, z = {}\", x, y, z);\n}",
-      why: "Use <code>let (x, y, z) = t;</code> to match the three-element shape. The pattern mirrors the tuple structure and each variable gets its corresponding element."
+      answerCode: "fn main() {\n    let t = (10, 20, 30);     // ① t is a tuple holding three i32 values\n    let (x, y, z) = t;        // ② the destructuring pattern mirrors the tuple's shape — x gets 10, y gets 20, z gets 30\n    println!(\"x = {}, y = {}, z = {}\", x, y, z); // ③ x, y, z are now independent variables — each holds one value from the tuple\n}",
+      why: "Destructuring unpacks a tuple into separate named variables in one statement. The pattern on the left must match the shape of the tuple on the right — same number of elements, in the same order. This is more readable than accessing <code>t.0</code>, <code>t.1</code>, <code>t.2</code> every time you need the values."
     },
     {
       num: 6,
@@ -285,8 +285,8 @@
       starterCode: "fn main() {\n    let t = (100, 200);\n    let mut a = 0;\n    let mut b = 0;\n    ___ = t;\n    println!(\"a = {}, b = {}\", a, b);\n}",
       instruction: "Fill in the blank to destructure into the existing variables",
       expectedOutput: "a = 100, b = 200",
-      answerCode: "fn main() {\n    let t = (100, 200);\n    let mut a = 0;\n    let mut b = 0;\n    (a, b) = t;\n    println!(\"a = {}, b = {}\", a, b);\n}",
-      why: "Write <code>(a, b) = t;</code> to assign both fields at once. No <code>let</code> keyword - you're updating existing variables, not creating new ones."
+      answerCode: "fn main() {\n    let t = (100, 200);    // ① t holds two i32 values\n    let mut a = 0;         // ② a is declared mutable — it will be overwritten by the destructuring assignment\n    let mut b = 0;         // ③ b is declared mutable — same reason\n    (a, b) = t;            // ④ destructuring assignment without let — updates a and b in place with t's values\n    println!(\"a = {}, b = {}\", a, b); // ⑤ a is now 100, b is now 200 — the tuple's values replaced the originals\n}",
+      why: "Destructuring without <code>let</code> updates existing variables instead of creating new ones. The variables must be declared <code>mut</code> because their values are being changed. This pattern is useful when you want to update several related variables at once from a tuple result."
     }
   ];
 

@@ -237,8 +237,8 @@
       starterCode: "struct User {\n    active: bool,\n    username: String,\n    email: String,\n    sign_in_count: u64,\n}\n\nfn main() {\n    let user1 = User {\n        active: ___,\n        username: ___,\n        email: String::from(\"alice@example.com\"),\n        sign_in_count: ___,\n    };\n    println!(\"User created\");\n}",
       instruction: "Fill in the three blanks with valid values for each field type",
       expectedOutput: "User created",
-      answerCode: "struct User {\n    active: bool,\n    username: String,\n    email: String,\n    sign_in_count: u64,\n}\n\nfn main() {\n    let user1 = User {\n        active: true,\n        username: String::from(\"alice\"),\n        email: String::from(\"alice@example.com\"),\n        sign_in_count: 1,\n    };\n    println!(\"User created\");\n}",
-      why: "Provide a <code>bool</code>, a <code>String</code>, and a <code>u64</code>. String fields need <code>String::from(\"...\")</code>, not just quotes - bare quotes give you a <code>&amp;str</code>, not a <code>String</code>."
+      answerCode: "struct User {               // ① the struct definition is the template — it declares field names and types, not values\n    active: bool,\n    username: String,\n    email: String,\n    sign_in_count: u64,\n}\n\nfn main() {\n    let user1 = User {\n        active: true,                             // ② bool field — true or false\n        username: String::from(\"alice\"),          // ③ String field — must be an owned String, not a &str literal\n        email: String::from(\"alice@example.com\"), // ④ already provided — shows the correct pattern\n        sign_in_count: 1,                         // ⑤ u64 field — an unsigned 64-bit integer\n    };\n    println!(\"User created\"); // ⑥ user1 is fully instantiated and valid\n}",
+      why: "A struct definition is just a blueprint — it defines what fields exist and what types they hold. To use a struct, you instantiate it by providing a concrete value for every field. Field values must match the declared types exactly: a <code>bool</code> field needs <code>true</code> or <code>false</code>, a <code>String</code> field needs an owned <code>String</code>."
     },
     {
       num: 2,
@@ -248,8 +248,8 @@
       starterCode: "struct User {\n    active: bool,\n    username: String,\n    email: String,\n    sign_in_count: u64,\n}\n\nfn main() {\n    let user1 = User {\n        active: true,\n        username: String::from(\"alice\"),\n        email: String::from(\"alice@example.com\"),\n        sign_in_count: 1,\n    };\n\n    user1.email = String::from(\"new@example.com\");\n    println!(\"Email: {}\", user1.email);\n}",
       instruction: "Modify one line so the struct instance can be mutated",
       expectedOutput: "Email: new@example.com",
-      answerCode: "struct User {\n    active: bool,\n    username: String,\n    email: String,\n    sign_in_count: u64,\n}\n\nfn main() {\n    let mut user1 = User {\n        active: true,\n        username: String::from(\"alice\"),\n        email: String::from(\"alice@example.com\"),\n        sign_in_count: 1,\n    };\n\n    user1.email = String::from(\"new@example.com\");\n    println!(\"Email: {}\", user1.email);\n}",
-      why: "Change <code>let user1</code> to <code>let mut user1</code>. The entire struct instance must be mutable - Rust does not allow marking individual fields as mutable."
+      answerCode: "struct User {\n    active: bool,\n    username: String,\n    email: String,\n    sign_in_count: u64,\n}\n\nfn main() {\n    let mut user1 = User {               // ① mut makes the entire struct instance mutable — Rust does not allow per-field mutability\n        active: true,\n        username: String::from(\"alice\"),\n        email: String::from(\"alice@example.com\"),\n        sign_in_count: 1,\n    };\n\n    user1.email = String::from(\"new@example.com\"); // ② dot notation assigns a new value to the email field — only valid because user1 is mut\n    println!(\"Email: {}\", user1.email);            // ③ prints the updated field value\n}",
+      why: "In Rust, mutability applies to the entire binding, not individual fields. If you need to change any field, the whole struct instance must be declared <code>mut</code>. This keeps the ownership model simple — there is no partial mutability to track."
     },
     {
       num: 3,
@@ -259,8 +259,8 @@
       starterCode: "struct User {\n    active: bool,\n    username: String,\n    email: String,\n    sign_in_count: u64,\n}\n\nfn build_user(email: String, username: String) -> ___ {\n    User {\n        active: true,\n        ___,\n        ___,\n        sign_in_count: 1,\n    }\n}\n\nfn main() {\n    let user = build_user(String::from(\"bob@example.com\"), String::from(\"bob\"));\n    println!(\"User: {}\", user.username);\n}",
       instruction: "Fill in the return type and the two shorthand field names",
       expectedOutput: "User: bob",
-      answerCode: "struct User {\n    active: bool,\n    username: String,\n    email: String,\n    sign_in_count: u64,\n}\n\nfn build_user(email: String, username: String) -> User {\n    User {\n        active: true,\n        email,\n        username,\n        sign_in_count: 1,\n    }\n}\n\nfn main() {\n    let user = build_user(String::from(\"bob@example.com\"), String::from(\"bob\"));\n    println!(\"User: {}\", user.username);\n}",
-      why: "The return type is <code>User</code>. Since the argument names match the field names, write <code>email,</code> and <code>username,</code> alone - no colon or value needed. Rust fills in the rest."
+      answerCode: "struct User {\n    active: bool,\n    username: String,\n    email: String,\n    sign_in_count: u64,\n}\n\nfn build_user(email: String, username: String) -> User { // ① the return type is User — this function constructs and returns a struct instance\n    User {\n        active: true,\n        email,    // ② shorthand: the parameter name matches the field name, so you write it once instead of email: email\n        username, // ③ shorthand: same pattern — username parameter fills the username field\n        sign_in_count: 1,\n    }\n}\n\nfn main() {\n    let user = build_user(String::from(\"bob@example.com\"), String::from(\"bob\")); // ④ calls the builder function — ownership of both Strings moves into build_user\n    println!(\"User: {}\", user.username); // ⑤ user now owns the returned struct — accesses the username field with dot notation\n}",
+      why: "Shorthand field initialization removes repetition when a variable name matches a field name. Instead of <code>email: email</code>, you write <code>email</code> once. The compiler knows you mean the field and the variable share the same name. This is especially useful in builder functions where argument names are chosen to match field names."
     },
     {
       num: 4,
@@ -270,8 +270,8 @@
       starterCode: "struct User {\n    active: bool,\n    username: String,\n    email: String,\n    sign_in_count: u64,\n}\n\nfn main() {\n    let user1 = User {\n        active: true,\n        username: String::from(\"alice\"),\n        email: String::from(\"alice@example.com\"),\n        sign_in_count: 1,\n    };\n\n    let user2 = User {\n        email: String::from(\"new@example.com\"),\n        ___,\n    };\n\n    println!(\"User2 email: {}\", user2.email);\n}",
       instruction: "Fill in the blank to copy all remaining fields from <code>user1</code>",
       expectedOutput: "User2 email: new@example.com",
-      answerCode: "struct User {\n    active: bool,\n    username: String,\n    email: String,\n    sign_in_count: u64,\n}\n\nfn main() {\n    let user1 = User {\n        active: true,\n        username: String::from(\"alice\"),\n        email: String::from(\"alice@example.com\"),\n        sign_in_count: 1,\n    };\n\n    let user2 = User {\n        email: String::from(\"new@example.com\"),\n        ..user1\n    };\n\n    println!(\"User2 email: {}\", user2.email);\n}",
-      why: "Use <code>..user1</code> to fill in all remaining fields. The two dots are part of the syntax. Fields you specify explicitly take priority; everything else is copied from <code>user1</code>."
+      answerCode: "struct User {\n    active: bool,\n    username: String,\n    email: String,\n    sign_in_count: u64,\n}\n\nfn main() {\n    let user1 = User {                              // ① user1 is the source instance\n        active: true,\n        username: String::from(\"alice\"),\n        email: String::from(\"alice@example.com\"),\n        sign_in_count: 1,\n    };\n\n    let user2 = User {\n        email: String::from(\"new@example.com\"), // ② the new value — overrides the email field from user1\n        ..user1                                  // ③ struct update syntax — copies active, username, and sign_in_count from user1; moves username because String does not implement Copy\n    };\n\n    println!(\"User2 email: {}\", user2.email); // ④ user2.email is the new value — all other fields came from user1\n}",
+      why: "Struct update syntax <code>..user1</code> copies all fields not explicitly set in the new struct. Fields with <code>Copy</code> types (like <code>bool</code> and <code>u64</code>) are copied cheaply. Fields with non-<code>Copy</code> types (like <code>String</code>) are moved — which means <code>user1.username</code> becomes invalid after this."
     },
     {
       num: 5,
@@ -281,8 +281,8 @@
       starterCode: "struct Color(___, ___, ___);\n\nfn main() {\n    let c = Color(0, 127, 255);\n    println!(\"Green: {}\", c.1);\n}",
       instruction: "Fill in the three field types in the tuple struct definition",
       expectedOutput: "Green: 127",
-      answerCode: "struct Color(i32, i32, i32);\n\nfn main() {\n    let c = Color(0, 127, 255);\n    println!(\"Green: {}\", c.1);\n}",
-      why: "All three fields hold whole numbers so the type is <code>i32</code>. The fields are accessed by index: <code>c.0</code> is red, <code>c.1</code> is green, <code>c.2</code> is blue."
+      answerCode: "struct Color(i32, i32, i32); // ① tuple struct definition — the types go inside parentheses, no field names, just types in order\n\nfn main() {\n    let c = Color(0, 127, 255); // ② instantiate with parentheses, like calling a function — values match the declared types in order\n    println!(\"Green: {}\", c.1); // ③ dot-index access — c.0 is red (0), c.1 is green (127), c.2 is blue (255)\n}",
+      why: "A tuple struct gives a name to a tuple, making it a distinct type. <code>Color(i32, i32, i32)</code> and <code>Point(i32, i32, i32)</code> are different types even though they hold the same data — the compiler treats them as separate. Use tuple structs when the name adds meaning but individual field names would be unnecessary."
     },
     {
       num: 6,
@@ -292,8 +292,8 @@
       starterCode: "struct ___;\n\nfn main() {\n    let _ = Placeholder;\n    println!(\"Placeholder created\");\n}",
       instruction: "Fill in the blank to declare the unit-like struct",
       expectedOutput: "Placeholder created",
-      answerCode: "struct Placeholder;\n\nfn main() {\n    let _ = Placeholder;\n    println!(\"Placeholder created\");\n}",
-      why: "A unit-like struct is just the name followed by a semicolon - no curly braces and no fields. It compiles to nothing at runtime but gives you a distinct named type."
+      answerCode: "struct Placeholder; // ① unit-like struct — no fields, no braces, just a name and a semicolon\n\nfn main() {\n    let _ = Placeholder; // ② instantiate with just the name, no parentheses or braces — there are no values to provide\n    println!(\"Placeholder created\"); // ③ the struct exists as a type even though it holds no data\n}",
+      why: "A unit-like struct is a type with no data. It takes zero bytes of memory. Its main use is with traits — you can implement behavior on it without storing any state. In contract code, unit-like structs are often used as markers or event types to signal that something happened."
     }
   ];
 
