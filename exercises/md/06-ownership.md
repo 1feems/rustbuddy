@@ -50,35 +50,35 @@ s1 = hello
 s2 = hello
 ```
 
-<answer>
+<details>
 <summary>Answer</summary>
 
-There are two approaches:
-
-**Option 1 — Clone:** Give `s2` its own copy so both variables stay valid:
+**Option 1 — Clone:**
 
 ```rust
 fn main() {
-    let s1 = String::from("hello");
-    let s2 = s1.clone();
-
-    println!("s1 = {}", s1);
-    println!("s2 = {}", s2);
+    let s1 = String::from("hello"); // ① s1 owns this String on the heap
+    let s2 = s1.clone();            // ② .clone() creates a second independent copy — s1 keeps its ownership
+    println!("s1 = {}", s1);       // ③ s1 is still valid because its ownership was never moved
+    println!("s2 = {}", s2);       // ④ s2 owns its own separate copy — both can be used at the same time
 }
 ```
 
-**Option 2 — Accept the move:** If you only need `s2`, remove the `s1` print and change the expected output to `s2 = hello`:
+**Why:** In Rust, assigning a `String` to a new variable moves ownership and the original becomes invalid. `.clone()` allocates a brand new copy on the heap so both variables have their own data. This is intentionally explicit because cloning costs memory and time.
+
+**Option 2 — Accept the move:**
 
 ```rust
 fn main() {
-    let s1 = String::from("hello");
-    let s2 = s1;
-
-    println!("s2 = {}", s2);
+    let s1 = String::from("hello"); // ① s1 owns the String
+    let s2 = s1;                    // ② ownership moves to s2 — s1 is now invalid, Rust enforces this at compile time
+    println!("s2 = {}", s2);       // ③ only s2 can be used now — attempting to print s1 would not compile
 }
 ```
 
-</answer>
+**Why:** When you only need one variable, accepting the move is the right call. The original variable is gone and Rust enforces this at compile time so you never accidentally use data that was moved away.
+
+</details>
 
 ---
 
@@ -87,8 +87,6 @@ fn main() {
 Sometimes you need both variables to stay valid after an assignment. Moving does not allow that. Cloning does.
 
 `.clone()` duplicates the entire heap allocation. Rust allocates new memory and copies every byte of the original into it. Both variables end up with completely independent copies of the data. Changing one does not affect the other.
-
-This is explicit and intentional. For large data, cloning takes time and memory. That is why Rust does not do it automatically. You have to ask for it.
 
 **Rules to remember:**
 
@@ -131,22 +129,21 @@ s1 = hello
 s2 = hello
 ```
 
-<answer>
+<details>
 <summary>Answer</summary>
-
-Call `.clone()` on `s1` before assigning. `s2` gets its own copy. `s1` stays valid:
 
 ```rust
 fn main() {
-    let s1 = String::from("hello");
-    let s2 = s1.clone();
-
-    println!("s1 = {}", s1);
-    println!("s2 = {}", s2);
+    let s1 = String::from("hello"); // ① s1 is the original owner of the String
+    let s2 = s1.clone();            // ② .clone() allocates new heap memory and copies every byte — s2 gets its own data, s1 keeps its ownership
+    println!("s1 = {}", s1);       // ③ s1 is still valid — clone() never moved ownership, it duplicated the data
+    println!("s2 = {}", s2);       // ④ s2 holds a completely independent copy — the two Strings share no memory
 }
 ```
 
-</answer>
+**Why:** A move transfers single ownership from one variable to another. A clone creates a second equal copy so both variables become owners of their own separate data. Use clone when you genuinely need two independent copies — Rust does not do it automatically because it has a real cost.
+
+</details>
 
 ---
 
@@ -155,8 +152,6 @@ fn main() {
 Some types implement the **Copy trait**. Assignment duplicates the value automatically. Both variables stay valid. No `.clone()` needed.
 
 These are stack-only types with a fixed size: `i32`, `u64`, `f64`, `bool`, `char`. Because their size is always known and small, Rust copies them instantly at no meaningful cost.
-
-This is different from `String`. A `String` lives on the heap and can grow to any size. Rust moves it instead of copying. With `i32`, the size is always fixed at 4 bytes, so Rust copies it automatically.
 
 #### Your Task
 
@@ -184,32 +179,27 @@ x1 = 10
 x2 = 10
 ```
 
-<answer>
+<details>
 <summary>Answer</summary>
-
-Add `println!("x2 = {}", x2);`. Both variables hold independent copies of `10`:
 
 ```rust
 fn main() {
-    let x1: i32 = 10;
-    let x2 = x1;
-
-    println!("x1 = {}", x1);
-    println!("x2 = {}", x2);
+    let x1: i32 = 10; // ① x1 stores an i32 on the stack — i32 has the Copy trait, so assignment duplicates it instead of moving it
+    let x2 = x1;      // ② Copy kicks in here — x2 gets its own independent value, x1 is still valid
+    println!("x1 = {}", x1); // ③ x1 is still valid — no move happened, just a cheap stack copy
+    println!("x2 = {}", x2); // ④ x2 holds its own copy of 10 — both variables are completely independent
 }
 ```
 
-If `x1` were a `String` instead of an `i32`, the `println!("x1 = {}", x1)` line would not compile — `x1` would have been moved into `x2`. Because `i32` implements Copy, both lines work.
+**Why:** Types like `i32`, `bool`, and `char` implement the `Copy` trait because their size is fixed and small. Rust copies them automatically on assignment. `String` cannot implement `Copy` because its size varies — copying it requires a heap allocation, which Rust makes you do explicitly with `.clone()`.
 
-</answer>
+</details>
 
 ---
 
 ## Exercise 4 - Scope and Drop
 
 A scope is the block of code between `{` and `}`. A variable is valid from where it is declared until the end of that block. When the block closes, the variable goes out of scope. Rust calls `drop` and frees the memory automatically. This is the third ownership rule: when the owner goes out of scope, the value is dropped.
-
-This is why moves matter. If two variables owned the same data, Rust would try to free it twice when both went out of scope. That is a double-free error. Ownership prevents it by allowing only one owner.
 
 #### Your Task
 
@@ -232,23 +222,21 @@ fn main() {
 Inside: hello
 ```
 
-<answer>
+<details>
 <summary>Answer</summary>
-
-Remove the `println!` that uses `s` after the block closes. Once the `}` is reached, `s` goes out of scope and is dropped:
 
 ```rust
 fn main() {
     {
-        let s = String::from("hello");
-        println!("Inside: {}", s);
-    }
+        let s = String::from("hello"); // ① s is declared inside this inner block — its lifetime is limited to this scope
+        println!("Inside: {}", s);    // ② s is used while it is still in scope — valid here
+    }                                  // ③ the block ends here — Rust automatically calls drop() and frees s's memory
 }
 ```
 
-`s` was declared inside the inner block. When that block closed, Rust called `drop` and freed the memory. The `s` in the outer scope no longer exists.
+**Why:** Every variable lives from where it is declared to the closing `}` of the block it belongs to. When that block ends, Rust automatically frees the memory — no manual cleanup needed. This is how Rust avoids memory leaks and double-free errors without a garbage collector.
 
-</answer>
+</details>
 
 ---
 
@@ -278,23 +266,23 @@ fn main() {
 Hello, world!
 ```
 
-<answer>
+<details>
 <summary>Answer</summary>
 
-After `greet(s)`, ownership moved into the function. When `greet` ended, `s` was dropped. Remove the line in `main` that tries to use `s` after the call:
-
 ```rust
-fn greet(s: String) {
-    println!("Hello, {}!", s);
-}
+fn greet(s: String) {          // ② s is now the owner — ownership moved from main into this function parameter
+    println!("Hello, {}!", s); // ③ s is used while greet owns it
+}                              // ④ s goes out of scope here — Rust calls drop and frees the memory
 
 fn main() {
-    let s = String::from("world");
-    greet(s);
+    let s = String::from("world"); // ① s owns the String in main
+    greet(s);                      // ② ownership moves into greet — s in main is invalid after this line
 }
 ```
 
-</answer>
+**Why:** Passing a value to a function is the same as assignment — it moves ownership. Once `greet(s)` runs, the `s` in `main` no longer exists. When the function ends, the value is dropped. To use the value again after the call, the function must return it.
+
+</details>
 
 ---
 
@@ -325,25 +313,25 @@ Processing: hello
 Done: hello
 ```
 
-<answer>
+<details>
 <summary>Answer</summary>
 
-Add a return type to `process` and return `s` at the end with no semicolon. The last expression without a semicolon is the return value:
-
 ```rust
-fn process(s: String) -> String {
-    println!("Processing: {}", s);
-    s
+fn process(s: String) -> String { // ② ownership of s moves in — the return type declares that ownership will move back out
+    println!("Processing: {}", s); // ③ s is used while process owns it
+    s                              // ④ no semicolon — this expression is the return value, ownership transfers back to the caller
 }
 
 fn main() {
-    let s = String::from("hello");
-    let s = process(s);
-    println!("Done: {}", s);
+    let s = String::from("hello"); // ① s owns the String in main
+    let s = process(s);            // ② ownership moves into process, then comes back — the new s receives it
+    println!("Done: {}", s);       // ⑤ s is valid again because process returned ownership
 }
 ```
 
-</answer>
+**Why:** Functions can give ownership back to the caller by returning the value. The last expression in a function without a semicolon is the return value — ownership moves out of the function and into whoever receives the result. This pattern lets functions do work on a value without permanently consuming it.
+
+</details>
 
 ---
 
@@ -372,26 +360,26 @@ Active: premium
 Backup: premium
 ```
 
-<answer>
+<details>
 <summary>Answer</summary>
 
-`main` calls `log_plan` and binds the return value to `plan`, so `log_plan` must take a `String` and return a `String`. It also needs to print before returning:
-
 ```rust
-fn log_plan(name: String) -> String {
-    println!("Plan logged: {}", name);
-    name
+fn log_plan(name: String) -> String {  // ② log_plan receives ownership of name — the return type says ownership comes back out
+    println!("Plan logged: {}", name); // ③ uses name while log_plan owns it
+    name                               // ④ returns ownership back to the caller — no semicolon makes this the return value
 }
 
 fn main() {
-    let plan = log_plan(String::from("premium"));
-    let backup = plan.clone();
-    println!("Active: {}", plan);
-    println!("Backup: {}", backup);
+    let plan = log_plan(String::from("premium")); // ① creates the String, moves ownership into log_plan, then receives it back
+    let backup = plan.clone();                    // ⑤ plan is still owned by main — .clone() creates a fully independent copy on the heap
+    println!("Active: {}", plan);                 // ⑥ plan is valid — ownership was returned from log_plan, not lost
+    println!("Backup: {}", backup);               // ⑦ backup is a separate String — changes to one would not affect the other
 }
 ```
 
-</answer>
+**Why:** To use a value both inside and after a function call, the function must either borrow the value or return ownership back. Here `log_plan` takes ownership, prints, and hands it back. Calling `.clone()` creates a second independent copy — both `plan` and `backup` are valid, separately owned `String` values.
+
+</details>
 
 ---
 

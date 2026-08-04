@@ -1,6 +1,6 @@
 # Practice - The "Option" Enum
 
-> Follows `EXERCISE-STYLE-GUIDE.md`
+> Source for `option.html` — follows `_docs/STYLE-GUIDE.md` and `_docs/EXERCISE-PAGE-DESIGN.md`
 
 Work through each exercise in the [Rust Playground](https://play.rust-lang.org).  
 Read the explainer, paste the starter code, fix it, then move on.  
@@ -23,11 +23,9 @@ Check your answer only after you've tried.
 
 ### Exercise 1 Wrapping a Value in `Some`
 
-This exercise tests creating an `Option` that holds a value. In a contract, a lookup function might return `Some(plan)` if the subscriber exists, or `None` if the account doesn't.
-
 A variable needs to hold the number 5 wrapped in `Option`. Right now it uses `let five = 5`, which is a plain number not wrapped in `Option`.
 
-`Option` is an enum with two variants: `Some(value)` and `None`. `Some(value)` wraps an actual value so you can pass it around as a single type. `None` says "nothing here." Think of it like a package notification: either the package is at your door, or it's not `Some` means it's there, `None` means no delivery today.
+`Option` is an enum with two variants: `Some(value)` and `None`. `Some(value)` wraps an actual value so you can pass it around as a single type. `None` says "nothing here." Think of it like a package notification: either the package is at your door (`Some`), or it is not (`None`).
 
 ```rust
 fn main() {
@@ -43,12 +41,12 @@ fn main() {
 
 ```rust
 fn main() {
-    let five = Some(5);
-    println!("{:?}", five);
+    let five = Some(5); // ① Some(5) wraps the integer 5 inside the Option<i32> enum — the compiler infers i32 from the literal
+    println!("{:?}", five); // ② {:?} prints the Option — output is Some(5), not just 5
 }
 ```
 
-`Some(5)` wraps the number 5 inside the `Option<i32>` type. The compiler infers `i32` from the literal. `Option` is in the prelude, so no import is needed.
+**Why:** `Option` is how Rust represents a value that might not exist. Instead of allowing `null` (which causes crashes in other languages), Rust requires you to explicitly wrap a value in `Some` or use `None`. The compiler then forces you to handle both possibilities before using the value.
 
 </details>
 
@@ -56,11 +54,9 @@ fn main() {
 
 ### Exercise 2 Handling `None`
 
-This exercise tests matching on `Option` when the value is absent. In a contract, a balance check might return `None` if a wallet has never been initialized.
-
 A `match` needs to handle both cases: a value present and a value missing. Right now it only handles `Some`.
 
-When you match on `Option`, you must handle both `Some(value)` and `None`. If you leave one out, the compiler complains. Think of it like a checkbox on a form: the program forces you to say what happens if the box is checked AND what happens if it isn't.
+When you match on `Option`, you must handle both `Some(value)` and `None`. If you leave one out, the compiler complains. The compiler forces you to say what happens if the value is there AND what happens if it is not.
 
 ```rust
 fn main() {
@@ -79,16 +75,16 @@ fn main() {
 
 ```rust
 fn main() {
-    let maybe = Some(10);
+    let maybe = Some(10); // ① maybe holds Some(10) — the Option has a value right now
 
     match maybe {
-        Some(n) => println!("Got: {}", n),
-        None => println!("Nothing here"),
+        Some(n) => println!("Got: {}", n), // ② Some(n) destructures the Option — n receives the inner value 10
+        None => println!("Nothing here"),  // ③ None arm handles the absent case — match must be exhaustive, both variants required
     }
 }
 ```
 
-Every `match` on `Option` must be exhaustive all variants must have an arm. `None =>` handles the absence case.
+**Why:** `match` on `Option` must be exhaustive — every variant must have an arm. Leaving out `None` is a compile error because Rust cannot guarantee the missing case is handled. This is the mechanism that replaces null checks: the compiler makes it impossible to forget.
 
 </details>
 
@@ -96,11 +92,9 @@ Every `match` on `Option` must be exhaustive all variants must have an arm. `Non
 
 ### Exercise 3 The `plus_one` Pattern
 
-This exercise tests a function that takes `Option`, transforms the value, and returns a new `Option`. In a contract, `apply_bonus` might take `Some(balance)`, add interest, and return `Some(new_balance)` or pass `None` through unchanged.
-
 The code wants a function that increments an `Option<i32>` by one. Right now the `match` doesn't return `None` when the input is `None`.
 
-A function with `Option` input and `Option` output should follow a simple rule: `None` in means `None` out. For `Some(i)`, you unwrap the value, do the work, then wrap the result back in `Some`. This pattern is common for safe transforms.
+A function with `Option` input and `Option` output should follow a simple rule: `None` in means `None` out. For `Some(i)`, unwrap the value, do the work, then wrap the result back in `Some`.
 
 ```rust
 fn plus_one(x: Option<i32>) -> Option<i32> {
@@ -121,20 +115,20 @@ fn main() {
 <summary>Answer</summary>
 
 ```rust
-fn plus_one(x: Option<i32>) -> Option<i32> {
+fn plus_one(x: Option<i32>) -> Option<i32> { // ① takes an Option<i32> and returns an Option<i32> — transforms the value if present
     match x {
-        None => None,
-        Some(i) => Some(i + 1),
+        None => None,              // ② None in, None out — nothing to increment, return absence
+        Some(i) => Some(i + 1),   // ③ Some(i) destructures the Option — i is the inner value, we increment it and wrap the result back in Some
     }
 }
 
 fn main() {
-    println!("{:?}", plus_one(Some(5)));
-    println!("{:?}", plus_one(None));
+    println!("{:?}", plus_one(Some(5))); // ④ Some(5) goes in, Some(6) comes out — value was present and incremented
+    println!("{:?}", plus_one(None));    // ⑤ None goes in, None comes out — nothing to transform
 }
 ```
 
-`None => None` is the identity path: if there's no value, there's nothing to increment, so return no value. This lets the function safely handle both cases.
+**Why:** The `None => None` arm is the identity path — when there is no value, there is nothing to transform, so return no value. This pattern (transform the inner value if present, pass `None` through unchanged) is the foundation of safe data transformation in Rust. The compiler forces you to handle both cases.
 
 </details>
 
@@ -142,11 +136,9 @@ fn main() {
 
 ### Exercise 4 Unwrapping with `if let`
 
-This exercise tests using `if let` to extract a value from `Some` when you only care about the success case. In a contract, you might check `if let Some(subscriber) = find_account(...)` and process them doing nothing if they don't exist.
-
 A program prints the value inside an `Option` only if it is `Some`. Right now it tries to print the `Option` directly.
 
-`if let Some(n) = value` is a shorter way to say: "if `value` is `Some`, grab the inner value as `n` and run this block." It skips the block entirely if the value is `None`. Think of it like a conditional mailbox check: if a package is there, open it; if not, move on.
+`if let Some(n) = value` is a shorter way to say: "if `value` is `Some`, grab the inner value as `n` and run this block." It skips the block entirely if the value is `None`. Use it when you only care about the `Some` case.
 
 ```rust
 fn main() {
@@ -165,25 +157,23 @@ fn main() {
 
 ```rust
 fn main() {
-    let six = None;
+    let six = None; // ① six now holds None — the Option has no value
 
-    if let Some(n) = six {
-        println!("{}", n);
+    if let Some(n) = six { // ② if let tries to destructure six as Some — n would receive the inner value if it existed
+        println!("{}", n); // ③ this block is skipped entirely because six is None — no inner value to bind to n
     } else {
-        println!("No value");
+        println!("No value"); // ④ the else block runs when the if let pattern does not match — handles the None case
     }
 }
 ```
 
-`if let Some(n)` destructures the `Option`: the variable `n` now holds the inner value. When `six` is `None`, the `if` block is skipped and the `else` block runs. This is cleaner than `match` when you only care about one variant.
+**Why:** `if let` is a pattern match shortcut for when you only care about one variant. It is cleaner than a full `match` when you want to act on `Some` and either do nothing or handle `None` in an `else` block. It destructures the inner value directly into a named variable, making it available inside the block.
 
 </details>
 
 ---
 
 ### Exercise 5 Type Inference on `Option`
-
-This exercise tests that `Option` types can often be inferred by the compiler. In a contract, helper functions return `Option` and the caller doesn't need to write the full type every time.
 
 A function receives `Some(5)` without an explicit type annotation. Right now the annotation forces extra verbosity.
 
@@ -209,20 +199,20 @@ fn main() {
 <summary>Answer</summary>
 
 ```rust
-fn reward(x: Option<i32>) -> Option<i32> {
+fn reward(x: Option<i32>) -> Option<i32> { // ① the function signature gives the compiler all the type information it needs
     match x {
         None => None,
-        Some(i) => Some(i * 2),
+        Some(i) => Some(i * 2), // ② i is inferred as i32 from the function signature — no annotation needed here
     }
 }
 
 fn main() {
-    let bonus = Some(5);
-    println!("{:?}", reward(bonus));
+    let bonus = Some(5); // ③ the type annotation is removed — the compiler infers Option<i32> from the reward() function signature when bonus is passed in
+    println!("{:?}", reward(bonus)); // ④ bonus is passed to reward — the compiler confirms the types match
 }
 ```
 
-The compiler infers `Option<i32>` from the function signature `reward(x: Option<i32>)`. Explicit annotations are optional when the compiler has enough context.
+**Why:** Rust's type inference works across function calls. When `bonus` is passed to `reward(x: Option<i32>)`, the compiler can infer that `bonus` must be `Option<i32>`. Writing the annotation explicitly is optional — leave it out when the context makes the type obvious, and add it back when it helps readability.
 
 </details>
 
@@ -230,11 +220,9 @@ The compiler infers `Option<i32>` from the function signature `reward(x: Option<
 
 ### Exercise 6 Safe Array Access
 
-This exercise tests using `Option` to avoid panics. In a contract, reading from an array of subscribers should never crash `get()` returns `Option` so the caller decides what to do.
+A program safely accesses an element that might be out of range. Right now it uses direct indexing, which panics if the index does not exist.
 
-A program safely accesses an element that might be out of range. Right now it uses direct indexing, which panics if out of bounds.
-
-Direct indexing with `[index]` panics when the index is too large. The `get()` method returns `Option` instead: `Some(value)` if the index exists, `None` if it doesn't. The caller then matches on the `Option` to handle both cases gracefully.
+Direct indexing with `[index]` panics when the index is too large. The `get()` method returns `Option` instead: `Some(value)` if the index exists, `None` if it does not. The caller then matches on the `Option` to handle both cases gracefully.
 
 ```rust
 fn main() {
@@ -251,19 +239,18 @@ fn main() {
 
 ```rust
 fn main() {
-    let names = ["alice", "bob", "carol"];
+    let names = ["alice", "bob", "carol"]; // ① array of three elements — valid indices are 0, 1, 2
 
-    match names.get(3) {
-        Some(name) => println!("{}", name),
-        None => println!("No such name"),
+    match names.get(3) {                          // ② .get(3) returns Option<&&str> — None because index 3 does not exist, no panic
+        Some(name) => println!("{}", name),       // ③ Some(name) destructures the Option — name receives a reference to the element if it existed
+        None => println!("No such name"),         // ④ None arm handles the absent case — prints safely instead of crashing
     }
 }
 ```
 
-`names.get(3)` returns `None` because the array has only 3 elements (indices 0, 1, 2). The program prints `No such name` instead of crashing. This pattern is essential in contract code where a panic means lost funds.
+**Why:** `.get()` is the safe alternative to direct indexing. It returns `Option` so the caller must handle the case where the index does not exist. In contract code, a panic at an array index means the whole transaction fails — `.get()` plus `match` gives you full control over what happens when data is missing.
 
 </details>
-
 
 ---
 

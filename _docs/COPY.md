@@ -71,6 +71,10 @@ Copy for each card on the exercises landing page. Descriptions must be one sente
 | 2.12 | Enums | An enum represents one of several named variants. Learn how to store data inside variants and model state. |
 | 2.13 | Option | Option is how Rust handles values that might not exist. Use Some and None instead of null. |
 | 2.14 | Flow Control | Control which code runs and when. Learn if, all three loop types, match, and if let. |
+| 2.15 | Error Handling | `panic!` stops your program immediately when something goes wrong. `Result` lets you handle errors and keep running. Learn both and when to use each. |
+| 2.16 | Lifetimes | A lifetime tells Rust how long a reference stays valid. Learn how to annotate lifetimes and when Rust figures them out for you. |
+| 2.17 | Closures | A closure is an anonymous function that can capture variables from its surrounding code. Learn how to write them, store them, and pass them to other functions. |
+| 2.18 | Iterators | An iterator moves through a collection one item at a time. Learn how to use map, filter, and collect to process data without writing loops. |
 
 **Exercise content source:** Each exercise page pulls from its matching `.md` file in `game/exercises/`. Inner copy (tasks, code, answers) lives there, not here.
 

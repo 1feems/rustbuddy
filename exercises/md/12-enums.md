@@ -1,6 +1,6 @@
 # Practice - Enums
 
-> Follows `EXERCISE-STYLE-GUIDE.md`
+> Source for `enums.html` — follows `_docs/STYLE-GUIDE.md` and `_docs/EXERCISE-PAGE-DESIGN.md`
 
 Work through each exercise in the [Rust Playground](https://play.rust-lang.org).  
 Read the explainer, paste the starter code, fix it, then move on.  
@@ -23,8 +23,6 @@ Check your answer only after you've tried.
 
 ### Exercise 1 Declaring an Enum
 
-This exercise tests defining an enum with variants that hold different data. In a real contract, a `PaymentMethod` enum might be `Card(String)` or `Wallet(String)` one type, many shapes.
-
 A program models an IP address as either version 4 or version 6. Right now the enum definition is missing.
 
 An `enum` is a list of possible values, but only one can be active at a time. Each value is called a variant. Variants can hold extra data using tuples inside parentheses.
@@ -34,30 +32,30 @@ fn main() {
     let home = IpAddr::V4(127, 0, 0, 1);
     let loopback = IpAddr::V6(String::from("::1"));
 
-    println!("{}, {}", home, loopback);
+    println!("{:?}, {:?}", home, loopback);
 }
 ```
 
-**Fill in the blank: define the `IpAddr` enum above `main` so it has two variants `V4` holding four `u8` values, and `V6` holding one `String`.**
+**Fill in the blank: define the `IpAddr` enum above `main` so it has two variants — `V4` holding four `u8` values, and `V6` holding one `String`.**
 
 <details>
 <summary>Answer</summary>
 
 ```rust
+#[derive(Debug)]
 enum IpAddr {
-    V4(u8, u8, u8, u8),
-    V6(String),
+    V4(u8, u8, u8, u8), // ① V4 variant holds four u8 values — each octet of an IPv4 address stored as a tuple inside the variant
+    V6(String),          // ② V6 variant holds one String — the full IPv6 address as text
 }
 
 fn main() {
-    let home = IpAddr::V4(127, 0, 0, 1);
-    let loopback = IpAddr::V6(String::from("::1"));
-
-    println!("{:?}, {:?}", home, loopback);
+    let home = IpAddr::V4(127, 0, 0, 1);           // ③ EnumName::Variant syntax creates a V4 instance — the four u8 values are stored inside
+    let loopback = IpAddr::V6(String::from("::1")); // ④ creates a V6 instance — the String is stored inside the variant
+    println!("{:?}, {:?}", home, loopback);          // ⑤ {:?} uses the Debug trait to print both enum instances
 }
 ```
 
-The enum has two variants. `V4` holds a tuple of four `u8` numbers. `V6` holds one `String`. You instantiate with `EnumName::VariantName(value)`.
+**Why:** An enum defines a type that can be one of several named forms. Each variant can optionally hold data — and the data shape can differ between variants. `V4` holds four numbers while `V6` holds a string, but both are the same `IpAddr` type. This lets you represent different kinds of data under one unified type.
 
 </details>
 
@@ -65,11 +63,7 @@ The enum has two variants. `V4` holds a tuple of four `u8` numbers. `V6` holds o
 
 ### Exercise 2 Only One Variant at a Time
 
-This exercise tests the rule that an enum instance holds exactly one variant. In a contract, a `SubscriptionStatus` is either `Active` or `Expired` it can't be both simultaneously.
-
-The code tries to create an enum holding two active variants at the same time. Rust doesn't allow that.
-
-In an enum, you pick ONE variant when you create it. That is the only value the instance holds. Think of it like picking a lane on a highway: you can only be in one lane at a time.
+This code already compiles. Run it and make sure you understand why an enum instance holds exactly one variant at a time.
 
 ```rust
 enum Direction {
@@ -90,7 +84,22 @@ fn main() {
 <details>
 <summary>What's happening</summary>
 
-An enum instance stores exactly one variant. Changing from `North` to `South` replaces the entire value. This is why enums are great for states that are mutually exclusive.
+```rust
+#[derive(Debug)]
+enum Direction {
+    North, // ① one of four possible variants — this enum can only ever be one of these at a time
+    South,
+    East,
+    West,
+}
+
+fn main() {
+    let way = Direction::North; // ② way holds exactly one variant — North — and nothing else
+    println!("{:?}", way);      // ③ changing North to South replaces the entire value — way cannot hold two directions at once
+}
+```
+
+**Why:** An enum instance stores exactly one variant. Changing from `North` to `South` replaces the entire value — you are not adding to it. This mutual exclusivity makes enums ideal for representing states like subscription status (`Active` or `Expired`) where only one can be true at a time.
 
 </details>
 
@@ -98,11 +107,9 @@ An enum instance stores exactly one variant. Changing from `North` to `South` re
 
 ### Exercise 3 C-like Enums with Discriminators
 
-This exercise tests assigning numeric values to enum variants. In a contract, you might number plan tiers as `Free = 0`, `Basic = 1`, `Premium = 2` so you can store the tier as a single number on-chain.
-
 An enum needs explicit discriminators so `Basic` equals 5 and the rest follow automatically. Right now the variants have no numbers assigned.
 
-Discriminators are numbers Rust gives each variant. By default they start at 0. You can set a custom starting number the rest auto-increment from there. You can't use floating point numbers as discriminators.
+Discriminators are numbers Rust gives each variant. By default they start at 0. You can set a custom starting number — the rest auto-increment from there.
 
 ```rust
 enum Plan {
@@ -123,26 +130,24 @@ fn main() {
 
 ```rust
 enum Plan {
-    Free,
-    Basic = 5,
-    Premium,
+    Free,      // ① no explicit discriminator — Free stays at 0 because it comes before the custom start
+    Basic = 5, // ② explicit discriminator set to 5 — overrides the default sequence starting here
+    Premium,   // ③ no explicit discriminator — auto-increments from Basic, so Premium = 6
 }
 
 fn main() {
-    println!("Basic is {}", Plan::Basic as u8);
-    println!("Premium is {}", Plan::Premium as u8);
+    println!("Basic is {}", Plan::Basic as u8);     // ④ as u8 casts the variant to its discriminator value — prints 5
+    println!("Premium is {}", Plan::Premium as u8); // ⑤ Premium auto-incremented from Basic — prints 6
 }
 ```
 
-Setting `Basic = 5` makes `Premium` automatically 6. `Free` stays 0 because it comes before the custom start.
+**Why:** C-like enums assign a number to each variant. Setting one explicitly changes where the sequence starts from that point. This pattern is used when you need to store a plan tier or status as a single compact number — useful for on-chain storage where every byte counts.
 
 </details>
 
 ---
 
 ### Exercise 4 Converting a Variant to an Integer
-
-This exercise tests using the `as` keyword to turn an enum variant into its underlying number. In a contract, you might store a plan tier as a raw `u8` to save space on-chain.
 
 A program converts an enum variant to its discriminator number. Right now the conversion line is wrong.
 
@@ -169,27 +174,25 @@ fn main() {
 
 ```rust
 enum Message {
-    Quit,
-    Move,
-    Write,
+    Quit,  // ① discriminator 0 — default, auto-assigned
+    Move,  // ② discriminator 1 — default, auto-assigned
+    Write, // ③ discriminator 2 — default, auto-assigned
 }
 
 fn main() {
-    let m = Message::Move;
-    let n = Message::Move as u8;
-    println!("{}", n);
+    let m = Message::Move;        // ④ m holds the Move variant
+    let n = Message::Move as u8;  // ⑤ as u8 casts the variant to its discriminator — Move is 1 because it is the second variant (0-indexed)
+    println!("{}", n);            // ⑥ prints 1
 }
 ```
 
-The cast requires the full path `Message::Move as u8`. This returns 1 because discriminators start at 0 (`Quit` = 0, `Move` = 1).
+**Why:** The `as` keyword casts an enum variant to its underlying integer discriminator. Default discriminators start at 0 and increment by 1. You must use the full `EnumName::Variant` path in the cast expression — using the variable `m` directly does not work for casting.
 
 </details>
 
 ---
 
 ### Exercise 5 Variants That Hold Different Data Shapes
-
-This exercise tests enum variants with struct-like fields and tuple-like values living in the same enum. In a contract, a `Transaction` might be `Deposit { amount: u64 }`, `Withdraw(u64)`, or `Cancel` same enum, three shapes.
 
 A program creates a `Move` variant with named `x` and `y` values. Right now the struct-like syntax is wrong.
 
@@ -215,20 +218,21 @@ fn main() {
 <summary>Answer</summary>
 
 ```rust
+#[derive(Debug)]
 enum Action {
-    Quit,
-    Move { x: i32, y: i32 },
-    Write(String),
-    ChangeColor(i32, i32, i32),
+    Quit,                         // ① no data — just a marker variant
+    Move { x: i32, y: i32 },     // ② struct-like variant — named fields with curly braces
+    Write(String),                // ③ tuple-like variant — unnamed field with parentheses
+    ChangeColor(i32, i32, i32),   // ④ tuple-like variant — three unnamed i32 fields
 }
 
 fn main() {
-    let msg = Action::Move { x: 1, y: 2 };
-    println!("{:?}", msg);
+    let msg = Action::Move { x: 1, y: 2 }; // ⑤ struct-like syntax requires curly braces and field names — must match the definition exactly
+    println!("{:?}", msg);                  // ⑥ {:?} prints the variant name and its field values
 }
 ```
 
-`Move` uses curly braces because it's defined with named fields. `Write` uses parentheses because it's defined with a tuple. The shape of the data must match the shape defined in the enum.
+**Why:** The syntax for creating a variant must match how that variant was defined. `Move` was defined with named fields `{ x: i32, y: i32 }`, so you must use curly brace syntax with field names. Using parentheses like `Move(1, 2)` would not compile — the data shape is part of the type contract.
 
 </details>
 
@@ -236,9 +240,7 @@ fn main() {
 
 ### Exercise 6 Array of Enum Instances
 
-This exercise tests declaring an array where every element is an instance of the same enum type. In a contract, you might store a list of recent transactions that all share the same `Transaction` type.
-
-An array holds three `Message` instances. Right now the array type annotation is missing and the compiler can't verify the types.
+An array holds three `Message` instances. Right now the array type annotation is missing.
 
 Array type annotations look like `[Type; count]`. Since every variant of an enum belongs to the same type, you can mix `Quit`, `Move`, and `Write` in one array.
 
@@ -273,20 +275,18 @@ enum Message {
 }
 
 fn main() {
-    let msgs: [Message; 3] = [
-        Message::Quit,
-        Message::Move { x: 1, y: 2 },
-        Message::Write(String::from("hello")),
+    let msgs: [Message; 3] = [               // ① [Message; 3] is the type annotation — an array of exactly three Message values
+        Message::Quit,                       // ② first element — the Quit variant, no data
+        Message::Move { x: 1, y: 2 },       // ③ second element — the Move variant with named fields
+        Message::Write(String::from("hello")), // ④ third element — the Write variant with a String inside
     ];
-
-    println!("Length: {}", msgs.len());
+    println!("Length: {}", msgs.len()); // ⑤ .len() returns 3 — all three different variants stored in one array under the same Message type
 }
 ```
 
-`[Message; 3]` tells Rust: this is an array of 3 elements, and every element is a `Message`. Different variants are fine because they all share the same `Message` type.
+**Why:** All variants of an enum belong to the same type. `Quit`, `Move`, and `Write` are all `Message` — so they can be stored together in a `[Message; 3]` array. This is a key advantage of enums: one type that can represent many different shapes of data, making it safe and easy to work with collections of mixed variants.
 
 </details>
-
 
 ---
 

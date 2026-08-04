@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rust: Closures - Rust Bud</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_design/styles.css">
+  <style>
+    :root {
+      --color-bg:        #FFFFFF;
+      --color-surface:   #1E1E1A;
+      --color-primary:   #FF7657;
+      --color-secondary: #DFFF65;
+      --color-ink:       #171714;
+      --color-muted:     #77766F;
+      --color-border:    #171714;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--color-bg); color: var(--color-ink); min-height: 100vh; }
+    .site-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid var(--color-border); }
+    .site-header-left { display: flex; align-items: center; gap: 10px; }
+    .site-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+    .site-logo img { width: 36px; height: 36px; object-fit: contain; }
+    .site-logo-name { font-size: 16px; font-weight: 800; letter-spacing: -0.03em; color: var(--color-primary); }
+    .nav-links { display: flex; gap: 8px; }
+    .nav-link { font-size: 11px; font-weight: 700; color: var(--color-ink); text-decoration: none; letter-spacing: 0.05em; text-transform: uppercase; background: #C5E94E; padding: 5px 14px; border-radius: 20px; transition: opacity 150ms ease; }
+    .nav-link:hover { opacity: 0.85; }
+    .nav-link.active { opacity: 1; }
+    .main { padding: 32px; max-width: 1400px; margin: 0 auto; }
+    .tab-container { border: 1px solid var(--color-border); border-radius: 20px; overflow: hidden; }
+    .tab-bar { display: flex; border-bottom: 1px solid var(--color-border); }
+    .tab-btn { padding: 14px 28px; font-family: inherit; font-size: 14px; font-weight: 600; border: none; border-right: 1px solid var(--color-border); background: transparent; color: var(--color-muted); cursor: pointer; transition: background 200ms ease, color 200ms ease; }
+    .tab-btn:last-child { border-right: none; }
+    .tab-btn.active { background: var(--color-primary); color: #fff; }
+    .tab-btn:not(.active):hover { background: #f7f6f3; color: var(--color-ink); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .exercise-subnav { display: flex; gap: 8px; flex-wrap: wrap; padding: 16px 24px; border-bottom: 1px solid var(--color-border); }
+    .ex-btn { padding: 7px 16px; font-family: inherit; font-size: 13px; font-weight: 500; border: none; border-radius: 9999px; cursor: pointer; background: var(--color-surface); color: var(--color-muted); transition: background 200ms ease, color 200ms ease; }
+    .ex-btn.active { background: var(--color-primary); color: #fff; }
+    .ex-btn:not(.active):hover { background: #2a2a26; color: #c0bfbb; }
+    .exercise-split { display: grid; grid-template-columns: 1fr 1fr; height: 100vh; max-height: 900px; }
+    .exercise-left { padding: 32px; border-right: 1px solid var(--color-border); overflow-y: auto; }
+    .ex-kicker { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 8px; }
+    .ex-title { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 16px; }
+    .ex-explainer { font-size: 14px; line-height: 1.65; color: #3a3935; margin-bottom: 24px; }
+    .ex-explainer p { margin-bottom: 10px; }
+    .ex-explainer p:last-child { margin-bottom: 0; }
+    .task-rule { height: 1px; background: rgba(23,23,20,0.12); margin-bottom: 20px; }
+    .task-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 12px; }
+    .task-body { font-size: 14px; line-height: 1.65; color: #3a3935; margin-bottom: 20px; }
+    .task-body p { margin-bottom: 10px; }
+    .task-body ol { padding-left: 20px; margin: 8px 0 10px; }
+    .task-body li { margin-bottom: 4px; }
+    .ex-explainer code, .task-body code, .task-instruction code { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; background: #f0efeb; padding: 1px 5px; border-radius: 4px; color: var(--color-ink); }
+    .starter-block { background: var(--color-surface); border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; overflow-x: auto; }
+    .starter-block pre { font-family: "SF Mono", "Fira Code", "Menlo", monospace; font-size: 13px; line-height: 1.7; color: #c9d1e3; white-space: pre; margin: 0; }
+    .task-instruction { font-size: 14px; font-weight: 600; color: var(--color-ink); margin-bottom: 20px; }
+    .expected-output-wrap { border-top: 1px solid rgba(23,23,20,0.12); padding-top: 16px; }
+    .expected-output-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 8px; }
+    .expected-output-text { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; line-height: 1.6; color: var(--color-ink); background: #f0efeb; border-radius: 8px; padding: 12px 16px; white-space: pre; }
+    .exercise-right { display: flex; flex-direction: column; overflow: hidden; }
+    .playground-bar { background: var(--color-surface); padding: 10px 20px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .playground-bar-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-primary); }
+    .playground-bar-label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.6); letter-spacing: 0.04em; }
+    .exercise-right iframe { flex: 1; width: 100%; border: none; display: block; }
+    .answers-list { padding: 32px; display: flex; flex-direction: column; gap: 20px; }
+    .answer-card { border: 1px solid var(--color-border); border-radius: 20px; overflow: hidden; }
+    .answer-card-head { padding: 14px 24px; border-bottom: 1px solid var(--color-border); font-size: 15px; font-weight: 600; }
+    .answer-card-body { padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+    .answer-code { background: var(--color-surface); border-radius: 12px; padding: 20px; overflow-x: auto; }
+    .answer-code pre { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; line-height: 1.7; color: #c9d1e3; margin: 0; }
+    .answer-why-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 4px; }
+    .answer-why { font-size: 14px; line-height: 1.6; color: #3a3935; }
+    .answer-why code { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; background: #f0efeb; padding: 1px 5px; border-radius: 4px; color: var(--color-ink); }
+    .starter-hint { font-size: 12px; color: var(--color-muted); margin-bottom: 8px; }
+    .overview-wrap { padding: 40px 48px; max-width: 720px; }
+    .overview-topic { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 10px; }
+    .overview-headline { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .overview-desc { font-size: 16px; line-height: 1.65; color: #3a3935; margin-bottom: 36px; }
+    .overview-divider { height: 1px; background: rgba(23,23,20,0.12); margin-bottom: 28px; }
+    .overview-ref-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 16px; }
+    .terms-wrap { padding: 32px; }
+    .terms-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .terms-table th { text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); border-bottom: 1px solid var(--color-border); }
+    .terms-table td { padding: 14px 16px; border-bottom: 1px solid rgba(23,23,20,0.12); vertical-align: top; line-height: 1.55; }
+    .terms-table tr:last-child td { border-bottom: none; }
+    .terms-table td:first-child { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; font-weight: 600; white-space: nowrap; width: 160px; }
+    .terms-table td:last-child { color: var(--color-muted); }
+    .breadcrumb { padding: 10px 32px; display: flex; align-items: center; gap: 6px; font-size: 13px; border-bottom: 1px solid rgba(23,23,20,0.08); }
+    .breadcrumb a { color: var(--color-muted); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--color-ink); }
+    .bc-sep { color: rgba(23,23,20,0.25); }
+    .bc-current { color: var(--color-ink); font-weight: 500; }
+  </style>
+  <link rel="stylesheet" href="../_design/mobile.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header-left">
+    <a href="../index.html" class="site-logo">
+      <img src="../_design/assets/rust.png" alt="Ferris">
+      <span class="site-logo-name">Rust Buddy</span>
+    </a>
+  </div>
+  <nav class="nav-links">
+    <a href="../exercises/index.html" class="nav-link active">Exercises</a>
+    <a href="../flashcards/index.html" class="nav-link">Flashcards</a>
+    <a href="../resources/index.html" class="nav-link">Resources</a>
+  </nav>
+</header>
+<nav class="breadcrumb">
+  <a href="../index.html">Rust Buddy</a>
+  <span class="bc-sep">/</span>
+  <a href="index.html">Exercises</a>
+  <span class="bc-sep">/</span>
+  <span class="bc-current">Closures</span>
+</nav>
+
+<main class="main">
+  <div class="tab-container">
+    <div class="tab-bar">
+      <button class="tab-btn" data-tab="overview">Overview</button>
+      <button class="tab-btn active" data-tab="exercises">Exercises</button>
+      <button class="tab-btn" data-tab="answers">Answers</button>
+      <button class="tab-btn" data-tab="terms">Terms to Know</button>
+    </div>
+
+    <div class="tab-panel" id="panel-overview">
+      <div class="overview-wrap">
+        <div class="overview-topic">Topic</div>
+        <div class="overview-headline">Closures</div>
+        <div class="overview-desc">A closure is an anonymous function that can capture variables from its surrounding code. Learn how to write them, store them, and pass them to other functions.</div>
+        <div class="overview-divider"></div>
+        <div class="overview-ref-label">Quick Reference</div>
+        <table class="terms-table">
+          <thead>
+            <tr><th>Concept</th><th>What it means</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Closure</td><td>An anonymous function you can store in a variable and call later. Written with |params| body.</td></tr>
+            <tr><td>Capture</td><td>A closure can use variables from the surrounding code without being passed them as arguments.</td></tr>
+            <tr><td>Type inference</td><td>You do not need to annotate parameter or return types on closures. The compiler figures them out.</td></tr>
+            <tr><td>move</td><td>Forces the closure to take ownership of captured variables instead of borrowing them.</td></tr>
+            <tr><td>Borrow in closure</td><td>By default, closures capture by the least restrictive method: immutable borrow if possible, then mutable, then move.</td></tr>
+            <tr><td>Stored closure</td><td>A closure assigned to a variable so it can be called multiple times: let double = |x| x * 2;</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-panel active" id="panel-exercises">
+      <div class="exercise-subnav" id="subnav"></div>
+      <div class="exercise-split">
+        <div class="exercise-left" id="ex-left"></div>
+        <div class="exercise-right" id="ex-right"></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-answers">
+      <div class="answers-list" id="answers-list"></div>
+    </div>
+
+    <div class="tab-panel" id="panel-terms">
+      <div class="terms-wrap">
+        <table class="terms-table">
+          <thead>
+            <tr><th>Term</th><th>What it means</th><th>When you use it</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Closure</td><td>An anonymous function written inline and stored in a variable. Uses |params| body syntax.</td><td>When you need a short, one-off function to pass to map, filter, or store for later use.</td></tr>
+            <tr><td>Capture</td><td>A closure reads or modifies variables from the scope where it was defined, without receiving them as parameters.</td><td>Every time a closure uses a variable that was not passed in as an argument.</td></tr>
+            <tr><td>Type inference</td><td>The compiler figures out parameter and return types from how the closure is first called.</td><td>Always. You rarely need to annotate types on a closure explicitly.</td></tr>
+            <tr><td>move</td><td>Forces the closure to take ownership of every variable it captures.</td><td>When the closure needs to outlive the scope where the captured variable was created.</td></tr>
+            <tr><td>Mutable capture</td><td>A closure that modifies a captured variable. Requires mut on both the variable and the closure binding.</td><td>When you want a closure to update a counter or accumulate a value across multiple calls.</td></tr>
+            <tr><td>Type lock</td><td>Once a closure is called with a specific type, the compiler locks in that type for all future calls.</td><td>After the first call locks the type, every subsequent call must pass the same type.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const EMBED = 'https://play.rust-lang.org/?version=stable&edition=2021&code=';
+
+  const exercises = [
+    {
+      num: 1,
+      title: "Writing a Closure",
+      explainer: "<p>A closure uses <code>|</code> pipes <code>|</code> around its parameters, then the body. No <code>fn</code> keyword, no name. You assign it to a variable and call it like a function.</p><p>A regular function and a closure that do the same thing look almost identical. The closure just skips the type annotations and the name.</p>",
+      task: "<p>A program needs to add 1 to a number. Right now it only has a regular function. Add a closure that does the same thing and assign it to a variable called <code>closure_add_one</code>. Call both and print the results.</p>",
+      starterCode: "fn add_one(x: i32) -> i32 {\n    x + 1\n}\n\nfn main() {\n    let i = 5;\n\n    // add a closure here that does the same thing as add_one\n    // assign it to closure_add_one\n\n    println!(\"function: {}\", add_one(i));\n    println!(\"closure:  {}\", closure_add_one(i));\n}",
+      instruction: "",
+      expectedOutput: "function: 6\nclosure:  6",
+      answerCode: "fn add_one(x: i32) -> i32 { // ① regular function — needs a name, parameter type, and return type written explicitly\n    x + 1\n}\n\nfn main() {\n    let i = 5;\n    let closure_add_one = |x| x + 1; // ② closure — no name, no type annotations; the compiler infers i32 from how it is called\n\n    println!(\"function: {}\", add_one(i));          // ③ calls the named function — same result as the closure\n    println!(\"closure:  {}\", closure_add_one(i));  // ④ calls the closure stored in closure_add_one — same syntax as calling a function\n}",
+      why: "<p>A closure is an anonymous function stored in a variable. The <code>|x|</code> syntax replaces <code>fn name(x: Type) -> Type</code>. The compiler infers the parameter and return types from the first time the closure is called, so you do not need to write them. Closures and functions produce identical results when they contain the same logic.</p>"
+    },
+    {
+      num: 2,
+      title: "Capturing a Variable",
+      explainer: "<p>A closure can use variables from the surrounding scope without receiving them as arguments. This is called capturing. By default, the closure borrows the variable. It does not take ownership.</p>",
+      task: "<p>A variable <code>color</code> holds a string. A closure called <code>print</code> should print it without taking <code>color</code> as a parameter. Right now <code>print</code> is missing. Write the closure and call it twice.</p>",
+      starterCode: "fn main() {\n    let color = String::from(\"green\");\n\n    // write a closure called `print` that prints color\n    // then call it twice\n\n    println!(\"color is still: {}\", color);\n}",
+      instruction: "",
+      expectedOutput: "color: green\ncolor: green\ncolor is still: green",
+      answerCode: "fn main() {\n    let color = String::from(\"green\"); // ① color is declared in the outer scope — the closure will borrow it\n\n    let print = || println!(\"color: {}\", color); // ② || means no parameters — the closure captures color by immutable borrow from the surrounding scope\n    print(); // ③ first call — color is borrowed while the closure runs, then the borrow is released\n    print(); // ④ second call — the closure can be called again because it only borrows, not owns\n\n    println!(\"color is still: {}\", color); // ⑤ color is still valid because the closure only borrowed it, never took ownership\n}",
+      why: "<p>A closure captures variables it uses from the surrounding code automatically. By default, it borrows the variable, which means the original is still available after the closure runs. This is different from passing a value as a function argument, where ownership rules apply. Capture lets closures work like small callbacks that remember their environment.</p>"
+    },
+    {
+      num: 3,
+      title: "Mutable Capture",
+      explainer: "<p>To mutate a captured variable, the closure must capture it as a mutable borrow. The variable must be declared <code>mut</code> and the closure must also be declared <code>mut</code>.</p><p>While a mutable borrow is active, no other code can use the variable. The borrow ends when the closure is dropped.</p>",
+      task: "<p>A counter starts at 0. A closure called <code>inc</code> should increment it by 1 each time it is called. Right now the code does not compile because the closure is immutable. Fix it by adding <code>mut</code> in the right places.</p>",
+      starterCode: "fn main() {\n    let mut count = 0;\n\n    let inc = || {\n        count += 1;\n        println!(\"count: {}\", count);\n    };\n\n    inc();\n    inc();\n    inc();\n}",
+      instruction: "",
+      expectedOutput: "count: 1\ncount: 2\ncount: 3",
+      answerCode: "fn main() {\n    let mut count = 0; // ① count must be mut because the closure will modify it\n\n    let mut inc = || { // ② the closure itself must be mut — it holds a mutable borrow on count, and mutating a capture requires the closure binding to be mut\n        count += 1;                    // ③ increments the captured count — only works because count is mut and inc is mut\n        println!(\"count: {}\", count); // ④ prints the updated value — the mutable borrow is still active during this call\n    };\n\n    inc(); // ⑤ first call — count becomes 1\n    inc(); // ⑥ second call — count becomes 2\n    inc(); // ⑦ third call — count becomes 3\n}",
+      why: "<p>Mutating a captured variable requires two things: the variable must be <code>mut</code>, and the closure binding must also be <code>mut</code>. The closure holds a mutable borrow on <code>count</code> for its entire lifetime, which means <code>count</code> cannot be used directly by other code while <code>inc</code> exists. The <code>mut</code> on the closure tells the compiler this closure modifies its captured state.</p>"
+    },
+    {
+      num: 4,
+      title: "The move Keyword",
+      explainer: "<p><code>move</code> forces the closure to take ownership of the variables it captures. After a <code>move</code> closure is created, the original variable is no longer usable by the surrounding code.</p><p><code>move</code> is useful when you need to send a closure to another thread or keep it alive longer than the scope where the variable was created.</p>",
+      task: "<p>A closure captures an <code>i32</code> value using <code>move</code>. Because <code>i32</code> implements the <code>Copy</code> trait, the closure gets its own copy and the original variable is still usable after. Right now the code is missing the <code>move</code> keyword. Add it and run to confirm both the closure and the original print correctly.</p>",
+      starterCode: "fn main() {\n    let count = 0;\n\n    let inc = || count + 1;\n\n    println!(\"closure result: {}\", inc());\n    println!(\"original count: {}\", count);\n}",
+      instruction: "",
+      expectedOutput: "closure result: 1\noriginal count: 0",
+      answerCode: "fn main() {\n    let count = 0; // ① count is an i32 — it implements Copy, so move will copy the value rather than transfer ownership\n\n    let inc = move || count + 1; // ② move forces the closure to take count — because i32 is Copy, the closure gets its own copy of count\n\n    println!(\"closure result: {}\", inc());    // ③ the closure uses its own copy of count — returns 0 + 1 = 1\n    println!(\"original count: {}\", count);    // ④ count is still valid — i32 was copied, not moved; if count were a String, this line would fail to compile\n}",
+      why: "<p><code>move</code> tells the closure to take ownership of every variable it captures. For <code>Copy</code> types like <code>i32</code>, this means the closure gets its own independent copy and the original stays usable. For non-<code>Copy</code> types like <code>String</code>, <code>move</code> transfers ownership completely and the original becomes invalid. Use <code>move</code> when the closure needs to outlive the scope where the variable was created.</p>"
+    },
+    {
+      num: 5,
+      title: "Type Lock",
+      explainer: "<p>Once you call a closure with a specific type, the compiler locks in that type. You cannot call the same closure with a different type afterward.</p>",
+      task: "<p>A closure takes one argument and returns it unchanged. It is called first with a <code>String</code>. The second call tries to pass a number. Right now the second call fails because the types conflict. Fix it by converting the number to a <code>String</code> before passing it.</p>",
+      starterCode: "fn main() {\n    let example = |x| x;\n\n    let s = example(String::from(\"hello\"));\n    println!(\"{}\", s);\n\n    let n = example(5);\n    println!(\"{}\", n);\n}",
+      instruction: "",
+      expectedOutput: "hello\n5",
+      answerCode: "fn main() {\n    let example = |x| x; // ① the closure has no type annotations — the compiler will infer the type from the first call\n\n    let s = example(String::from(\"hello\")); // ② first call with a String — the compiler now locks example's input and output type to String\n    println!(\"{}\", s);\n\n    let n = example(5.to_string()); // ③ 5.to_string() converts the integer to a String before passing — required because the type is locked to String\n    println!(\"{}\", n);              // ④ n holds a String containing \"5\" — the closure returned it unchanged\n}",
+      why: "<p>The compiler infers a closure's parameter and return types from the first time it is called. Once locked, every subsequent call must use the same types. This is different from a generic function, which can handle multiple types. To work around the lock, you convert the value to the expected type before passing it in.</p>"
+    },
+    {
+      num: 6,
+      title: "Build: Apply a Fee Rule",
+      explainer: "<p>A payment contract applies different fee calculations depending on the plan. Closures let you store the calculation as a value and pass it around without writing a new function for each rule.</p>",
+      task: "<p>Write three closures, one for each fee tier, and apply them to a payment amount:</p><ol><li><code>full_fee</code> — returns the amount unchanged.</li><li><code>half_fee</code> — returns the amount divided by 2.</li><li><code>quarter_fee</code> — returns the amount divided by 4.</li></ol><p>Then call each with <code>amount = 1_000_000u64</code> and print the results.</p>",
+      starterCode: "fn main() {\n    let amount: u64 = 1_000_000;\n\n    // write three closures: full_fee, half_fee, quarter_fee\n    // then print the result of each\n}",
+      instruction: "",
+      expectedOutput: "full:    1000000\nhalf:    500000\nquarter: 250000",
+      answerCode: "fn main() {\n    let amount: u64 = 1_000_000; // ① the base payment amount — passed to each fee closure\n\n    let full_fee    = |a: u64| a;       // ② closure: takes a u64, returns it unchanged — the explicit type annotation anchors the type for all three\n    let half_fee    = |a: u64| a / 2;   // ③ closure: divides by 2 — integer division, no remainder kept\n    let quarter_fee = |a: u64| a / 4;   // ④ closure: divides by 4 — same integer division pattern\n\n    println!(\"full:    {}\", full_fee(amount));    // ⑤ calls full_fee — prints 1000000\n    println!(\"half:    {}\", half_fee(amount));    // ⑥ calls half_fee — prints 500000\n    println!(\"quarter: {}\", quarter_fee(amount)); // ⑦ calls quarter_fee — prints 250000\n}",
+      why: "<p>Closures can be stored in variables and called later, just like functions. Each closure here captures nothing from the outer scope. It only uses its parameter. This pattern lets you represent fee rules as values: store the right closure based on a subscriber's plan, then call it once when processing a payment, without needing a separate function for each tier.</p>"
+    }
+  ];
+
+  let currentEx = 0;
+
+  function buildSubnav() {
+    const subnav = document.getElementById('subnav');
+    subnav.innerHTML = '';
+    exercises.forEach((ex, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'ex-btn' + (i === currentEx ? ' active' : '');
+      btn.textContent = 'Exercise ' + ex.num;
+      btn.addEventListener('click', () => selectExercise(i));
+      subnav.appendChild(btn);
+    });
+  }
+
+  function renderLeft(ex) {
+    const left = document.getElementById('ex-left');
+    left.innerHTML =
+      '<div class="ex-kicker">Exercise ' + ex.num + ' of ' + exercises.length + '</div>' +
+      '<div class="ex-title">' + ex.title + '</div>' +
+      '<div class="ex-explainer">' + ex.explainer + '</div>' +
+      '<div class="task-rule"></div>' +
+      '<div class="task-label">Your Task</div>' +
+      '<div class="task-body">' + ex.task + '</div>';
+    const hint = document.createElement('p');
+    hint.className = 'starter-hint';
+    hint.textContent = 'Clear the Playground on the right and paste this code to begin.';
+    left.appendChild(hint);
+    const starterWrap = document.createElement('div');
+    starterWrap.className = 'starter-block';
+    const starterPre = document.createElement('pre');
+    starterPre.textContent = ex.starterCode;
+    starterWrap.appendChild(starterPre);
+    left.appendChild(starterWrap);
+    const instr = document.createElement('p');
+    instr.className = 'task-instruction';
+    instr.innerHTML = ex.instruction;
+    left.appendChild(instr);
+    const outputWrap = document.createElement('div');
+    outputWrap.className = 'expected-output-wrap';
+    const outputLabel = document.createElement('div');
+    outputLabel.className = 'expected-output-label';
+    outputLabel.textContent = 'Expected Output';
+    const outputText = document.createElement('div');
+    outputText.className = 'expected-output-text';
+    outputText.textContent = ex.expectedOutput;
+    outputWrap.appendChild(outputLabel);
+    outputWrap.appendChild(outputText);
+    left.appendChild(outputWrap);
+  }
+
+  let iframeEl = null;
+
+  function renderRight(ex) {
+    const right = document.getElementById('ex-right');
+    if (!iframeEl) {
+      right.innerHTML =
+        '<div class="playground-bar">' +
+          '<div class="playground-bar-dot"></div>' +
+          '<span class="playground-bar-label">Rust Playground</span>' +
+        '</div>';
+      iframeEl = document.createElement('iframe');
+      right.appendChild(iframeEl);
+    }
+    iframeEl.src = EMBED + encodeURIComponent(ex.starterCode);
+  }
+
+  function selectExercise(i) {
+    currentEx = i;
+    buildSubnav();
+    renderLeft(exercises[i]);
+    renderRight(exercises[i]);
+  }
+
+  function buildAnswers() {
+    const list = document.getElementById('answers-list');
+    if (list.children.length > 0) return;
+    exercises.forEach(ex => {
+      const card = document.createElement('div');
+      card.className = 'answer-card';
+      const head = document.createElement('div');
+      head.className = 'answer-card-head';
+      head.textContent = 'Exercise ' + ex.num + ' — ' + ex.title;
+      const body = document.createElement('div');
+      body.className = 'answer-card-body';
+      const codeWrap = document.createElement('div');
+      codeWrap.className = 'answer-code';
+      const pre = document.createElement('pre');
+      pre.textContent = ex.answerCode;
+      codeWrap.appendChild(pre);
+      const whyLabel = document.createElement('div');
+      whyLabel.className = 'answer-why-label';
+      whyLabel.textContent = 'Why';
+      const whyText = document.createElement('div');
+      whyText.className = 'answer-why';
+      whyText.innerHTML = ex.why;
+      body.appendChild(codeWrap);
+      body.appendChild(whyLabel);
+      body.appendChild(whyText);
+      card.appendChild(head);
+      card.appendChild(body);
+      list.appendChild(card);
+    });
+  }
+
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === tabId);
+    });
+    document.querySelectorAll('.tab-panel').forEach(panel => {
+      panel.classList.toggle('active', panel.id === 'panel-' + tabId);
+    });
+    if (tabId === 'answers') buildAnswers();
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
+
+  buildSubnav();
+  renderLeft(exercises[0]);
+  renderRight(exercises[0]);
+</script>
+</body>
+</html>

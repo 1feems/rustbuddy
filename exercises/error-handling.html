@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rust: Error Handling - Rust Bud</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_design/styles.css">
+  <style>
+    :root {
+      --color-bg:        #FFFFFF;
+      --color-surface:   #1E1E1A;
+      --color-primary:   #FF7657;
+      --color-secondary: #DFFF65;
+      --color-ink:       #171714;
+      --color-muted:     #77766F;
+      --color-border:    #171714;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--color-bg); color: var(--color-ink); min-height: 100vh; }
+    .site-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid var(--color-border); }
+    .site-header-left { display: flex; align-items: center; gap: 10px; }
+    .site-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+    .site-logo img { width: 36px; height: 36px; object-fit: contain; }
+    .site-logo-name { font-size: 16px; font-weight: 800; letter-spacing: -0.03em; color: var(--color-primary); }
+    .back-link { font-size: 14px; color: var(--color-muted); text-decoration: none; transition: color 200ms ease; }
+    .back-link:hover { color: var(--color-ink); }
+    .header-sep { color: var(--color-muted); font-size: 14px; }
+    .header-title { font-size: 14px; font-weight: 500; color: var(--color-muted); }
+    .nav-links { display: flex; gap: 8px; }
+    .nav-link { font-size: 11px; font-weight: 700; color: var(--color-ink); text-decoration: none; letter-spacing: 0.05em; text-transform: uppercase; background: #C5E94E; padding: 5px 14px; border-radius: 20px; transition: opacity 150ms ease; }
+    .nav-link:hover { opacity: 0.85; }
+    .nav-link.active { opacity: 1; }
+    .main { padding: 32px; max-width: 1400px; margin: 0 auto; }
+    .tab-container { border: 1px solid var(--color-border); border-radius: 20px; overflow: hidden; }
+    .tab-bar { display: flex; border-bottom: 1px solid var(--color-border); }
+    .tab-btn { padding: 14px 28px; font-family: inherit; font-size: 14px; font-weight: 600; border: none; border-right: 1px solid var(--color-border); background: transparent; color: var(--color-muted); cursor: pointer; transition: background 200ms ease, color 200ms ease; }
+    .tab-btn:last-child { border-right: none; }
+    .tab-btn.active { background: var(--color-primary); color: #fff; }
+    .tab-btn:not(.active):hover { background: #f7f6f3; color: var(--color-ink); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .exercise-subnav { display: flex; gap: 8px; flex-wrap: wrap; padding: 16px 24px; border-bottom: 1px solid var(--color-border); }
+    .ex-btn { padding: 7px 16px; font-family: inherit; font-size: 13px; font-weight: 500; border: none; border-radius: 9999px; cursor: pointer; background: var(--color-surface); color: var(--color-muted); transition: background 200ms ease, color 200ms ease; }
+    .ex-btn.active { background: var(--color-primary); color: #fff; }
+    .ex-btn:not(.active):hover { background: #2a2a26; color: #c0bfbb; }
+    .exercise-split { display: grid; grid-template-columns: 1fr 1fr; height: 100vh; max-height: 900px; }
+    .exercise-left { padding: 32px; border-right: 1px solid var(--color-border); overflow-y: auto; }
+    .ex-kicker { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 8px; }
+    .ex-title { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 16px; }
+    .ex-explainer { font-size: 14px; line-height: 1.65; color: #3a3935; margin-bottom: 24px; }
+    .ex-explainer p { margin-bottom: 10px; }
+    .ex-explainer p:last-child { margin-bottom: 0; }
+    .task-rule { height: 1px; background: rgba(23,23,20,0.12); margin-bottom: 20px; }
+    .task-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 12px; }
+    .task-body { font-size: 14px; line-height: 1.65; color: #3a3935; margin-bottom: 20px; }
+    .task-body p { margin-bottom: 10px; }
+    .task-body ol { padding-left: 20px; margin: 8px 0 10px; }
+    .task-body li { margin-bottom: 4px; }
+    .ex-explainer code, .task-body code, .task-instruction code { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; background: #f0efeb; padding: 1px 5px; border-radius: 4px; color: var(--color-ink); }
+    .starter-block { background: var(--color-surface); border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; overflow-x: auto; }
+    .starter-block pre { font-family: "SF Mono", "Fira Code", "Menlo", monospace; font-size: 13px; line-height: 1.7; color: #c9d1e3; white-space: pre; margin: 0; }
+    .task-instruction { font-size: 14px; font-weight: 600; color: var(--color-ink); margin-bottom: 20px; }
+    .expected-output-wrap { border-top: 1px solid rgba(23,23,20,0.12); padding-top: 16px; }
+    .expected-output-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 8px; }
+    .expected-output-text { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; line-height: 1.6; color: var(--color-ink); background: #f0efeb; border-radius: 8px; padding: 12px 16px; white-space: pre; }
+    .exercise-right { display: flex; flex-direction: column; overflow: hidden; }
+    .playground-bar { background: var(--color-surface); padding: 10px 20px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .playground-bar-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-primary); }
+    .playground-bar-label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.6); letter-spacing: 0.04em; }
+    .exercise-right iframe { flex: 1; width: 100%; border: none; display: block; }
+    .answers-list { padding: 32px; display: flex; flex-direction: column; gap: 20px; }
+    .answer-card { border: 1px solid var(--color-border); border-radius: 20px; overflow: hidden; }
+    .answer-card-head { padding: 14px 24px; border-bottom: 1px solid var(--color-border); font-size: 15px; font-weight: 600; }
+    .answer-card-body { padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+    .answer-code { background: var(--color-surface); border-radius: 12px; padding: 20px; overflow-x: auto; }
+    .answer-code pre { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; line-height: 1.7; color: #c9d1e3; margin: 0; }
+    .answer-why-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 4px; }
+    .answer-why { font-size: 14px; line-height: 1.6; color: #3a3935; }
+    .answer-why code { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; background: #f0efeb; padding: 1px 5px; border-radius: 4px; color: var(--color-ink); }
+    .starter-hint { font-size: 12px; color: var(--color-muted); margin-bottom: 8px; }
+    .overview-wrap { padding: 40px 48px; max-width: 720px; }
+    .overview-topic { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 10px; }
+    .overview-headline { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .overview-desc { font-size: 16px; line-height: 1.65; color: #3a3935; margin-bottom: 36px; }
+    .overview-divider { height: 1px; background: rgba(23,23,20,0.12); margin-bottom: 28px; }
+    .overview-ref-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 16px; }
+    .terms-wrap { padding: 32px; }
+    .terms-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .terms-table th { text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); border-bottom: 1px solid var(--color-border); }
+    .terms-table td { padding: 14px 16px; border-bottom: 1px solid rgba(23,23,20,0.12); vertical-align: top; line-height: 1.55; }
+    .terms-table tr:last-child td { border-bottom: none; }
+    .terms-table td:first-child { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; font-weight: 600; white-space: nowrap; width: 160px; }
+    .terms-table td:last-child { color: var(--color-muted); }
+    .breadcrumb { padding: 10px 32px; display: flex; align-items: center; gap: 6px; font-size: 13px; border-bottom: 1px solid rgba(23,23,20,0.08); }
+    .breadcrumb a { color: var(--color-muted); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--color-ink); }
+    .bc-sep { color: rgba(23,23,20,0.25); }
+    .bc-current { color: var(--color-ink); font-weight: 500; }
+  </style>
+  <link rel="stylesheet" href="../_design/mobile.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header-left">
+    <a href="../index.html" class="site-logo">
+      <img src="../_design/assets/rust.png" alt="Ferris">
+      <span class="site-logo-name">Rust Buddy</span>
+    </a>
+  </div>
+  <nav class="nav-links">
+    <a href="../exercises/index.html" class="nav-link active">Exercises</a>
+    <a href="../flashcards/index.html" class="nav-link">Flashcards</a>
+    <a href="../resources/index.html" class="nav-link">Resources</a>
+  </nav>
+</header>
+<nav class="breadcrumb">
+  <a href="../index.html">Rust Buddy</a>
+  <span class="bc-sep">/</span>
+  <a href="index.html">Exercises</a>
+  <span class="bc-sep">/</span>
+  <span class="bc-current">Error Handling</span>
+</nav>
+
+<main class="main">
+  <div class="tab-container">
+    <div class="tab-bar">
+      <button class="tab-btn" data-tab="overview">Overview</button>
+      <button class="tab-btn active" data-tab="exercises">Exercises</button>
+      <button class="tab-btn" data-tab="answers">Answers</button>
+      <button class="tab-btn" data-tab="terms">Terms to Know</button>
+    </div>
+
+    <div class="tab-panel" id="panel-overview">
+      <div class="overview-wrap">
+        <div class="overview-topic">Topic</div>
+        <div class="overview-headline">Error Handling</div>
+        <div class="overview-desc"><code>panic!</code> stops your program immediately when something goes wrong. <code>Result</code> lets you handle errors and keep running. Learn both and when to use each.</div>
+        <div class="overview-divider"></div>
+        <div class="overview-ref-label">Quick Reference</div>
+        <table class="terms-table">
+          <thead>
+            <tr><th>Concept</th><th>What it means</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>panic!</td><td>Prints an error message, cleans up memory, and exits the program immediately.</td></tr>
+            <tr><td>Result&lt;T, E&gt;</td><td>An enum with two variants: Ok(T) when things work, Err(E) when they fail.</td></tr>
+            <tr><td>Ok(value)</td><td>The success variant of Result. Wraps the value you get back when nothing went wrong.</td></tr>
+            <tr><td>Err(message)</td><td>The failure variant of Result. Wraps an error value describing what went wrong.</td></tr>
+            <tr><td>match on Result</td><td>The standard way to handle both Ok and Err cases without crashing.</td></tr>
+            <tr><td>unwrap()</td><td>Extracts the value from Ok. Panics if the variant is Err. Only use when you are certain it will succeed.</td></tr>
+            <tr><td>? operator</td><td>Shorthand for propagating errors. Returns the Err early instead of panicking. Can only be used in functions that return Result.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-panel active" id="panel-exercises">
+      <div class="exercise-subnav" id="subnav"></div>
+      <div class="exercise-split">
+        <div class="exercise-left" id="ex-left"></div>
+        <div class="exercise-right" id="ex-right"></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-answers">
+      <div class="answers-list" id="answers-list"></div>
+    </div>
+
+    <div class="tab-panel" id="panel-terms">
+      <div class="terms-wrap">
+        <table class="terms-table">
+          <thead>
+            <tr><th>Term</th><th>What it means</th><th>When you use it</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>panic!</td><td>Stops the program immediately with a message and cleans up memory. There is no recovering from a panic.</td><td>When something has gone so wrong that the program cannot safely continue, like an impossible state or a violated invariant.</td></tr>
+            <tr><td>Result&lt;T, E&gt;</td><td>An enum with Ok for success and Err for failure. Lets the caller decide what to do with errors.</td><td>Any time a function can fail and the caller should decide what happens next.</td></tr>
+            <tr><td>Ok(value)</td><td>The success variant of Result. Wraps the returned value when everything went right.</td><td>When a function completes successfully and needs to pass a value back to the caller.</td></tr>
+            <tr><td>Err(message)</td><td>The failure variant of Result. Wraps an error description when something went wrong.</td><td>When a function fails and needs to tell the caller what went wrong instead of panicking.</td></tr>
+            <tr><td>match on Result</td><td>Handles both Ok and Err with separate code paths. The compiler requires both arms.</td><td>Every time you call a function that returns Result and want to act differently on success vs failure.</td></tr>
+            <tr><td>unwrap()</td><td>Extracts the value from Ok in one step. Panics if the variant is Err.</td><td>Only when you are certain the result will be Ok, such as parsing a hard-coded literal you wrote yourself.</td></tr>
+            <tr><td>? operator</td><td>Unwraps Ok or returns Err early from the current function. Shorthand for writing match on every call.</td><td>Inside functions that return Result, when you want errors to propagate up automatically without writing match.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const EMBED = 'https://play.rust-lang.org/?version=stable&edition=2021&code=';
+
+  const exercises = [
+    {
+      num: 1,
+      title: "What panic! Does",
+      explainer: "<p><code>panic!</code> is the simplest form of error handling. When Rust hits a <code>panic!</code>, it prints your message, cleans up memory, and exits the program. There is no recovering from a panic. The program stops.</p><p>Use <code>panic!</code> when something has gone so wrong that continuing makes no sense, like receiving an invalid plan type in a contract.</p>",
+      task: "<p>A function checks which drink was ordered. If it is not lemonade, the program should stop with a clear message. Right now the else branch is missing the panic call.</p><ol><li>Add <code>panic!(\"order not supported\")</code> in the else branch so the program stops when given anything other than lemonade.</li></ol>",
+      starterCode: "fn drink(beverage: &str) {\n    if beverage == \"lemonade\" {\n        println!(\"Success!\");\n    } else {\n        // panic here\n    }\n}\n\nfn main() {\n    drink(\"lemonade\");\n    drink(\"juice\");\n}",
+      instruction: "",
+      expectedOutput: "Success!\nthread 'main' panicked at 'order not supported', src/main.rs",
+      answerCode: "fn drink(beverage: &str) {     // ① takes a &str — borrows the string, no ownership needed for a check\n    if beverage == \"lemonade\" {\n        println!(\"Success!\");\n    } else {\n        panic!(\"order not supported\"); // ② panic! prints the message, unwinds the stack, and exits — no code after this line runs\n    }\n}\n\nfn main() {\n    drink(\"lemonade\"); // ③ passes the check — prints Success!\n    drink(\"juice\");    // ④ fails the check — hits the panic! branch and the program stops here\n}",
+      why: "<p><code>panic!</code> is an immediate, unrecoverable stop. It is not for routine errors. Use it only when the program is in a state that should never happen. For errors the caller should handle, like bad input, use <code>Result</code> instead.</p>"
+    },
+    {
+      num: 2,
+      title: "Common Panic: Divide by Zero",
+      explainer: "<p>Some panics happen automatically without you calling <code>panic!</code> directly. Dividing by zero is one of them. Rust catches it at runtime and panics for you.</p><p>The fix is to check for the bad value before the operation runs.</p>",
+      task: "<p>A function divides two numbers. Right now it panics when the second argument is zero. Fix it so the function returns <code>0</code> instead of crashing when <code>b</code> is zero.</p>",
+      starterCode: "fn divide(a: u32, b: u32) -> u32 {\n    a / b\n}\n\nfn main() {\n    println!(\"{}\", divide(10, 2));\n    println!(\"{}\", divide(10, 0));\n}",
+      instruction: "",
+      expectedOutput: "5\n0",
+      answerCode: "fn divide(a: u32, b: u32) -> u32 { // ① takes two u32 values — unsigned, so no negative numbers\n    if b == 0 {\n        return 0; // ② early return before the division happens — eliminates the divide-by-zero panic\n    }\n    a / b         // ③ only reached when b is not zero — safe to divide\n}\n\nfn main() {\n    println!(\"{}\", divide(10, 2)); // ④ b is 2 — division runs normally, prints 5\n    println!(\"{}\", divide(10, 0)); // ⑤ b is 0 — early return fires, prints 0 instead of panicking\n}",
+      why: "<p>Checking for invalid inputs before using them prevents runtime panics. This is the guard pattern: return a safe value before reaching the operation that would crash. In contract code, a divide-by-zero panic would halt the transaction entirely.</p>"
+    },
+    {
+      num: 3,
+      title: "Returning Ok and Err",
+      explainer: "<p><code>panic!</code> is all-or-nothing. When you want the caller to decide what to do with an error, use <code>Result</code>. <code>Result</code> is an enum with two variants: <code>Ok(value)</code> for success and <code>Err(message)</code> for failure.</p><p>A function that returns <code>Result&lt;f64, String&gt;</code> can succeed with a <code>f64</code> number wrapped in <code>Ok</code>, or fail with a <code>String</code> message wrapped in <code>Err</code>.</p>",
+      task: "<p>A divide function should return <code>Result</code> instead of panicking. Right now the function returns <code>0.0</code> on divide by zero. Replace that with an <code>Err</code> so the caller knows what went wrong.</p><ol><li>Change the return type to <code>Result&lt;f64, String&gt;</code>.</li><li>Return <code>Err(String::from(\"cannot divide by zero\"))</code> when <code>b</code> is zero.</li><li>Return <code>Ok(a / b)</code> for all other cases.</li></ol>",
+      starterCode: "fn divide(a: f64, b: f64) -> f64 {\n    if b == 0.0 {\n        return 0.0;\n    }\n    a / b\n}\n\nfn main() {\n    println!(\"{:?}\", divide(10.0, 2.0));\n    println!(\"{:?}\", divide(10.0, 0.0));\n}",
+      instruction: "",
+      expectedOutput: "Ok(5.0)\nErr(\"cannot divide by zero\")",
+      answerCode: "fn divide(a: f64, b: f64) -> Result<f64, String> { // ① return type is Result<f64, String> — Ok holds an f64, Err holds a String message\n    if b == 0.0 {\n        return Err(String::from(\"cannot divide by zero\")); // ② Err wraps the error message — the caller receives this instead of a panic\n    }\n    Ok(a / b) // ③ Ok wraps the successful result — the f64 value is stored inside the Ok variant\n}\n\nfn main() {\n    println!(\"{:?}\", divide(10.0, 2.0)); // ④ b is 2.0 — succeeds, prints Ok(5.0)\n    println!(\"{:?}\", divide(10.0, 0.0)); // ⑤ b is 0.0 — returns Err, prints Err(\"cannot divide by zero\")\n}",
+      why: "<p><code>Result</code> gives the caller control over how to handle failure. Instead of the program crashing, the function hands back a description of what went wrong. The caller can match on it, propagate it, or decide to panic if appropriate. This is the foundation of error handling in Rust.</p>"
+    },
+    {
+      num: 4,
+      title: "Matching on Result",
+      explainer: "<p>Once a function returns <code>Result</code>, the caller needs to handle both cases. The standard way is <code>match</code>. One arm handles <code>Ok</code>, the other handles <code>Err</code>.</p>",
+      task: "<p>The <code>divide</code> function returns a <code>Result</code>. Right now <code>main</code> only handles <code>Ok</code>. Add an <code>Err</code> arm to each match block that prints <code>Error: </code> followed by the error message.</p>",
+      starterCode: "fn divide(a: f64, b: f64) -> Result<f64, String> {\n    if b == 0.0 {\n        return Err(String::from(\"cannot divide by zero\"));\n    }\n    Ok(a / b)\n}\n\nfn main() {\n    match divide(10.0, 2.0) {\n        Ok(val) => println!(\"Result: {}\", val),\n    }\n\n    match divide(10.0, 0.0) {\n        Ok(val) => println!(\"Result: {}\", val),\n    }\n}",
+      instruction: "",
+      expectedOutput: "Result: 5\nError: cannot divide by zero",
+      answerCode: "fn divide(a: f64, b: f64) -> Result<f64, String> {\n    if b == 0.0 {\n        return Err(String::from(\"cannot divide by zero\"));\n    }\n    Ok(a / b)\n}\n\nfn main() {\n    match divide(10.0, 2.0) {\n        Ok(val) => println!(\"Result: {}\", val), // ① Ok(val) destructures the Result — val receives the inner f64 value\n        Err(e) => println!(\"Error: {}\", e),     // ② Err(e) destructures the Result — e receives the error String\n    }\n\n    match divide(10.0, 0.0) {\n        Ok(val) => println!(\"Result: {}\", val), // ③ this arm is skipped — divide returned Err, not Ok\n        Err(e) => println!(\"Error: {}\", e),     // ④ this arm runs — e is \"cannot divide by zero\"\n    }\n}",
+      why: "<p><code>match</code> on <code>Result</code> is exhaustive. The compiler requires both <code>Ok</code> and <code>Err</code> arms. <code>Ok(val)</code> and <code>Err(e)</code> both destructure the inner value into a named variable. This forces you to decide what happens in both the success and failure cases before the code will compile.</p>"
+    },
+    {
+      num: 5,
+      title: "unwrap",
+      explainer: "<p><code>unwrap()</code> is a shortcut. Instead of writing a full <code>match</code>, you call <code>.unwrap()</code> and get the value inside <code>Ok</code> directly. If the result is <code>Err</code>, it panics.</p><p>Use <code>unwrap()</code> only when you are certain the result will be <code>Ok</code>. For everything else, use <code>match</code> or the <code>?</code> operator.</p>",
+      task: "<p>A program multiplies two numbers parsed from strings. Right now the code uses <code>match</code> to unwrap both values. Replace the two <code>match</code> blocks with <code>.unwrap()</code> calls to shorten the code.</p>",
+      starterCode: "fn main() {\n    let n1: i32 = match \"10\".parse() {\n        Ok(val) => val,\n        Err(_) => panic!(\"parse failed\"),\n    };\n\n    let n2: i32 = match \"2\".parse() {\n        Ok(val) => val,\n        Err(_) => panic!(\"parse failed\"),\n    };\n\n    println!(\"{}\", n1 * n2);\n}",
+      instruction: "",
+      expectedOutput: "20",
+      answerCode: "fn main() {\n    let n1: i32 = \"10\".parse().unwrap(); // ① .parse() returns Result<i32, ParseIntError> — .unwrap() extracts the Ok value or panics on Err\n    let n2: i32 = \"2\".parse().unwrap();  // ② same pattern — safe here because \"2\" is a valid integer literal\n    println!(\"{}\", n1 * n2);             // ③ n1 and n2 hold plain i32 values — multiply and print\n}",
+      why: "<p><code>.unwrap()</code> extracts the value from <code>Ok</code> in one step, removing the boilerplate of a full <code>match</code>. It is appropriate when you know for certain the value will succeed, like parsing a hard-coded string literal that you wrote yourself. If there is any chance of failure, use <code>match</code> or <code>?</code> instead.</p>"
+    },
+    {
+      num: 6,
+      title: "The ? Operator",
+      explainer: "<p>The <code>?</code> operator is a shorthand that does what <code>match</code> does: if the result is <code>Ok</code>, it unwraps the value. If it is <code>Err</code>, it returns the error immediately from the current function instead of panicking.</p><p><code>?</code> can only be used inside a function that returns <code>Result</code>.</p>",
+      task: "<p>A function multiplies two strings by parsing them to integers. Right now it uses <code>.unwrap()</code> on both parse calls. Replace both <code>.unwrap()</code> calls with <code>?</code> so errors propagate instead of panicking.</p>",
+      starterCode: "use std::num::ParseIntError;\n\nfn multiply(a: &str, b: &str) -> Result<i32, ParseIntError> {\n    let n1: i32 = a.parse().unwrap();\n    let n2: i32 = b.parse().unwrap();\n    Ok(n1 * n2)\n}\n\nfn main() {\n    println!(\"{:?}\", multiply(\"3\", \"4\"));\n    println!(\"{:?}\", multiply(\"3\", \"abc\"));\n}",
+      instruction: "",
+      expectedOutput: "Ok(12)\nErr(ParseIntError { kind: InvalidDigit })",
+      answerCode: "use std::num::ParseIntError;\n\nfn multiply(a: &str, b: &str) -> Result<i32, ParseIntError> { // ① return type is Result — required for ? to work inside this function\n    let n1: i32 = a.parse()?; // ② ? unwraps Ok and assigns to n1, OR returns the Err immediately from multiply — no panic\n    let n2: i32 = b.parse()?; // ③ same — if \"abc\" fails to parse, this returns Err early and the next line never runs\n    Ok(n1 * n2)               // ④ only reached when both parses succeed — wraps the product in Ok\n}\n\nfn main() {\n    println!(\"{:?}\", multiply(\"3\", \"4\"));   // ⑤ both parse, returns Ok(12)\n    println!(\"{:?}\", multiply(\"3\", \"abc\")); // ⑥ \"abc\" fails to parse — ? returns the Err from multiply, prints it here\n}",
+      why: "<p><code>?</code> eliminates the repetition of writing <code>match</code> for every fallible call. It propagates errors up the call stack automatically. Each <code>?</code> either continues with the value or returns the error to the caller. The function's return type must be <code>Result</code> because <code>?</code> needs somewhere to return the error to.</p>"
+    },
+    {
+      num: 7,
+      title: "Build: Safe Payment Validation",
+      explainer: "<p>A payment contract receives an amount as a string from user input. Before processing, it must parse the amount and check it is above zero. If either step fails, it should return an error and stop. The contract must never panic in production.</p>",
+      task: "<p>Write a function <code>validate_payment</code> that:</p><ol><li>Takes a <code>&amp;str</code> representing an amount.</li><li>Parses it to a <code>u64</code> using <code>?</code>.</li><li>Returns <code>Err(String::from(\"amount must be above zero\"))</code> if the parsed value is <code>0</code>.</li><li>Returns <code>Ok(amount)</code> if valid.</li></ol><p>The <code>main</code> function is written for you.</p>",
+      starterCode: "fn main() {\n    println!(\"{:?}\", validate_payment(\"1000\"));\n    println!(\"{:?}\", validate_payment(\"0\"));\n    println!(\"{:?}\", validate_payment(\"abc\"));\n}",
+      instruction: "",
+      expectedOutput: "Ok(1000)\nErr(\"amount must be above zero\")\nErr(ParseIntError { kind: InvalidDigit })",
+      answerCode: "use std::num::ParseIntError;\n\nfn validate_payment(input: &str) -> Result<u64, Box<dyn std::error::Error>> { // ① Box<dyn Error> accepts multiple error types — both ParseIntError and String can be returned\n    let amount: u64 = input.parse()?; // ② ? propagates the ParseIntError if input is not a valid number — early return on failure\n    if amount == 0 {\n        return Err(String::from(\"amount must be above zero\").into()); // ③ manual Err for the zero case — .into() converts String into Box<dyn Error>\n    }\n    Ok(amount) // ④ only reached when parsing succeeded and amount is above zero — wraps the valid amount in Ok\n}\n\nfn main() {\n    println!(\"{:?}\", validate_payment(\"1000\")); // ⑤ valid number above zero — Ok(1000)\n    println!(\"{:?}\", validate_payment(\"0\"));    // ⑥ valid parse but zero — Err(\"amount must be above zero\")\n    println!(\"{:?}\", validate_payment(\"abc\"));  // ⑦ parse fails — Err(ParseIntError)\n}",
+      why: "<p>Every entry point that reads external input should return <code>Result</code> and never call <code>unwrap()</code>. The <code>?</code> operator handles the parse error and <code>return Err(...)</code> handles the business rule. <code>Box&lt;dyn std::error::Error&gt;</code> is a common return type when a function can produce more than one kind of error.</p>"
+    }
+  ];
+
+  let currentEx = 0;
+
+  function buildSubnav() {
+    const subnav = document.getElementById('subnav');
+    subnav.innerHTML = '';
+    exercises.forEach((ex, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'ex-btn' + (i === currentEx ? ' active' : '');
+      btn.textContent = 'Exercise ' + ex.num;
+      btn.addEventListener('click', () => selectExercise(i));
+      subnav.appendChild(btn);
+    });
+  }
+
+  function renderLeft(ex) {
+    const left = document.getElementById('ex-left');
+    left.innerHTML =
+      '<div class="ex-kicker">Exercise ' + ex.num + ' of ' + exercises.length + '</div>' +
+      '<div class="ex-title">' + ex.title + '</div>' +
+      '<div class="ex-explainer">' + ex.explainer + '</div>' +
+      '<div class="task-rule"></div>' +
+      '<div class="task-label">Your Task</div>' +
+      '<div class="task-body">' + ex.task + '</div>';
+    const hint = document.createElement('p');
+    hint.className = 'starter-hint';
+    hint.textContent = 'Clear the Playground on the right and paste this code to begin.';
+    left.appendChild(hint);
+    const starterWrap = document.createElement('div');
+    starterWrap.className = 'starter-block';
+    const starterPre = document.createElement('pre');
+    starterPre.textContent = ex.starterCode;
+    starterWrap.appendChild(starterPre);
+    left.appendChild(starterWrap);
+    const instr = document.createElement('p');
+    instr.className = 'task-instruction';
+    instr.innerHTML = ex.instruction;
+    left.appendChild(instr);
+    const outputWrap = document.createElement('div');
+    outputWrap.className = 'expected-output-wrap';
+    const outputLabel = document.createElement('div');
+    outputLabel.className = 'expected-output-label';
+    outputLabel.textContent = 'Expected Output';
+    const outputText = document.createElement('div');
+    outputText.className = 'expected-output-text';
+    outputText.textContent = ex.expectedOutput;
+    outputWrap.appendChild(outputLabel);
+    outputWrap.appendChild(outputText);
+    left.appendChild(outputWrap);
+  }
+
+  let iframeEl = null;
+
+  function renderRight(ex) {
+    const right = document.getElementById('ex-right');
+    if (!iframeEl) {
+      right.innerHTML =
+        '<div class="playground-bar">' +
+          '<div class="playground-bar-dot"></div>' +
+          '<span class="playground-bar-label">Rust Playground</span>' +
+        '</div>';
+      iframeEl = document.createElement('iframe');
+      right.appendChild(iframeEl);
+    }
+    iframeEl.src = EMBED + encodeURIComponent(ex.starterCode);
+  }
+
+  function selectExercise(i) {
+    currentEx = i;
+    buildSubnav();
+    renderLeft(exercises[i]);
+    renderRight(exercises[i]);
+  }
+
+  function buildAnswers() {
+    const list = document.getElementById('answers-list');
+    if (list.children.length > 0) return;
+    exercises.forEach(ex => {
+      const card = document.createElement('div');
+      card.className = 'answer-card';
+      const head = document.createElement('div');
+      head.className = 'answer-card-head';
+      head.textContent = 'Exercise ' + ex.num + ' — ' + ex.title;
+      const body = document.createElement('div');
+      body.className = 'answer-card-body';
+      const codeWrap = document.createElement('div');
+      codeWrap.className = 'answer-code';
+      const pre = document.createElement('pre');
+      pre.textContent = ex.answerCode;
+      codeWrap.appendChild(pre);
+      const whyLabel = document.createElement('div');
+      whyLabel.className = 'answer-why-label';
+      whyLabel.textContent = 'Why';
+      const whyText = document.createElement('div');
+      whyText.className = 'answer-why';
+      whyText.innerHTML = ex.why;
+      body.appendChild(codeWrap);
+      body.appendChild(whyLabel);
+      body.appendChild(whyText);
+      card.appendChild(head);
+      card.appendChild(body);
+      list.appendChild(card);
+    });
+  }
+
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === tabId);
+    });
+    document.querySelectorAll('.tab-panel').forEach(panel => {
+      panel.classList.toggle('active', panel.id === 'panel-' + tabId);
+    });
+    if (tabId === 'answers') buildAnswers();
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
+
+  buildSubnav();
+  renderLeft(exercises[0]);
+  renderRight(exercises[0]);
+</script>
+</body>
+</html>

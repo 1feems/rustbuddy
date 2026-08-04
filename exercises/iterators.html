@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rust: Iterators - Rust Bud</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_design/styles.css">
+  <style>
+    :root {
+      --color-bg:        #FFFFFF;
+      --color-surface:   #1E1E1A;
+      --color-primary:   #FF7657;
+      --color-secondary: #DFFF65;
+      --color-ink:       #171714;
+      --color-muted:     #77766F;
+      --color-border:    #171714;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--color-bg); color: var(--color-ink); min-height: 100vh; }
+    .site-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid var(--color-border); }
+    .site-header-left { display: flex; align-items: center; gap: 10px; }
+    .site-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+    .site-logo img { width: 36px; height: 36px; object-fit: contain; }
+    .site-logo-name { font-size: 16px; font-weight: 800; letter-spacing: -0.03em; color: var(--color-primary); }
+    .nav-links { display: flex; gap: 8px; }
+    .nav-link { font-size: 11px; font-weight: 700; color: var(--color-ink); text-decoration: none; letter-spacing: 0.05em; text-transform: uppercase; background: #C5E94E; padding: 5px 14px; border-radius: 20px; transition: opacity 150ms ease; }
+    .nav-link:hover { opacity: 0.85; }
+    .nav-link.active { opacity: 1; }
+    .main { padding: 32px; max-width: 1400px; margin: 0 auto; }
+    .tab-container { border: 1px solid var(--color-border); border-radius: 20px; overflow: hidden; }
+    .tab-bar { display: flex; border-bottom: 1px solid var(--color-border); }
+    .tab-btn { padding: 14px 28px; font-family: inherit; font-size: 14px; font-weight: 600; border: none; border-right: 1px solid var(--color-border); background: transparent; color: var(--color-muted); cursor: pointer; transition: background 200ms ease, color 200ms ease; }
+    .tab-btn:last-child { border-right: none; }
+    .tab-btn.active { background: var(--color-primary); color: #fff; }
+    .tab-btn:not(.active):hover { background: #f7f6f3; color: var(--color-ink); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .exercise-subnav { display: flex; gap: 8px; flex-wrap: wrap; padding: 16px 24px; border-bottom: 1px solid var(--color-border); }
+    .ex-btn { padding: 7px 16px; font-family: inherit; font-size: 13px; font-weight: 500; border: none; border-radius: 9999px; cursor: pointer; background: var(--color-surface); color: var(--color-muted); transition: background 200ms ease, color 200ms ease; }
+    .ex-btn.active { background: var(--color-primary); color: #fff; }
+    .ex-btn:not(.active):hover { background: #2a2a26; color: #c0bfbb; }
+    .exercise-split { display: grid; grid-template-columns: 1fr 1fr; height: 100vh; max-height: 900px; }
+    .exercise-left { padding: 32px; border-right: 1px solid var(--color-border); overflow-y: auto; }
+    .ex-kicker { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 8px; }
+    .ex-title { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 16px; }
+    .ex-explainer { font-size: 14px; line-height: 1.65; color: #3a3935; margin-bottom: 24px; }
+    .ex-explainer p { margin-bottom: 10px; }
+    .ex-explainer p:last-child { margin-bottom: 0; }
+    .task-rule { height: 1px; background: rgba(23,23,20,0.12); margin-bottom: 20px; }
+    .task-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 12px; }
+    .task-body { font-size: 14px; line-height: 1.65; color: #3a3935; margin-bottom: 20px; }
+    .task-body p { margin-bottom: 10px; }
+    .task-body ol { padding-left: 20px; margin: 8px 0 10px; }
+    .task-body li { margin-bottom: 4px; }
+    .ex-explainer code, .task-body code, .task-instruction code { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; background: #f0efeb; padding: 1px 5px; border-radius: 4px; color: var(--color-ink); }
+    .starter-block { background: var(--color-surface); border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; overflow-x: auto; }
+    .starter-block pre { font-family: "SF Mono", "Fira Code", "Menlo", monospace; font-size: 13px; line-height: 1.7; color: #c9d1e3; white-space: pre; margin: 0; }
+    .task-instruction { font-size: 14px; font-weight: 600; color: var(--color-ink); margin-bottom: 20px; }
+    .expected-output-wrap { border-top: 1px solid rgba(23,23,20,0.12); padding-top: 16px; }
+    .expected-output-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 8px; }
+    .expected-output-text { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; line-height: 1.6; color: var(--color-ink); background: #f0efeb; border-radius: 8px; padding: 12px 16px; white-space: pre; }
+    .exercise-right { display: flex; flex-direction: column; overflow: hidden; }
+    .playground-bar { background: var(--color-surface); padding: 10px 20px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .playground-bar-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-primary); }
+    .playground-bar-label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.6); letter-spacing: 0.04em; }
+    .exercise-right iframe { flex: 1; width: 100%; border: none; display: block; }
+    .answers-list { padding: 32px; display: flex; flex-direction: column; gap: 20px; }
+    .answer-card { border: 1px solid var(--color-border); border-radius: 20px; overflow: hidden; }
+    .answer-card-head { padding: 14px 24px; border-bottom: 1px solid var(--color-border); font-size: 15px; font-weight: 600; }
+    .answer-card-body { padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+    .answer-code { background: var(--color-surface); border-radius: 12px; padding: 20px; overflow-x: auto; }
+    .answer-code pre { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; line-height: 1.7; color: #c9d1e3; margin: 0; }
+    .answer-why-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 4px; }
+    .answer-why { font-size: 14px; line-height: 1.6; color: #3a3935; }
+    .answer-why code { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; background: #f0efeb; padding: 1px 5px; border-radius: 4px; color: var(--color-ink); }
+    .starter-hint { font-size: 12px; color: var(--color-muted); margin-bottom: 8px; }
+    .overview-wrap { padding: 40px 48px; max-width: 720px; }
+    .overview-topic { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 10px; }
+    .overview-headline { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .overview-desc { font-size: 16px; line-height: 1.65; color: #3a3935; margin-bottom: 36px; }
+    .overview-divider { height: 1px; background: rgba(23,23,20,0.12); margin-bottom: 28px; }
+    .overview-ref-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 16px; }
+    .terms-wrap { padding: 32px; }
+    .terms-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .terms-table th { text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); border-bottom: 1px solid var(--color-border); }
+    .terms-table td { padding: 14px 16px; border-bottom: 1px solid rgba(23,23,20,0.12); vertical-align: top; line-height: 1.55; }
+    .terms-table tr:last-child td { border-bottom: none; }
+    .terms-table td:first-child { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; font-weight: 600; white-space: nowrap; width: 160px; }
+    .terms-table td:last-child { color: var(--color-muted); }
+    .breadcrumb { padding: 10px 32px; display: flex; align-items: center; gap: 6px; font-size: 13px; border-bottom: 1px solid rgba(23,23,20,0.08); }
+    .breadcrumb a { color: var(--color-muted); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--color-ink); }
+    .bc-sep { color: rgba(23,23,20,0.25); }
+    .bc-current { color: var(--color-ink); font-weight: 500; }
+  </style>
+  <link rel="stylesheet" href="../_design/mobile.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header-left">
+    <a href="../index.html" class="site-logo">
+      <img src="../_design/assets/rust.png" alt="Ferris">
+      <span class="site-logo-name">Rust Buddy</span>
+    </a>
+  </div>
+  <nav class="nav-links">
+    <a href="../exercises/index.html" class="nav-link active">Exercises</a>
+    <a href="../flashcards/index.html" class="nav-link">Flashcards</a>
+    <a href="../resources/index.html" class="nav-link">Resources</a>
+  </nav>
+</header>
+<nav class="breadcrumb">
+  <a href="../index.html">Rust Buddy</a>
+  <span class="bc-sep">/</span>
+  <a href="index.html">Exercises</a>
+  <span class="bc-sep">/</span>
+  <span class="bc-current">Iterators</span>
+</nav>
+
+<main class="main">
+  <div class="tab-container">
+    <div class="tab-bar">
+      <button class="tab-btn" data-tab="overview">Overview</button>
+      <button class="tab-btn active" data-tab="exercises">Exercises</button>
+      <button class="tab-btn" data-tab="answers">Answers</button>
+      <button class="tab-btn" data-tab="terms">Terms to Know</button>
+    </div>
+
+    <div class="tab-panel" id="panel-overview">
+      <div class="overview-wrap">
+        <div class="overview-topic">Topic</div>
+        <div class="overview-headline">Iterators</div>
+        <div class="overview-desc">An iterator moves through a collection one at a time. Learn how to use map, filter, and collect to process data without writing loops.</div>
+        <div class="overview-divider"></div>
+        <div class="overview-ref-label">Quick Reference</div>
+        <table class="terms-table">
+          <thead>
+            <tr><th>Concept</th><th>What it means</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Iterator</td><td>A value that produces a sequence of items one at a time.</td></tr>
+            <tr><td>.iter()</td><td>Borrows each element of a collection. The original collection stays usable.</td></tr>
+            <tr><td>.into_iter()</td><td>Takes ownership of each element. The original collection is consumed.</td></tr>
+            <tr><td>.map(|x| ...)</td><td>Transforms each item using a closure. Returns a new iterator.</td></tr>
+            <tr><td>.filter(|x| ...)</td><td>Keeps only items where the closure returns true. Returns a new iterator.</td></tr>
+            <tr><td>.sum()</td><td>Adds all items together and returns the total. Consumes the iterator.</td></tr>
+            <tr><td>.collect()</td><td>Gathers all items from an iterator into a collection like a Vec. Consumes the iterator.</td></tr>
+            <tr><td>Lazy</td><td>Iterators do nothing until you call a consuming method like .sum() or .collect().</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-panel active" id="panel-exercises">
+      <div class="exercise-subnav" id="subnav"></div>
+      <div class="exercise-split">
+        <div class="exercise-left" id="ex-left"></div>
+        <div class="exercise-right" id="ex-right"></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-answers">
+      <div class="answers-list" id="answers-list"></div>
+    </div>
+
+    <div class="tab-panel" id="panel-terms">
+      <div class="terms-wrap">
+        <table class="terms-table">
+          <thead>
+            <tr><th>Term</th><th>What it means</th><th>When you use it</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Iterator</td><td>A value that produces items one at a time from a collection.</td><td>Whenever you want to process a collection without writing a manual index loop.</td></tr>
+            <tr><td>.iter()</td><td>Creates an iterator that borrows each element. The original collection stays usable after.</td><td>When you want to read through a collection and keep the original intact.</td></tr>
+            <tr><td>.into_iter()</td><td>Creates an iterator that takes ownership of each element. The original collection is consumed.</td><td>When you want to move items out of a collection one at a time.</td></tr>
+            <tr><td>.map()</td><td>Applies a closure to every element and returns a new iterator with the transformed values.</td><td>When you want to transform every item in a collection into something else.</td></tr>
+            <tr><td>.filter()</td><td>Keeps only the items where the closure returns true and returns a new iterator.</td><td>When you want a subset of a collection based on a condition.</td></tr>
+            <tr><td>.sum()</td><td>Adds all items and returns the total. Consumes the iterator.</td><td>When you want the total of a numeric collection.</td></tr>
+            <tr><td>.collect()</td><td>Gathers iterator items into a Vec or other collection. Consumes the iterator.</td><td>After chaining adapters like map or filter, when you want a concrete collection back.</td></tr>
+            <tr><td>Lazy</td><td>Iterators do no work until a consuming method is called.</td><td>Every iterator chain. Nothing runs until .sum(), .collect(), or similar is invoked.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const EMBED = 'https://play.rust-lang.org/?version=stable&edition=2021&code=';
+
+  const exercises = [
+    {
+      num: 1,
+      title: "Creating an Iterator",
+      explainer: "<p>You turn a collection into an iterator by calling <code>.iter()</code> on it. Once you have an iterator, you can loop over it, transform it, or consume it.</p><p>Calling <code>.iter()</code> borrows the elements. The original collection stays valid and usable after.</p>",
+      task: "<p>A vector of numbers needs to be printed one by one using an iterator. Right now the code uses a regular index loop. Replace the <code>for i in 0..nums.len()</code> loop with a <code>for</code> loop that uses <code>.iter()</code> directly.</p>",
+      starterCode: "fn main() {\n    let nums = vec![1, 2, 3];\n\n    for i in 0..nums.len() {\n        println!(\"{}\", nums[i]);\n    }\n\n    println!(\"still have nums: {:?}\", nums);\n}",
+      instruction: "",
+      expectedOutput: "1\n2\n3\nstill have nums: [1, 2, 3]",
+      answerCode: "fn main() {\n    let nums = vec![1, 2, 3]; // ① nums is a Vec<i32> — owns the three integers on the heap\n\n    for n in nums.iter() { // ② .iter() creates an iterator that borrows each element — n is a reference (&i32), not an owned value\n        println!(\"{}\", n); // ③ Rust auto-dereferences n when printing — no need to write *n\n    }\n\n    println!(\"still have nums: {:?}\", nums); // ④ nums is still valid — .iter() only borrowed, it did not consume the vector\n}",
+      why: "<p><code>.iter()</code> produces an iterator that borrows each element from the collection. Because it borrows rather than consumes, the original vector is still usable after the loop finishes. This is the standard way to read through a collection in Rust without giving up ownership. If you need to consume the elements, use <code>.into_iter()</code> instead.</p>"
+    },
+    {
+      num: 2,
+      title: "sum",
+      explainer: "<p><code>.sum()</code> is a consuming adapter. It takes ownership of the iterator, adds all the items together, and returns the total. Once consumed, the iterator cannot be used again.</p>",
+      task: "<p>A vector holds payment amounts. Use <code>.iter()</code> and <code>.sum()</code> to add them all together and print the total. You will need to annotate the type of <code>total</code> because <code>sum</code> needs to know what type to collect into.</p>",
+      starterCode: "fn main() {\n    let payments = vec![100_000u64, 250_000, 500_000];\n\n    // use .iter().sum() to get the total\n    let total: u64 = 0;\n\n    println!(\"total: {}\", total);\n}",
+      instruction: "",
+      expectedOutput: "total: 850000",
+      answerCode: "fn main() {\n    let payments = vec![100_000u64, 250_000, 500_000]; // ① Vec of u64 amounts — the u64 suffix on the first element sets the type for the whole vec\n\n    let total: u64 = payments.iter().sum(); // ② .iter() borrows each element; .sum() adds them all and returns the total — the : u64 annotation tells the compiler what type to produce\n\n    println!(\"total: {}\", total); // ③ prints 850000 — the sum of all three amounts\n}",
+      why: "<p><code>.sum()</code> is a consuming adapter: it runs through the iterator and adds every element together. The type annotation on <code>total</code> is required because <code>.sum()</code> is generic and the compiler needs to know what number type to produce. Using <code>.iter()</code> instead of <code>.into_iter()</code> means <code>payments</code> is still valid after the sum, because only a borrow was consumed, not the vector itself.</p>"
+    },
+    {
+      num: 3,
+      title: "map",
+      explainer: "<p><code>.map()</code> transforms each item using a closure. It returns a new iterator with the transformed values. Because iterators are lazy, nothing happens until you call a consuming method on the result.</p><p><code>.collect()</code> is the consuming method that gathers the transformed items into a new <code>Vec</code>.</p>",
+      task: "<p>A vector holds amounts in lamports. Use <code>.iter()</code>, <code>.map()</code>, and <code>.collect()</code> to create a new vector where every amount is doubled.</p>",
+      starterCode: "fn main() {\n    let amounts = vec![100u64, 200, 300];\n\n    // use .iter().map(...).collect() to double each amount\n    let doubled: Vec<u64> = vec![];\n\n    println!(\"{:?}\", doubled);\n}",
+      instruction: "",
+      expectedOutput: "[200, 400, 600]",
+      answerCode: "fn main() {\n    let amounts = vec![100u64, 200, 300]; // ① original vector — untouched after the chain runs\n\n    let doubled: Vec<u64> = amounts.iter().map(|a| a * 2).collect(); // ② .iter() borrows each element as &u64; .map() applies the closure to each; .collect() gathers the new values into a Vec<u64>\n\n    println!(\"{:?}\", doubled); // ③ prints [200, 400, 600] — the original amounts doubled; amounts is still usable\n}",
+      why: "<p><code>.map()</code> applies a transformation to every element and produces a new iterator with the results. It is lazy, meaning no work happens until <code>.collect()</code> is called at the end. The closure receives a reference because <code>.iter()</code> borrows, but Rust auto-dereferences for arithmetic so <code>a * 2</code> works without writing <code>*a * 2</code>. The result is a completely new <code>Vec</code> and the original is unchanged.</p>"
+    },
+    {
+      num: 4,
+      title: "filter",
+      explainer: "<p><code>.filter()</code> keeps only the items where the closure returns <code>true</code>. Like <code>.map()</code>, it is lazy and returns a new iterator. You still need <code>.collect()</code> to get a <code>Vec</code> out.</p>",
+      task: "<p>A vector holds payment amounts. Use <code>.filter()</code> to keep only amounts above 150. Collect the results into a new <code>Vec</code>.</p>",
+      starterCode: "fn main() {\n    let amounts = vec![50u64, 100, 200, 300, 75];\n\n    // use .iter().filter(...).collect() to keep amounts above 150\n    let large: Vec<&u64> = vec![];\n\n    println!(\"{:?}\", large);\n}",
+      instruction: "",
+      expectedOutput: "[200, 300]",
+      answerCode: "fn main() {\n    let amounts = vec![50u64, 100, 200, 300, 75]; // ① original vector with five amounts\n\n    let large: Vec<&u64> = amounts.iter().filter(|a| **a > 150).collect(); // ② .iter() gives &u64; .filter() receives &&u64 (reference to a reference); ** dereferences twice to compare the raw value; .collect() builds a Vec of references\n\n    println!(\"{:?}\", large); // ③ prints [200, 300] — the two amounts above 150; amounts is still valid\n}",
+      why: "<p><code>.filter()</code> passes a reference to each element into the closure. Because <code>.iter()</code> already produces <code>&amp;u64</code>, the filter closure receives <code>&amp;&amp;u64</code>, a reference to a reference. Writing <code>**a</code> dereferences both layers to get the plain <code>u64</code> for comparison. The resulting <code>Vec&lt;&amp;u64&gt;</code> holds references into the original vector, so the original <code>amounts</code> must remain alive as long as <code>large</code> is used.</p>"
+    },
+    {
+      num: 5,
+      title: "Chaining map and filter",
+      explainer: "<p><code>.map()</code> and <code>.filter()</code> can be chained. The output of one becomes the input of the next. The whole chain is lazy — nothing runs until <code>.collect()</code> or another consuming method is called at the end.</p>",
+      task: "<p>A vector holds subscriber IDs paired with plan tier numbers. Use <code>.iter()</code>, <code>.filter()</code> to keep only premium subscribers (tier above 1), then <code>.map()</code> to extract just the ID. Collect the results into a <code>Vec&lt;u32&gt;</code>.</p>",
+      starterCode: "fn main() {\n    let subscribers: Vec<(u32, u8)> = vec![\n        (1001, 1),\n        (1002, 2),\n        (1003, 1),\n        (1004, 3),\n    ];\n\n    // filter for tier > 1, then map to just the ID\n    let premium_ids: Vec<u32> = vec![];\n\n    println!(\"{:?}\", premium_ids);\n}",
+      instruction: "",
+      expectedOutput: "[1002, 1004]",
+      answerCode: "fn main() {\n    let subscribers: Vec<(u32, u8)> = vec![ // ① vector of tuples — each is (subscriber_id, plan_tier)\n        (1001, 1),\n        (1002, 2),\n        (1003, 1),\n        (1004, 3),\n    ];\n\n    let premium_ids: Vec<u32> = subscribers\n        .iter()\n        .filter(|(_, tier)| *tier > 1) // ② destructures each tuple reference — _ ignores the id; *tier dereferences to compare the u8 value\n        .map(|(id, _)| *id)            // ③ destructures again — _ ignores the tier; *id dereferences the u32 reference to produce an owned value\n        .collect();                    // ④ gathers the owned u32 IDs into a new Vec<u32>\n\n    println!(\"{:?}\", premium_ids); // ⑤ prints [1002, 1004] — the two subscribers with tier above 1\n}",
+      why: "<p>Chaining <code>.filter()</code> and <code>.map()</code> creates a pipeline: first select the items you want, then transform them into the shape you need. Each step returns a new lazy iterator, so nothing runs until <code>.collect()</code> is called. Destructuring with <code>(id, _)</code> and <code>(_, tier)</code> inside the closures lets you name only the field you care about, ignoring the rest with <code>_</code>.</p>"
+    },
+    {
+      num: 6,
+      title: "Build: Process a Subscriber Payment List",
+      explainer: "<p>A payment contract receives a list of (wallet address, amount) pairs. It needs to skip zero-amount entries, apply a 10% fee to each valid amount, and return the total fees collected.</p>",
+      task: "<p>Given the vector below, use <code>.iter()</code>, <code>.filter()</code>, <code>.map()</code>, and <code>.sum()</code> in a single chain to:</p><ol><li>Skip any entry where the amount is 0.</li><li>Calculate 10% of each valid amount (use integer division: <code>amount / 10</code>).</li><li>Sum all the fees into a single <code>u64</code> total.</li></ol>",
+      starterCode: "fn main() {\n    let payments: Vec<(&str, u64)> = vec![\n        (\"wallet_a\", 1_000_000),\n        (\"wallet_b\", 0),\n        (\"wallet_c\", 500_000),\n        (\"wallet_d\", 250_000),\n    ];\n\n    // chain filter, map, and sum here\n    let total_fees: u64 = 0;\n\n    println!(\"total fees: {}\", total_fees);\n}",
+      instruction: "",
+      expectedOutput: "total fees: 175000",
+      answerCode: "fn main() {\n    let payments: Vec<(&str, u64)> = vec![ // ① each entry is a tuple of (wallet address, lamport amount)\n        (\"wallet_a\", 1_000_000),\n        (\"wallet_b\", 0),\n        (\"wallet_c\", 500_000),\n        (\"wallet_d\", 250_000),\n    ];\n\n    let total_fees: u64 = payments\n        .iter()\n        .filter(|(_, amount)| *amount > 0)  // ② skip zero-amount entries — *amount dereferences the u64 reference from .iter()\n        .map(|(_, amount)| amount / 10)     // ③ calculate 10% fee for each valid amount — integer division, no rounding\n        .sum();                             // ④ add all fees together into a single u64 — : u64 on total_fees tells the compiler what type to produce\n\n    println!(\"total fees: {}\", total_fees); // ⑤ wallet_a: 100_000, wallet_c: 50_000, wallet_d: 25_000 — total 175_000\n}",
+      why: "<p>The iterator chain reads like a contract rule written in plain English: take all payments, skip the empty ones, take 10% of each, add them up. Each step in the chain is lazy and no work is done until <code>.sum()</code> runs at the end. This pattern replaces manual loops and index tracking, making the logic easier to read and harder to get wrong.</p>"
+    }
+  ];
+
+  let currentEx = 0;
+
+  function buildSubnav() {
+    const subnav = document.getElementById('subnav');
+    subnav.innerHTML = '';
+    exercises.forEach((ex, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'ex-btn' + (i === currentEx ? ' active' : '');
+      btn.textContent = 'Exercise ' + ex.num;
+      btn.addEventListener('click', () => selectExercise(i));
+      subnav.appendChild(btn);
+    });
+  }
+
+  function renderLeft(ex) {
+    const left = document.getElementById('ex-left');
+    left.innerHTML =
+      '<div class="ex-kicker">Exercise ' + ex.num + ' of ' + exercises.length + '</div>' +
+      '<div class="ex-title">' + ex.title + '</div>' +
+      '<div class="ex-explainer">' + ex.explainer + '</div>' +
+      '<div class="task-rule"></div>' +
+      '<div class="task-label">Your Task</div>' +
+      '<div class="task-body">' + ex.task + '</div>';
+    const hint = document.createElement('p');
+    hint.className = 'starter-hint';
+    hint.textContent = 'Clear the Playground on the right and paste this code to begin.';
+    left.appendChild(hint);
+    const starterWrap = document.createElement('div');
+    starterWrap.className = 'starter-block';
+    const starterPre = document.createElement('pre');
+    starterPre.textContent = ex.starterCode;
+    starterWrap.appendChild(starterPre);
+    left.appendChild(starterWrap);
+    const instr = document.createElement('p');
+    instr.className = 'task-instruction';
+    instr.innerHTML = ex.instruction;
+    left.appendChild(instr);
+    const outputWrap = document.createElement('div');
+    outputWrap.className = 'expected-output-wrap';
+    const outputLabel = document.createElement('div');
+    outputLabel.className = 'expected-output-label';
+    outputLabel.textContent = 'Expected Output';
+    const outputText = document.createElement('div');
+    outputText.className = 'expected-output-text';
+    outputText.textContent = ex.expectedOutput;
+    outputWrap.appendChild(outputLabel);
+    outputWrap.appendChild(outputText);
+    left.appendChild(outputWrap);
+  }
+
+  let iframeEl = null;
+
+  function renderRight(ex) {
+    const right = document.getElementById('ex-right');
+    if (!iframeEl) {
+      right.innerHTML =
+        '<div class="playground-bar">' +
+          '<div class="playground-bar-dot"></div>' +
+          '<span class="playground-bar-label">Rust Playground</span>' +
+        '</div>';
+      iframeEl = document.createElement('iframe');
+      right.appendChild(iframeEl);
+    }
+    iframeEl.src = EMBED + encodeURIComponent(ex.starterCode);
+  }
+
+  function selectExercise(i) {
+    currentEx = i;
+    buildSubnav();
+    renderLeft(exercises[i]);
+    renderRight(exercises[i]);
+  }
+
+  function buildAnswers() {
+    const list = document.getElementById('answers-list');
+    if (list.children.length > 0) return;
+    exercises.forEach(ex => {
+      const card = document.createElement('div');
+      card.className = 'answer-card';
+      const head = document.createElement('div');
+      head.className = 'answer-card-head';
+      head.textContent = 'Exercise ' + ex.num + ' — ' + ex.title;
+      const body = document.createElement('div');
+      body.className = 'answer-card-body';
+      const codeWrap = document.createElement('div');
+      codeWrap.className = 'answer-code';
+      const pre = document.createElement('pre');
+      pre.textContent = ex.answerCode;
+      codeWrap.appendChild(pre);
+      const whyLabel = document.createElement('div');
+      whyLabel.className = 'answer-why-label';
+      whyLabel.textContent = 'Why';
+      const whyText = document.createElement('div');
+      whyText.className = 'answer-why';
+      whyText.innerHTML = ex.why;
+      body.appendChild(codeWrap);
+      body.appendChild(whyLabel);
+      body.appendChild(whyText);
+      card.appendChild(head);
+      card.appendChild(body);
+      list.appendChild(card);
+    });
+  }
+
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === tabId);
+    });
+    document.querySelectorAll('.tab-panel').forEach(panel => {
+      panel.classList.toggle('active', panel.id === 'panel-' + tabId);
+    });
+    if (tabId === 'answers') buildAnswers();
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
+
+  buildSubnav();
+  renderLeft(exercises[0]);
+  renderRight(exercises[0]);
+</script>
+</body>
+</html>

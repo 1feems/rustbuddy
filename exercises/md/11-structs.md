@@ -1,14 +1,14 @@
 # Practice - Structs
 
-> Follows `EXERCISE-STYLE-GUIDE.md`
+> Source for `structs.html` — follows `_docs/STYLE-GUIDE.md` and `_docs/EXERCISE-PAGE-DESIGN.md`
 
 Work through each exercise in the [Rust Playground](https://play.rust-lang.org).  
 Read the explainer, paste the starter code, fix it, then move on.  
 Check your answer only after you've tried.
 
-> 🔔 Common mistakes to watch for:
+> Common mistakes to watch for:
 > - The `:` labels the type. The `=` puts the value inside. They are two separate jobs.
-> - When copying code, don't paste the backtick fence lines (`` ``` ``) into the Rust Playground.
+> - When copying code, don't paste the backtick fence lines into the Rust Playground.
 > - String values need quote marks: `"basic"` is a string, but `basic` is a variable name.
 
 ---
@@ -31,11 +31,9 @@ Check your answer only after you've tried.
 
 ### Exercise 1 - Instantiating a Struct
 
-This exercise tests struct definition and instantiation. In a contract, a `Subscriber` struct is the template that groups a wallet, a plan, and an amount into one named record.
-
 A `User` struct needs to be instantiated with concrete values. Right now three fields are blank.
 
-A struct is a custom compound type that groups values of different types under named fields. It's similar to a tuple, but each value has a name so you can access it later. The struct itself is just a template you must instantiate it with real data to create a usable record.
+A struct is a custom compound type that groups values of different types under named fields. It is similar to a tuple, but each value has a name so you can access it later. The struct itself is just a template — you must instantiate it with real data to create a usable record.
 
 ```rust
 struct User {
@@ -69,10 +67,8 @@ User created
 <details>
 <summary>Answer</summary>
 
-Provide a boolean, a `String`, and a `u64`.
-
 ```rust
-struct User {
+struct User {               // ① the struct definition is the template — it declares field names and types, not values
     active: bool,
     username: String,
     email: String,
@@ -81,22 +77,22 @@ struct User {
 
 fn main() {
     let user1 = User {
-        active: true,
-        username: String::from("alice"),
-        email: String::from("alice@example.com"),
-        sign_in_count: 1,
+        active: true,                           // ② bool field — true or false
+        username: String::from("alice"),        // ③ String field — must be an owned String, not a &str literal
+        email: String::from("alice@example.com"), // ④ already provided — shows the correct pattern
+        sign_in_count: 1,                       // ⑤ u64 field — an unsigned 64-bit integer
     };
-    println!("User created");
+    println!("User created"); // ⑥ user1 is fully instantiated and valid
 }
 ```
+
+**Why:** A struct definition is just a blueprint — it defines what fields exist and what types they hold. To use a struct, you instantiate it by providing a concrete value for every field. Field values must match the declared types exactly: a `bool` field needs `true` or `false`, a `String` field needs an owned `String`.
 
 </details>
 
 ---
 
 ### Exercise 2 - Making a Struct Mutable
-
-This exercise tests explicit mutability on a struct instance. In a contract, upgrading a subscriber's plan requires changing a field but Rust only allows that if the whole instance is declared mutable.
 
 A struct field needs to change after the instance is created. Right now it fails because the instance is immutable.
 
@@ -134,8 +130,6 @@ Email: new@example.com
 <details>
 <summary>Answer</summary>
 
-Change `let user1` to `let mut user1`.
-
 ```rust
 struct User {
     active: bool,
@@ -145,25 +139,25 @@ struct User {
 }
 
 fn main() {
-    let mut user1 = User {
+    let mut user1 = User {               // ① mut makes the entire struct instance mutable — Rust does not allow per-field mutability
         active: true,
         username: String::from("alice"),
         email: String::from("alice@example.com"),
         sign_in_count: 1,
     };
 
-    user1.email = String::from("new@example.com");
-    println!("Email: {}", user1.email);
+    user1.email = String::from("new@example.com"); // ② dot notation assigns a new value to the email field — only valid because user1 is mut
+    println!("Email: {}", user1.email);            // ③ prints the updated field value
 }
 ```
+
+**Why:** In Rust, mutability applies to the entire binding, not individual fields. If you need to change any field, the whole struct instance must be declared `mut`. This keeps the ownership model simple — there is no partial mutability to track.
 
 </details>
 
 ---
 
 ### Exercise 3 - Building a Struct with Shorthand Syntax
-
-This exercise tests functions that return struct instances and the shorthand field init syntax. In a contract, a helper like `build_subscriber` creates a record from arguments without repeating field names.
 
 A function creates and returns a `User` using shorthand field syntax. Right now the return type and two shorthand fields are blank.
 
@@ -200,12 +194,8 @@ fn main() {
 User: bob
 ```
 
-> Common mistake: In struct initialization, `:` separates the field name from its value. Don't confuse it with `=` you're inside the struct body, not doing a variable assignment.
-
 <details>
 <summary>Answer</summary>
-
-The return type is `User`. The field names that match the arguments are `email` and `username`.
 
 ```rust
 struct User {
@@ -215,28 +205,28 @@ struct User {
     sign_in_count: u64,
 }
 
-fn build_user(email: String, username: String) -> User {
+fn build_user(email: String, username: String) -> User { // ① the return type is User — this function constructs and returns a struct instance
     User {
         active: true,
-        email,
-        username,
+        email,    // ② shorthand: the parameter name matches the field name, so you write it once instead of email: email
+        username, // ③ shorthand: same pattern — username parameter fills the username field
         sign_in_count: 1,
     }
 }
 
 fn main() {
-    let user = build_user(String::from("bob@example.com"), String::from("bob"));
-    println!("User: {}", user.username);
+    let user = build_user(String::from("bob@example.com"), String::from("bob")); // ④ calls the builder function — ownership of both Strings moves into build_user
+    println!("User: {}", user.username); // ⑤ user now owns the returned struct — accesses the username field with dot notation
 }
 ```
+
+**Why:** Shorthand field initialization removes repetition when a variable name matches a field name. Instead of `email: email`, you write `email` once. The compiler knows you mean the field and the variable share the same name. This is especially useful in builder functions where argument names are chosen to match field names.
 
 </details>
 
 ---
 
 ### Exercise 4 - Updating a Struct with Struct Update Syntax
-
-This exercise tests struct update syntax: creating a new instance from an existing one while changing only some fields. In a contract, you might create an upgraded subscription by copying most fields from the original and changing just the plan.
 
 A new `User` is created from an existing one with a different email. Right now the struct update syntax is missing.
 
@@ -278,8 +268,6 @@ User2 email: new@example.com
 <details>
 <summary>Answer</summary>
 
-Use `..user1` to fill in the rest.
-
 ```rust
 struct User {
     active: bool,
@@ -289,7 +277,7 @@ struct User {
 }
 
 fn main() {
-    let user1 = User {
+    let user1 = User {                              // ① user1 is the source instance
         active: true,
         username: String::from("alice"),
         email: String::from("alice@example.com"),
@@ -297,21 +285,21 @@ fn main() {
     };
 
     let user2 = User {
-        email: String::from("new@example.com"),
-        ..user1
+        email: String::from("new@example.com"), // ② the new value — overrides the email field from user1
+        ..user1                                  // ③ struct update syntax — copies active, username, and sign_in_count from user1; moves username because String does not implement Copy
     };
 
-    println!("User2 email: {}", user2.email);
+    println!("User2 email: {}", user2.email); // ④ user2.email is the new value — all other fields came from user1
 }
 ```
+
+**Why:** Struct update syntax `..user1` copies all fields not explicitly set in the new struct. Fields with `Copy` types (like `bool` and `u64`) are copied cheaply. Fields with non-`Copy` types (like `String`) are moved — which means `user1.username` becomes invalid after this. Only specify what changes; let `..` fill in the rest.
 
 </details>
 
 ---
 
 ### Exercise 5 - Defining a Tuple Struct
-
-This exercise tests tuple structs: named tuples that are instantiated with parentheses and accessed with dot notation. In a contract, a `Color` tuple struct might store RGB values for a UI badge.
 
 A `Color` tuple struct holds three `i32` values. Right now the types in the struct definition are blank.
 
@@ -337,16 +325,16 @@ Green: 127
 <details>
 <summary>Answer</summary>
 
-The fields are all `i32`.
-
 ```rust
-struct Color(i32, i32, i32);
+struct Color(i32, i32, i32); // ① tuple struct definition — the types go inside parentheses, no field names, just types in order
 
 fn main() {
-    let c = Color(0, 127, 255);
-    println!("Green: {}", c.1);
+    let c = Color(0, 127, 255); // ② instantiate with parentheses, like calling a function — values match the declared types in order
+    println!("Green: {}", c.1); // ③ dot-index access — c.0 is red (0), c.1 is green (127), c.2 is blue (255)
 }
 ```
+
+**Why:** A tuple struct gives a name to a tuple, making it a distinct type. `Color(i32, i32, i32)` and `Point(i32, i32, i32)` are different types even though they hold the same data — the compiler treats them as separate. Use tuple structs when the name adds meaning but individual field names would be unnecessary.
 
 </details>
 
@@ -354,11 +342,9 @@ fn main() {
 
 ### Exercise 6 - Defining a Unit-Like Struct
 
-This exercise tests unit-like structs: structs with no fields. In a contract, a unit-like struct might act as a marker type for a trait or event.
-
 A unit-like struct needs to be defined. Right now the definition is missing.
 
-A unit-like struct has no fields. It doesn't hold any values. It is mainly used when working with traits.
+A unit-like struct has no fields. It does not hold any values. It is mainly used when working with traits — to attach behavior to a type without storing any data.
 
 ```rust
 struct ___;
@@ -380,19 +366,18 @@ Placeholder created
 <details>
 <summary>Answer</summary>
 
-A unit-like struct is written with the name followed by a semicolon and no braces.
-
 ```rust
-struct Placeholder;
+struct Placeholder; // ① unit-like struct — no fields, no braces, just a name and a semicolon
 
 fn main() {
-    let _ = Placeholder;
-    println!("Placeholder created");
+    let _ = Placeholder; // ② instantiate with just the name, no parentheses or braces — there are no values to provide
+    println!("Placeholder created"); // ③ the struct exists as a type even though it holds no data
 }
 ```
 
-</details>
+**Why:** A unit-like struct is a type with no data. It takes zero bytes of memory. Its main use is with traits — you can implement behavior on it without storing any state. In contract code, unit-like structs are often used as markers or event types to signal that something happened.
 
+</details>
 
 ---
 

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rust: Lifetimes - Rust Bud</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_design/styles.css">
+  <style>
+    :root {
+      --color-bg:        #FFFFFF;
+      --color-surface:   #1E1E1A;
+      --color-primary:   #FF7657;
+      --color-secondary: #DFFF65;
+      --color-ink:       #171714;
+      --color-muted:     #77766F;
+      --color-border:    #171714;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--color-bg); color: var(--color-ink); min-height: 100vh; }
+    .site-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid var(--color-border); }
+    .site-header-left { display: flex; align-items: center; gap: 10px; }
+    .site-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+    .site-logo img { width: 36px; height: 36px; object-fit: contain; }
+    .site-logo-name { font-size: 16px; font-weight: 800; letter-spacing: -0.03em; color: var(--color-primary); }
+    .nav-links { display: flex; gap: 8px; }
+    .nav-link { font-size: 11px; font-weight: 700; color: var(--color-ink); text-decoration: none; letter-spacing: 0.05em; text-transform: uppercase; background: #C5E94E; padding: 5px 14px; border-radius: 20px; transition: opacity 150ms ease; }
+    .nav-link:hover { opacity: 0.85; }
+    .nav-link.active { opacity: 1; }
+    .main { padding: 32px; max-width: 1400px; margin: 0 auto; }
+    .tab-container { border: 1px solid var(--color-border); border-radius: 20px; overflow: hidden; }
+    .tab-bar { display: flex; border-bottom: 1px solid var(--color-border); }
+    .tab-btn { padding: 14px 28px; font-family: inherit; font-size: 14px; font-weight: 600; border: none; border-right: 1px solid var(--color-border); background: transparent; color: var(--color-muted); cursor: pointer; transition: background 200ms ease, color 200ms ease; }
+    .tab-btn:last-child { border-right: none; }
+    .tab-btn.active { background: var(--color-primary); color: #fff; }
+    .tab-btn:not(.active):hover { background: #f7f6f3; color: var(--color-ink); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .exercise-subnav { display: flex; gap: 8px; flex-wrap: wrap; padding: 16px 24px; border-bottom: 1px solid var(--color-border); }
+    .ex-btn { padding: 7px 16px; font-family: inherit; font-size: 13px; font-weight: 500; border: none; border-radius: 9999px; cursor: pointer; background: var(--color-surface); color: var(--color-muted); transition: background 200ms ease, color 200ms ease; }
+    .ex-btn.active { background: var(--color-primary); color: #fff; }
+    .ex-btn:not(.active):hover { background: #2a2a26; color: #c0bfbb; }
+    .exercise-split { display: grid; grid-template-columns: 1fr 1fr; height: 100vh; max-height: 900px; }
+    .exercise-left { padding: 32px; border-right: 1px solid var(--color-border); overflow-y: auto; }
+    .ex-kicker { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 8px; }
+    .ex-title { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 16px; }
+    .ex-explainer { font-size: 14px; line-height: 1.65; color: #3a3935; margin-bottom: 24px; }
+    .ex-explainer p { margin-bottom: 10px; }
+    .ex-explainer p:last-child { margin-bottom: 0; }
+    .task-rule { height: 1px; background: rgba(23,23,20,0.12); margin-bottom: 20px; }
+    .task-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 12px; }
+    .task-body { font-size: 14px; line-height: 1.65; color: #3a3935; margin-bottom: 20px; }
+    .task-body p { margin-bottom: 10px; }
+    .task-body ol { padding-left: 20px; margin: 8px 0 10px; }
+    .task-body li { margin-bottom: 4px; }
+    .ex-explainer code, .task-body code, .task-instruction code { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; background: #f0efeb; padding: 1px 5px; border-radius: 4px; color: var(--color-ink); }
+    .starter-block { background: var(--color-surface); border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; overflow-x: auto; }
+    .starter-block pre { font-family: "SF Mono", "Fira Code", "Menlo", monospace; font-size: 13px; line-height: 1.7; color: #c9d1e3; white-space: pre; margin: 0; }
+    .task-instruction { font-size: 14px; font-weight: 600; color: var(--color-ink); margin-bottom: 20px; }
+    .expected-output-wrap { border-top: 1px solid rgba(23,23,20,0.12); padding-top: 16px; }
+    .expected-output-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 8px; }
+    .expected-output-text { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; line-height: 1.6; color: var(--color-ink); background: #f0efeb; border-radius: 8px; padding: 12px 16px; white-space: pre; }
+    .exercise-right { display: flex; flex-direction: column; overflow: hidden; }
+    .playground-bar { background: var(--color-surface); padding: 10px 20px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .playground-bar-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-primary); }
+    .playground-bar-label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.6); letter-spacing: 0.04em; }
+    .exercise-right iframe { flex: 1; width: 100%; border: none; display: block; }
+    .answers-list { padding: 32px; display: flex; flex-direction: column; gap: 20px; }
+    .answer-card { border: 1px solid var(--color-border); border-radius: 20px; overflow: hidden; }
+    .answer-card-head { padding: 14px 24px; border-bottom: 1px solid var(--color-border); font-size: 15px; font-weight: 600; }
+    .answer-card-body { padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+    .answer-code { background: var(--color-surface); border-radius: 12px; padding: 20px; overflow-x: auto; }
+    .answer-code pre { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; line-height: 1.7; color: #c9d1e3; margin: 0; }
+    .answer-why-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 4px; }
+    .answer-why { font-size: 14px; line-height: 1.6; color: #3a3935; }
+    .answer-why code { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; background: #f0efeb; padding: 1px 5px; border-radius: 4px; color: var(--color-ink); }
+    .starter-hint { font-size: 12px; color: var(--color-muted); margin-bottom: 8px; }
+    .overview-wrap { padding: 40px 48px; max-width: 720px; }
+    .overview-topic { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 10px; }
+    .overview-headline { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .overview-desc { font-size: 16px; line-height: 1.65; color: #3a3935; margin-bottom: 36px; }
+    .overview-divider { height: 1px; background: rgba(23,23,20,0.12); margin-bottom: 28px; }
+    .overview-ref-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 16px; }
+    .terms-wrap { padding: 32px; }
+    .terms-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .terms-table th { text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); border-bottom: 1px solid var(--color-border); }
+    .terms-table td { padding: 14px 16px; border-bottom: 1px solid rgba(23,23,20,0.12); vertical-align: top; line-height: 1.55; }
+    .terms-table tr:last-child td { border-bottom: none; }
+    .terms-table td:first-child { font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; font-weight: 600; white-space: nowrap; width: 160px; }
+    .terms-table td:last-child { color: var(--color-muted); }
+    .breadcrumb { padding: 10px 32px; display: flex; align-items: center; gap: 6px; font-size: 13px; border-bottom: 1px solid rgba(23,23,20,0.08); }
+    .breadcrumb a { color: var(--color-muted); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--color-ink); }
+    .bc-sep { color: rgba(23,23,20,0.25); }
+    .bc-current { color: var(--color-ink); font-weight: 500; }
+  </style>
+  <link rel="stylesheet" href="../_design/mobile.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header-left">
+    <a href="../index.html" class="site-logo">
+      <img src="../_design/assets/rust.png" alt="Ferris">
+      <span class="site-logo-name">Rust Buddy</span>
+    </a>
+  </div>
+  <nav class="nav-links">
+    <a href="../exercises/index.html" class="nav-link active">Exercises</a>
+    <a href="../flashcards/index.html" class="nav-link">Flashcards</a>
+    <a href="../resources/index.html" class="nav-link">Resources</a>
+  </nav>
+</header>
+<nav class="breadcrumb">
+  <a href="../index.html">Rust Buddy</a>
+  <span class="bc-sep">/</span>
+  <a href="index.html">Exercises</a>
+  <span class="bc-sep">/</span>
+  <span class="bc-current">Lifetimes</span>
+</nav>
+
+<main class="main">
+  <div class="tab-container">
+    <div class="tab-bar">
+      <button class="tab-btn" data-tab="overview">Overview</button>
+      <button class="tab-btn active" data-tab="exercises">Exercises</button>
+      <button class="tab-btn" data-tab="answers">Answers</button>
+      <button class="tab-btn" data-tab="terms">Terms to Know</button>
+    </div>
+
+    <div class="tab-panel" id="panel-overview">
+      <div class="overview-wrap">
+        <div class="overview-topic">Topic</div>
+        <div class="overview-headline">Lifetimes</div>
+        <div class="overview-desc">A lifetime tells Rust how long a reference stays valid. Learn how to annotate lifetimes and when Rust figures them out for you.</div>
+        <div class="overview-divider"></div>
+        <div class="overview-ref-label">Quick Reference</div>
+        <table class="terms-table">
+          <thead>
+            <tr><th>Concept</th><th>What it means</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Lifetime</td><td>How long a reference stays valid. Every reference has one.</td></tr>
+            <tr><td>'a</td><td>The syntax for a lifetime annotation. An apostrophe followed by a letter.</td></tr>
+            <tr><td>Dangling reference</td><td>A reference that points to data that has already been dropped. Rust refuses to compile this.</td></tr>
+            <tr><td>Borrow checker</td><td>The part of the Rust compiler that checks every reference is valid for as long as it is used.</td></tr>
+            <tr><td>Lifetime annotation</td><td>A label you add to a function signature to tell the compiler how the lifetimes of its references relate to each other.</td></tr>
+            <tr><td>Lifetime elision</td><td>Rules that let the compiler infer lifetimes automatically so you do not have to write them.</td></tr>
+            <tr><td>'static</td><td>A special lifetime meaning the reference lives for the entire program. String literals have this lifetime.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-panel active" id="panel-exercises">
+      <div class="exercise-subnav" id="subnav"></div>
+      <div class="exercise-split">
+        <div class="exercise-left" id="ex-left"></div>
+        <div class="exercise-right" id="ex-right"></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-answers">
+      <div class="answers-list" id="answers-list"></div>
+    </div>
+
+    <div class="tab-panel" id="panel-terms">
+      <div class="terms-wrap">
+        <table class="terms-table">
+          <thead>
+            <tr><th>Term</th><th>What it means</th><th>When you use it</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Lifetime</td><td>How long a reference is valid before Rust frees the data it points to.</td><td>Every time you write a reference in Rust. Often inferred automatically.</td></tr>
+            <tr><td>'a</td><td>The syntax for naming a lifetime. An apostrophe followed by a letter.</td><td>When a function returns a reference and the compiler needs to know which input it came from.</td></tr>
+            <tr><td>Dangling reference</td><td>A reference that points to freed memory. The borrow checker makes this impossible to compile.</td><td>Something Rust prevents at compile time so you never see it at runtime.</td></tr>
+            <tr><td>Borrow checker</td><td>The part of the compiler that tracks reference lifetimes and rejects invalid code.</td><td>Always active. It runs automatically every time you compile Rust code.</td></tr>
+            <tr><td>Lifetime annotation</td><td>A label on a function signature that describes how input and output lifetimes relate to each other.</td><td>When the compiler cannot infer the relationship on its own, usually when multiple references are involved.</td></tr>
+            <tr><td>Lifetime elision</td><td>Built-in rules that let the compiler infer lifetimes in the most common cases.</td><td>One-reference-in, one-reference-out functions benefit from this automatically. You write no annotation at all.</td></tr>
+            <tr><td>'static</td><td>A lifetime that lasts for the entire program. The reference is always valid.</td><td>String literals and constants defined at compile time.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const EMBED = 'https://play.rust-lang.org/?version=stable&edition=2021&code=';
+
+  const exercises = [
+    {
+      num: 1,
+      title: "A Reference Must Not Outlive Its Value",
+      explainer: "<p>The main job of lifetimes is to prevent dangling references. A dangling reference points to memory that has already been freed. Rust catches this at compile time.</p><p>The rule is simple: a reference to a value must never outlive the value itself.</p>",
+      task: "<p><code>r</code> is declared in the outer scope. Inside an inner block, <code>x</code> is created and <code>r</code> is set to point to it. When the inner block ends, <code>x</code> is dropped but <code>r</code> still tries to use it. Rust will not compile this. Fix it by moving the <code>println!</code> inside the inner block.</p>",
+      starterCode: "fn main() {\n    let r;\n\n    {\n        let x = 5;\n        r = &x;\n    }\n\n    println!(\"r: {}\", r);\n}",
+      instruction: "",
+      expectedOutput: "r: 5",
+      answerCode: "fn main() {\n    let r; // ① r is declared in the outer scope — its lifetime spans to the end of main\n\n    {\n        let x = 5;         // ② x is declared inside the inner block — its lifetime ends when the block closes\n        r = &x;            // ③ r now holds a reference to x — the reference's lifetime is tied to x\n        println!(\"r: {}\", r); // ④ r is used here while x is still in scope — the reference is valid at this point\n    }                      // ⑤ x is dropped here — if println! were after this brace, r would be a dangling reference\n}",
+      why: "<p>A reference cannot outlive the value it points to. When <code>x</code> is dropped at the end of the inner block, any reference to it becomes invalid. Moving the <code>println!</code> inside the block ensures <code>r</code> is used before <code>x</code> is gone. This is the borrow checker's core job: guarantee no dangling references exist.</p>"
+    },
+    {
+      num: 2,
+      title: "The Borrow Checker in Action",
+      explainer: "<p>The borrow checker compares the lifetime of the value with the lifetime of the reference. If the reference lives longer than the value it points to, the compiler stops you.</p><p>This exercise shows the rule working correctly. Both the value and the reference live in the same scope, so there is no problem.</p>",
+      task: "<p>This code already compiles. Read it, run it, and confirm you understand why it works. Then change <code>x = 5</code> to be declared inside a separate inner block and see what error you get.</p>",
+      starterCode: "fn main() {\n    let x = 5;\n    let r = &x;\n    println!(\"r: {}\", r);\n}",
+      instruction: "",
+      expectedOutput: "r: 5",
+      answerCode: "fn main() {\n    let x = 5;    // ① x is declared in the main scope — its lifetime spans to the end of main\n    let r = &x;   // ② r holds an immutable reference to x — the reference's lifetime is also in the main scope\n    println!(\"r: {}\", r); // ③ r is used while x is still alive — the reference is valid, the borrow checker approves\n}",
+      why: "<p>Both <code>x</code> and <code>r</code> live until the end of <code>main</code>. The reference never outlives the value. When you move <code>x</code> into an inner block and use <code>r</code> after the block closes, the compiler tells you <code>x does not live long enough</code>. That error is the borrow checker preventing a dangling reference.</p>"
+    },
+    {
+      num: 3,
+      title: "Lifetime Annotations on Functions",
+      explainer: "<p>When a function takes two references and returns one of them, the compiler needs to know which input the returned reference comes from. It cannot always figure this out on its own. That is when you add a lifetime annotation.</p><p><code>'a</code> is the annotation. You declare it in angle brackets after the function name, then apply it to the parameters and return type that share that lifetime.</p>",
+      task: "<p>A function returns the longer of two string slices. Right now it is missing lifetime annotations. The compiler cannot tell whether the returned reference comes from <code>x</code> or <code>y</code>, so it refuses to compile. Add <code>'a</code> to the function signature so the compiler knows both inputs and the output share the same lifetime.</p>",
+      starterCode: "fn longest(x: &str, y: &str) -> &str {\n    if x.len() > y.len() {\n        x\n    } else {\n        y\n    }\n}\n\nfn main() {\n    let s1 = String::from(\"long string\");\n    let result;\n    {\n        let s2 = String::from(\"xyz\");\n        result = longest(s1.as_str(), s2.as_str());\n        println!(\"longest: {}\", result);\n    }\n}",
+      instruction: "",
+      expectedOutput: "longest: long string",
+      answerCode: "fn longest<'a>(x: &'a str, y: &'a str) -> &'a str { // ① <'a> declares the lifetime — both inputs and the return share it\n    if x.len() > y.len() {                            // ② compares lengths — either x or y may be returned\n        x                                             // ③ returns a reference with lifetime 'a — valid as long as both inputs are\n    } else {\n        y                                             // ④ same lifetime — the compiler knows the return lives as long as the shorter input\n    }\n}\n\nfn main() {\n    let s1 = String::from(\"long string\"); // ⑤ s1 is owned by main\n    let result;\n    {\n        let s2 = String::from(\"xyz\");            // ⑥ s2 is owned by this inner block\n        result = longest(s1.as_str(), s2.as_str()); // ⑦ both references passed in — result's lifetime is bounded by the shorter (s2)\n        println!(\"longest: {}\", result);         // ⑧ result used while both s1 and s2 are still alive — valid\n    }\n}",
+      why: "<p>The lifetime annotation <code>'a</code> does not change how long references actually live. It just tells the compiler how they relate to each other. Saying both inputs and the return share <code>'a</code> means the returned reference will live at least as long as the shorter of the two inputs. Without this, the compiler cannot verify the returned reference is safe.</p>"
+    },
+    {
+      num: 4,
+      title: "Multiple Lifetime Annotations",
+      explainer: "<p>A function can have more than one lifetime. When two parameters have different lifetimes and only one is returned, they get different labels.</p>",
+      task: "<p>A function takes two references: one that will be returned, one that will only be printed. Add two lifetime annotations <code>'a</code> and <code>'b</code> so the return type is tied only to the reference that gets returned.</p>",
+      starterCode: "fn print_and_return(x: &str, y: &str) -> &str {\n    println!(\"y is: {}\", y);\n    x\n}\n\nfn main() {\n    let s1 = String::from(\"hello\");\n    let result;\n    {\n        let s2 = String::from(\"world\");\n        result = print_and_return(s1.as_str(), s2.as_str());\n    }\n    println!(\"result: {}\", result);\n}",
+      instruction: "",
+      expectedOutput: "y is: world\nresult: hello",
+      answerCode: "fn print_and_return<'a, 'b>(x: &'a str, y: &'b str) -> &'a str { // ① two lifetimes declared — 'a for x (returned), 'b for y (only printed)\n    println!(\"y is: {}\", y); // ② y is used inside the function — its lifetime 'b only needs to cover the function call\n    x                        // ③ x is returned — the return type carries 'a, so the caller knows this reference lives as long as x\n}\n\nfn main() {\n    let s1 = String::from(\"hello\"); // ④ s1 is owned by main — lifetime 'a lasts until end of main\n    let result;\n    {\n        let s2 = String::from(\"world\");                           // ⑤ s2 is owned by this block — lifetime 'b only needs to last through the function call\n        result = print_and_return(s1.as_str(), s2.as_str());      // ⑥ result's lifetime is 'a (tied to s1), not 'b (tied to s2)\n    }                                                              // ⑦ s2 is dropped here — fine because result is not tied to s2\n    println!(\"result: {}\", result); // ⑧ result is valid — its reference points to s1, which is still alive\n}",
+      why: "<p>Separate lifetime annotations let you express that the return is tied to one input but not the other. <code>'a</code> on <code>x</code> and the return type says: the caller can use the returned reference as long as <code>x</code> is alive. <code>'b</code> on <code>y</code> is independent. <code>y</code> only needs to live through the function call itself.</p>"
+    },
+    {
+      num: 5,
+      title: "Lifetime Elision",
+      explainer: "<p>Most of the time you do not need to write lifetime annotations. Rust has a set of built-in rules called lifetime elision rules that let the compiler fill them in automatically.</p><p>The most common case: a function that takes one reference and returns a reference. The compiler assumes the output has the same lifetime as the input.</p>",
+      task: "<p>This function takes a string slice and returns the first word. It works without any lifetime annotations because elision handles it. Run it and confirm it compiles. Then add the lifetime annotation manually and confirm it still compiles.</p>",
+      starterCode: "fn first_word(s: &str) -> &str {\n    let bytes = s.as_bytes();\n    for (i, &item) in bytes.iter().enumerate() {\n        if item == b' ' {\n            return &s[0..i];\n        }\n    }\n    &s[..]\n}\n\nfn main() {\n    let sentence = String::from(\"hello world\");\n    let word = first_word(&sentence);\n    println!(\"{}\", word);\n}",
+      instruction: "",
+      expectedOutput: "hello",
+      answerCode: "fn first_word<'a>(s: &'a str) -> &'a str { // ① explicit lifetime annotation — 'a ties the return to the input (same as what elision does automatically)\n    let bytes = s.as_bytes();               // ② converts the string to a byte slice for scanning\n    for (i, &item) in bytes.iter().enumerate() {\n        if item == b' ' {\n            return &s[0..i]; // ③ returns a slice of s — the returned reference has lifetime 'a because it comes from s\n        }\n    }\n    &s[..]  // ④ returns the whole string if no space found — also lifetime 'a\n}\n\nfn main() {\n    let sentence = String::from(\"hello world\"); // ⑤ sentence owns the String\n    let word = first_word(&sentence);           // ⑥ borrows sentence — word's lifetime is tied to sentence's\n    println!(\"{}\", word);                       // ⑦ word is valid here because sentence is still in scope\n}",
+      why: "<p>Lifetime elision rule: one reference input, one reference output — the compiler assumes they share the same lifetime. The explicit annotation above is identical to what the compiler infers silently. Understanding what elision does helps you know when you need to write annotations: when there are multiple inputs or different possible sources for the return.</p>"
+    },
+    {
+      num: 6,
+      title: "Build: Longest Plan Name in a Contract",
+      explainer: "<p>A contract stores plan names for multiple subscribers. A helper function compares two plan name slices and returns the longer one. The caller uses the result after both inputs are still in scope.</p>",
+      task: "<p>Write a function <code>longest_plan</code> that:</p><ol><li>Takes two <code>&amp;str</code> parameters.</li><li>Returns the longer one as a <code>&amp;str</code>.</li><li>Uses a lifetime annotation so it compiles.</li></ol><p>The <code>main</code> function is written for you.</p>",
+      starterCode: "fn main() {\n    let plan_a = String::from(\"basic\");\n    let plan_b = String::from(\"enterprise\");\n    let result = longest_plan(plan_a.as_str(), plan_b.as_str());\n    println!(\"Longer plan: {}\", result);\n}",
+      instruction: "",
+      expectedOutput: "Longer plan: enterprise",
+      answerCode: "fn longest_plan<'a>(x: &'a str, y: &'a str) -> &'a str { // ① <'a> declares the shared lifetime — both inputs and the return use it\n    if x.len() >= y.len() { // ② compares lengths — >= means x wins on a tie\n        x                   // ③ returns x with lifetime 'a\n    } else {\n        y                   // ④ returns y with lifetime 'a\n    }\n}\n\nfn main() {\n    let plan_a = String::from(\"basic\");      // ⑤ plan_a is owned by main\n    let plan_b = String::from(\"enterprise\"); // ⑥ plan_b is owned by main\n    let result = longest_plan(plan_a.as_str(), plan_b.as_str()); // ⑦ result's lifetime is bounded by the shorter of plan_a and plan_b\n    println!(\"Longer plan: {}\", result);     // ⑧ both plan_a and plan_b are still alive — result is valid\n}",
+      why: "<p>The lifetime annotation <code>&lt;'a&gt;</code> tells the compiler that the returned reference will be valid as long as both inputs are. Without it, the compiler cannot determine which input the return came from and refuses to compile. In a contract, this pattern appears whenever you compare or select between borrowed string values.</p>"
+    }
+  ];
+
+  let currentEx = 0;
+
+  function buildSubnav() {
+    const subnav = document.getElementById('subnav');
+    subnav.innerHTML = '';
+    exercises.forEach((ex, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'ex-btn' + (i === currentEx ? ' active' : '');
+      btn.textContent = 'Exercise ' + ex.num;
+      btn.addEventListener('click', () => selectExercise(i));
+      subnav.appendChild(btn);
+    });
+  }
+
+  function renderLeft(ex) {
+    const left = document.getElementById('ex-left');
+    left.innerHTML =
+      '<div class="ex-kicker">Exercise ' + ex.num + ' of ' + exercises.length + '</div>' +
+      '<div class="ex-title">' + ex.title + '</div>' +
+      '<div class="ex-explainer">' + ex.explainer + '</div>' +
+      '<div class="task-rule"></div>' +
+      '<div class="task-label">Your Task</div>' +
+      '<div class="task-body">' + ex.task + '</div>';
+    const hint = document.createElement('p');
+    hint.className = 'starter-hint';
+    hint.textContent = 'Clear the Playground on the right and paste this code to begin.';
+    left.appendChild(hint);
+    const starterWrap = document.createElement('div');
+    starterWrap.className = 'starter-block';
+    const starterPre = document.createElement('pre');
+    starterPre.textContent = ex.starterCode;
+    starterWrap.appendChild(starterPre);
+    left.appendChild(starterWrap);
+    const instr = document.createElement('p');
+    instr.className = 'task-instruction';
+    instr.innerHTML = ex.instruction;
+    left.appendChild(instr);
+    const outputWrap = document.createElement('div');
+    outputWrap.className = 'expected-output-wrap';
+    const outputLabel = document.createElement('div');
+    outputLabel.className = 'expected-output-label';
+    outputLabel.textContent = 'Expected Output';
+    const outputText = document.createElement('div');
+    outputText.className = 'expected-output-text';
+    outputText.textContent = ex.expectedOutput;
+    outputWrap.appendChild(outputLabel);
+    outputWrap.appendChild(outputText);
+    left.appendChild(outputWrap);
+  }
+
+  let iframeEl = null;
+
+  function renderRight(ex) {
+    const right = document.getElementById('ex-right');
+    if (!iframeEl) {
+      right.innerHTML =
+        '<div class="playground-bar">' +
+          '<div class="playground-bar-dot"></div>' +
+          '<span class="playground-bar-label">Rust Playground</span>' +
+        '</div>';
+      iframeEl = document.createElement('iframe');
+      right.appendChild(iframeEl);
+    }
+    iframeEl.src = EMBED + encodeURIComponent(ex.starterCode);
+  }
+
+  function selectExercise(i) {
+    currentEx = i;
+    buildSubnav();
+    renderLeft(exercises[i]);
+    renderRight(exercises[i]);
+  }
+
+  function buildAnswers() {
+    const list = document.getElementById('answers-list');
+    if (list.children.length > 0) return;
+    exercises.forEach(ex => {
+      const card = document.createElement('div');
+      card.className = 'answer-card';
+      const head = document.createElement('div');
+      head.className = 'answer-card-head';
+      head.textContent = 'Exercise ' + ex.num + ' — ' + ex.title;
+      const body = document.createElement('div');
+      body.className = 'answer-card-body';
+      const codeWrap = document.createElement('div');
+      codeWrap.className = 'answer-code';
+      const pre = document.createElement('pre');
+      pre.textContent = ex.answerCode;
+      codeWrap.appendChild(pre);
+      const whyLabel = document.createElement('div');
+      whyLabel.className = 'answer-why-label';
+      whyLabel.textContent = 'Why';
+      const whyText = document.createElement('div');
+      whyText.className = 'answer-why';
+      whyText.innerHTML = ex.why;
+      body.appendChild(codeWrap);
+      body.appendChild(whyLabel);
+      body.appendChild(whyText);
+      card.appendChild(head);
+      card.appendChild(body);
+      list.appendChild(card);
+    });
+  }
+
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === tabId);
+    });
+    document.querySelectorAll('.tab-panel').forEach(panel => {
+      panel.classList.toggle('active', panel.id === 'panel-' + tabId);
+    });
+    if (tabId === 'answers') buildAnswers();
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
+
+  buildSubnav();
+  renderLeft(exercises[0]);
+  renderRight(exercises[0]);
+</script>
+</body>
+</html>
